@@ -51,39 +51,90 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .hidden{display:none!important;}
+.view-toggle{display:flex;gap:0;background:rgba(255,255,255,0.12);border-radius:10px;padding:4px;margin-left:auto;}
+.view-toggle button{background:none;border:none;color:rgba(255,255,255,0.7);padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.view-toggle button.active{background:white;color:#0C447C;}
+.entry-section{margin-bottom:1.5rem;}
+.entry-section-title{font-size:13px;font-weight:700;color:#0C447C;margin-bottom:.75rem;padding-bottom:6px;border-bottom:2px solid #E6F1FB;}
+.entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.entry-field{display:flex;flex-direction:column;gap:5px;}
+.entry-field label{font-size:13px;font-weight:600;color:var(--text);}
+.entry-field .ref-hint{font-size:11px;color:var(--text-muted);font-weight:400;}
+.entry-field input{height:40px;border:1px solid var(--border);border-radius:7px;padding:0 10px;font-size:14px;outline:none;transition:border-color .15s;}
+.entry-field input:focus{border-color:var(--blue);}
+.entry-field input.flagged{border-color:var(--red);background:var(--red-light);}
+.analyst-row{display:flex;gap:12px;align-items:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);}
+.no-tests-msg{padding:1rem;background:var(--bg-sec);border-radius:8px;color:var(--text-muted);font-size:14px;text-align:center;}
 @media(max-width:600px){.search-row,.sections-grid,.gen-row{flex-direction:column;}.sections-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="header">
   <div class="header-logo">ES</div>
-  <div><h1>Evashalom Medical Diagnostic Services</h1><p>Laboratory Report Generator</p></div>
+  <div><h1>Evashalom Medical Diagnostic Services</h1><p>Laboratory Information System</p></div>
+  <div class="view-toggle">
+    <button id="tabReport" class="active" onclick="switchView('report')">Generate Report</button>
+    <button id="tabEntry" onclick="switchView('entry')">Enter Results</button>
+  </div>
 </div>
 <div class="container">
-  <div class="card">
-    <div class="card-title">Search Patient by Lab Number</div>
-    <div class="search-row">
-      <div class="field">
-        <label>Lab Number (same as Google Sheet row number)</label>
-        <input type="number" id="labInput" placeholder="e.g. 2, 3, 446, 2990" min="2"/>
+  <!-- ============ REPORT VIEW ============ -->
+  <div id="reportView">
+    <div class="card">
+      <div class="card-title">Search Patient by Lab Number</div>
+      <div class="search-row">
+        <div class="field">
+          <label>Lab Number (same as Google Sheet row number)</label>
+          <input type="number" id="labInput" placeholder="e.g. 2, 3, 446, 2990" min="2"/>
+        </div>
+        <button class="btn btn-primary" onclick="searchPatient()" id="searchBtn">Search</button>
       </div>
-      <button class="btn btn-primary" onclick="searchPatient()" id="searchBtn">Search</button>
+    </div>
+    <div id="statusBar" class="hidden"></div>
+    <div id="patientCard" class="card hidden">
+      <div class="card-title">Patient Information</div>
+      <div class="patient-grid" id="patientGrid"></div>
+      <div class="card-title" style="margin-top:.5rem;">Tests Requested</div>
+      <div class="badges" id="testsBadges"></div>
+      <hr class="divider">
+      <div class="card-title">Sections with Data</div>
+      <div class="sections-grid" id="sectionsGrid"></div>
+      <div id="resultsPreview"></div>
+      <hr class="divider">
+      <div class="gen-row">
+        <div class="gen-note" id="genNote"></div>
+        <button class="btn btn-success" onclick="generateReport()" id="genBtn">Download Report (.docx)</button>
+      </div>
     </div>
   </div>
-  <div id="statusBar" class="hidden"></div>
-  <div id="patientCard" class="card hidden">
-    <div class="card-title">Patient Information</div>
-    <div class="patient-grid" id="patientGrid"></div>
-    <div class="card-title" style="margin-top:.5rem;">Tests Requested</div>
-    <div class="badges" id="testsBadges"></div>
-    <hr class="divider">
-    <div class="card-title">Sections with Data</div>
-    <div class="sections-grid" id="sectionsGrid"></div>
-    <div id="resultsPreview"></div>
-    <hr class="divider">
-    <div class="gen-row">
-      <div class="gen-note" id="genNote"></div>
-      <button class="btn btn-success" onclick="generateReport()" id="genBtn">Download Report (.docx)</button>
+
+  <!-- ============ ENTRY VIEW ============ -->
+  <div id="entryView" class="hidden">
+    <div class="card">
+      <div class="card-title">Enter Results by Lab Number</div>
+      <div class="search-row">
+        <div class="field">
+          <label>Lab Number (same as Google Sheet row number)</label>
+          <input type="number" id="entryLabInput" placeholder="e.g. 2, 3, 446, 2990" min="2"/>
+        </div>
+        <button class="btn btn-primary" onclick="loadEntryPatient()" id="entrySearchBtn">Load Patient</button>
+      </div>
+    </div>
+    <div id="entryStatusBar" class="hidden"></div>
+    <div id="entryCard" class="card hidden">
+      <div class="card-title">Patient Information</div>
+      <div class="patient-grid" id="entryPatientGrid"></div>
+      <div class="card-title" style="margin-top:.5rem;">Tests Requested</div>
+      <div class="badges" id="entryTestsBadges"></div>
+      <hr class="divider">
+      <div id="entryFields"></div>
+      <div class="analyst-row">
+        <div class="field" style="max-width:320px;">
+          <label>Analyst Name</label>
+          <input type="text" id="analystName" placeholder="Who is entering these results?"/>
+        </div>
+        <button class="btn btn-success" onclick="saveResults()" id="saveBtn">Save Results</button>
+      </div>
     </div>
   </div>
 </div>
@@ -424,6 +475,136 @@ async function generateReport() {
   } catch(err) { console.error(err); showStatus('Failed to generate: ' + err.message, 'error'); }
   btn.disabled = false; btn.innerHTML = 'Download Report (.docx)';
 }
+
+// ========================= ENTRY VIEW =========================
+
+// Which section each map belongs to, for building entry fields
+const SECTION_DEFS = [
+  {name:'Chemistry',    gid:GIDS.CHEMISTRY,    map:CHEM_MAP, unit:CHEM_UNIT, refStr:CHEM_REF_STR, refNum:CHEM_REF_NUM},
+  {name:'Haematology',  gid:GIDS.HAEMATOLOGY,  map:HAEM_MAP, unit:HAEM_UNIT, refStr:HAEM_REF_STR, refNum:HAEM_REF_NUM},
+  {name:'Hormones & Serology', gid:GIDS.HORMONES, map:HORM_MAP, unit:HORM_UNIT, refStr:HORM_REF_STR, refNum:HORM_REF_NUM},
+  {name:'Microbiology', gid:GIDS.MICROBIOLOGY, map:MICRO_MAP, unit:{}, refStr:MICRO_REF_STR, refNum:{}}
+];
+
+let entryPatient = null;
+let entrySheetData = null; // {sectionName: {cols, rows}}
+
+function switchView(view) {
+  const isReport = view === 'report';
+  document.getElementById('reportView').classList.toggle('hidden', !isReport);
+  document.getElementById('entryView').classList.toggle('hidden', isReport);
+  document.getElementById('tabReport').classList.toggle('active', isReport);
+  document.getElementById('tabEntry').classList.toggle('active', !isReport);
+}
+
+function showEntryStatus(msg, type) {
+  const bar = document.getElementById('entryStatusBar');
+  bar.className = 'status-bar status-' + type;
+  bar.innerHTML = msg;
+  bar.classList.remove('hidden');
+}
+function hideEntryStatus() { document.getElementById('entryStatusBar').classList.add('hidden'); }
+
+async function loadEntryPatient() {
+  const labNum = parseInt(document.getElementById('entryLabInput').value);
+  if (!labNum || labNum < 2) { showEntryStatus('Please enter a valid lab number (minimum 2).', 'error'); return; }
+  const btn = document.getElementById('entrySearchBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Loading...';
+  document.getElementById('entryCard').classList.add('hidden');
+  showEntryStatus('Loading patient...', 'loading');
+  try {
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    const rowIndex = labNum - 2;
+    const pRow = patientData.rows[rowIndex] || [];
+    if (!pRow || !pRow[1]) { showEntryStatus('No patient found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Load Patient'; return; }
+    let patientDate = '';
+    for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
+    const rawAge = pRow[3] ? pRow[3].trim() : '';
+    const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
+    entryPatient = {
+      labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+      age: age, investigations: pRow[5] || '', referredBy: pRow[6] || '',
+      date: formatDate(patientDate), rowIndex: rowIndex, labNum: labNum
+    };
+    // Fetch existing results so we can pre-fill any already-entered values
+    showEntryStatus('Loading existing results...', 'loading');
+    const fetched = await Promise.all(SECTION_DEFS.map(s => fetchTabCsv(RESULT_ID, s.gid).catch(() => ({cols:[],rows:[]}))));
+    entrySheetData = {};
+    SECTION_DEFS.forEach((s, i) => { entrySheetData[s.name] = fetched[i]; });
+    renderEntryForm();
+    hideEntryStatus();
+  } catch(err) { console.error(err); showEntryStatus('Error: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Load Patient';
+}
+
+function renderEntryForm() {
+  const p = entryPatient;
+  // Patient info
+  const fields = [
+    {lbl:'Lab No.',val:p.labNo},{lbl:'Patient Name',val:p.name},
+    {lbl:'Gender',val:p.gender},{lbl:'Age',val:p.age},
+    {lbl:'Referred By',val:p.referredBy||'—'},{lbl:'Request Date',val:p.date||'—'}
+  ];
+  document.getElementById('entryPatientGrid').innerHTML = fields.map(f =>
+    '<div class="pf"><span class="lbl">' + f.lbl + '</span><span class="val' + (f.val==='—'?' empty':'') + '">' + f.val + '</span></div>'
+  ).join('');
+  document.getElementById('entryTestsBadges').innerHTML = p.investigations.split(/[,\n]/).map(t => t.replace(/"/g,'').trim()).filter(Boolean).map(t => '<span class="badge">' + t + '</span>').join('');
+
+  // Build input fields for EVERY parameter in each section.
+  // Pre-fill with any existing value already in the sheet for this row.
+  let html = '';
+  SECTION_DEFS.forEach(section => {
+    const sheet = entrySheetData[section.name];
+    const existingRow = (sheet.rows[p.rowIndex]) || [];
+    const paramKeys = Object.keys(section.map);
+    let fieldsHtml = '';
+    paramKeys.forEach(key => {
+      const colIndex = sheet.cols.indexOf(key);
+      const existingVal = (colIndex >= 0 && existingRow[colIndex]) ? existingRow[colIndex] : '';
+      const label = section.map[key];
+      const unit = section.unit[key] || '';
+      const ref = section.refStr[key] || '';
+      const hint = [unit, ref ? 'Ref: ' + ref : ''].filter(Boolean).join('  \u2022  ');
+      const safeId = 'entry__' + section.name.replace(/[^a-zA-Z]/g,'') + '__' + key.replace(/[^a-zA-Z0-9]/g,'_');
+      fieldsHtml += '<div class="entry-field">'
+        + '<label>' + label + (unit ? ' <span class="ref-hint">(' + unit + ')</span>' : '') + '</label>'
+        + '<input type="text" id="' + safeId + '" data-section="' + section.name + '" data-key="' + key + '" value="' + existingVal.replace(/"/g,'&quot;') + '" '
+        + 'oninput="validateEntryField(this)" placeholder="—"/>'
+        + (ref ? '<span class="ref-hint">Ref: ' + ref + '</span>' : '')
+        + '</div>';
+    });
+    html += '<div class="entry-section"><div class="entry-section-title">' + section.name + '</div><div class="entry-grid">' + fieldsHtml + '</div></div>';
+  });
+  document.getElementById('entryFields').innerHTML = html;
+  document.getElementById('entryCard').classList.remove('hidden');
+}
+
+function validateEntryField(input) {
+  const section = input.getAttribute('data-section');
+  const key = input.getAttribute('data-key');
+  const def = SECTION_DEFS.find(s => s.name === section);
+  if (!def) return;
+  const abn = checkAbnormal(key, input.value, def.refNum);
+  input.classList.toggle('flagged', !!abn);
+}
+
+function saveResults() {
+  const analyst = document.getElementById('analystName').value.trim();
+  if (!analyst) { showEntryStatus('Please enter the analyst name before saving.', 'error'); return; }
+  // Gather all non-empty entered values
+  const inputs = document.querySelectorAll('#entryFields input');
+  const toSave = [];
+  inputs.forEach(inp => {
+    const val = inp.value.trim();
+    if (val) toSave.push({ section: inp.getAttribute('data-section'), key: inp.getAttribute('data-key'), value: val });
+  });
+  if (toSave.length === 0) { showEntryStatus('No results entered to save.', 'error'); return; }
+  // Phase 2 will wire this to a secure Apps Script write endpoint.
+  console.log('READY TO SAVE:', { labNum: entryPatient.labNum, analyst: analyst, results: toSave });
+  showEntryStatus('Saving is coming in the next phase. ' + toSave.length + ' value(s) captured for ' + entryPatient.name + ' (analyst: ' + analyst + '). Check the browser console to see the captured data.', 'success');
+}
+
+document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
 
 document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
 </script>
