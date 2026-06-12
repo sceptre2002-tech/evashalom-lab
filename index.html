@@ -144,6 +144,11 @@ const LOGO_B64 = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQ
 const PATIENT_ID = '1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ';
 const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
 
+// Secure write endpoint (Google Apps Script web app URL) + shared token.
+// Fill these in after deploying the Apps Script. Until then, Save stays in preview mode.
+const SAVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycby_rnWGmLhfnN5HbcWs49kU-Ox4shOjJPZdQF2K1ddb16KNTPoN5i08-iO5eVtUrqIEdA/exec';
+const SAVE_TOKEN    = 'evashalom-lab-secure-gateway-2026';
+
 const CHEM_MAP = {'Ur':'UREA','Cr':'CREATININE','Na':'SODIUM','K':'POTASSIUM','Cl':'CHLORIDE','HC02-':'BICARBONATE','Tca':'TOTAL CALCIUM','pregnancy test':'PREGNANCY TEST','ica':'IONIZED CALCIUM','Ag':'ANION GAP','TB':'TOTAL BILIRUBIN','DB':'DIRECT BILIRUBIN','IB':'INDIRECT BILIRUBIN','AST':'AST','ALT':'ALT','ALP':'ALP','TC':'TOTAL CHOLESTEROL','TG':'TRIGLYCERIDES','HDL':'HDL','LDL':'LDL','TP':'TOTAL PROTEIN','ALB':'ALBUMIN','GLB':'GLOBULIN','FBS/2HPP':'FBS / 2HRPP','UA/wide gap':'URIC ACID (URINE)','LDH':'LDH','Uric acid':'URIC ACID','phosphate':'PHOSPHATE','Mg':'MAGNESIUM','ACR':'ALBUMIN:CREATININE RATIO','Occult Blood':'OCCULT BLOOD','Bence jones Protein':'BENCE JONES PROTEIN','Inorg. Phos.':'INORGANIC PHOSPHATE','Lipase':'LIPASE','Amylase':'AMYLASE','ADA':'ADA'};
 const CHEM_UNIT = {'Ur':'mmol/L','Cr':'µmol/L','Na':'mmol/L','K':'mmol/L','Cl':'mmol/L','HC02-':'mmol/L','Tca':'mmol/L','ica':'mmol/L','Ag':'mmol/L','TB':'µmol/L','DB':'µmol/L','IB':'µmol/L','AST':'U/L','ALT':'U/L','ALP':'U/L','TC':'mmol/L','TG':'mmol/L','HDL':'mmol/L','LDL':'mmol/L','TP':'g/L','ALB':'g/L','GLB':'g/L','FBS/2HPP':'mmol/L','LDH':'U/L','Uric acid':'µmol/L','phosphate':'mmol/L','Mg':'mmol/L','ACR':'mg/mmol','Lipase':'U/L','Amylase':'U/L'};
 const CHEM_REF_NUM = {'Ur':[1.6,8.0],'Cr':[36,130],'Na':[130,146],'K':[3.3,5.0],'Cl':[90,108],'HC02-':[20,32],'Tca':[2.20,2.70],'ica':[1.20,1.40],'Ag':[10,24],'TB':[0,25],'DB':[0,8.3],'IB':[0,16.7],'AST':[0,40],'ALT':[0,40],'ALP':[44,147],'TC':[0,5.2],'TG':[0,1.7],'HDL':[1.0,99],'LDL':[0,3.4],'TP':[64,83],'ALB':[35,52],'GLB':[20,36],'FBS/2HPP':[3.9,5.5],'LDH':[135,214],'Uric acid':[155,428],'phosphate':[0.81,1.45],'Mg':[0.65,1.05],'ACR':[0,3.0]};
@@ -588,10 +593,9 @@ function validateEntryField(input) {
   input.classList.toggle('flagged', !!abn);
 }
 
-function saveResults() {
+async function saveResults() {
   const analyst = document.getElementById('analystName').value.trim();
   if (!analyst) { showEntryStatus('Please enter the analyst name before saving.', 'error'); return; }
-  // Gather all non-empty entered values
   const inputs = document.querySelectorAll('#entryFields input');
   const toSave = [];
   inputs.forEach(inp => {
@@ -599,9 +603,39 @@ function saveResults() {
     if (val) toSave.push({ section: inp.getAttribute('data-section'), key: inp.getAttribute('data-key'), value: val });
   });
   if (toSave.length === 0) { showEntryStatus('No results entered to save.', 'error'); return; }
-  // Phase 2 will wire this to a secure Apps Script write endpoint.
-  console.log('READY TO SAVE:', { labNum: entryPatient.labNum, analyst: analyst, results: toSave });
-  showEntryStatus('Saving is coming in the next phase. ' + toSave.length + ' value(s) captured for ' + entryPatient.name + ' (analyst: ' + analyst + '). Check the browser console to see the captured data.', 'success');
+
+  // If the endpoint isn't configured yet, stay in preview mode
+  if (SAVE_ENDPOINT.indexOf('PASTE_APPS_SCRIPT_URL') === 0) {
+    console.log('PREVIEW (endpoint not set):', { labNum: entryPatient.labNum, analyst: analyst, results: toSave });
+    showEntryStatus(toSave.length + ' value(s) captured for ' + entryPatient.name + ' (analyst: ' + analyst + '). Endpoint not configured yet — nothing was written. See console.', 'success');
+    return;
+  }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving...';
+  try {
+    const payload = { token: SAVE_TOKEN, labNum: entryPatient.labNum, analyst: analyst, results: toSave };
+    // Apps Script web apps don't return CORS headers, so we POST as text/plain
+    // and read the response. no-cors would hide the result, so we use a normal
+    // fetch; Apps Script allows this for anonymous "Anyone" deployments.
+    const res = await fetch(SAVE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if (out.ok) {
+      let msg = 'Saved ' + out.written + ' result(s) for ' + entryPatient.name + ' (analyst: ' + analyst + ').';
+      if (out.skipped && out.skipped.length) msg += ' Skipped: ' + out.skipped.join(', ') + '.';
+      showEntryStatus(msg, 'success');
+    } else {
+      showEntryStatus('Save failed: ' + (out.error || 'unknown error'), 'error');
+    }
+  } catch(err) {
+    console.error(err);
+    showEntryStatus('Save failed: ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.innerHTML = 'Save Results';
 }
 
 document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
