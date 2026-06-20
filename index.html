@@ -149,25 +149,19 @@ const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
 const SAVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycby_rnWGmLhfnN5HbcWs49kU-Ox4shOjJPZdQF2K1ddb16KNTPoN5i08-iO5eVtUrqIEdA/exec';
 const SAVE_TOKEN    = 'evashalom-lab-secure-gateway-2026';
 
-const CHEM_MAP = {'Ur':'UREA','Cr':'CREATININE','Na':'SODIUM','K':'POTASSIUM','Cl':'CHLORIDE','HC02-':'BICARBONATE','Tca':'TOTAL CALCIUM','pregnancy test':'PREGNANCY TEST','ica':'IONIZED CALCIUM','Ag':'ANION GAP','TB':'TOTAL BILIRUBIN','DB':'DIRECT BILIRUBIN','IB':'INDIRECT BILIRUBIN','AST':'AST','ALT':'ALT','ALP':'ALP','TC':'TOTAL CHOLESTEROL','TG':'TRIGLYCERIDES','HDL':'HDL','LDL':'LDL','TP':'TOTAL PROTEIN','ALB':'ALBUMIN','GLB':'GLOBULIN','FBS/2HPP':'FBS / 2HRPP','UA/wide gap':'URIC ACID (URINE)','LDH':'LDH','Uric acid':'URIC ACID','phosphate':'PHOSPHATE','Mg':'MAGNESIUM','ACR':'ALBUMIN:CREATININE RATIO','Occult Blood':'OCCULT BLOOD','Bence jones Protein':'BENCE JONES PROTEIN','Inorg. Phos.':'INORGANIC PHOSPHATE','Lipase':'LIPASE','Amylase':'AMYLASE','ADA':'ADA'};
-const CHEM_UNIT = {'Ur':'mmol/L','Cr':'µmol/L','Na':'mmol/L','K':'mmol/L','Cl':'mmol/L','HC02-':'mmol/L','Tca':'mmol/L','ica':'mmol/L','Ag':'mmol/L','TB':'µmol/L','DB':'µmol/L','IB':'µmol/L','AST':'U/L','ALT':'U/L','ALP':'U/L','TC':'mmol/L','TG':'mmol/L','HDL':'mmol/L','LDL':'mmol/L','TP':'g/L','ALB':'g/L','GLB':'g/L','FBS/2HPP':'mmol/L','LDH':'U/L','Uric acid':'µmol/L','phosphate':'mmol/L','Mg':'mmol/L','ACR':'mg/mmol','Lipase':'U/L','Amylase':'U/L'};
-const CHEM_REF_NUM = {'Ur':[1.6,8.0],'Cr':[36,130],'Na':[130,146],'K':[3.3,5.0],'Cl':[90,108],'HC02-':[20,32],'Tca':[2.20,2.70],'ica':[1.20,1.40],'Ag':[10,24],'TB':[0,25],'DB':[0,8.3],'IB':[0,16.7],'AST':[0,40],'ALT':[0,40],'ALP':[44,147],'TC':[0,5.2],'TG':[0,1.7],'HDL':[1.0,99],'LDL':[0,3.4],'TP':[64,83],'ALB':[35,52],'GLB':[20,36],'FBS/2HPP':[3.9,5.5],'LDH':[135,214],'Uric acid':[155,428],'phosphate':[0.81,1.45],'Mg':[0.65,1.05],'ACR':[0,3.0]};
-const CHEM_REF_STR = {'Ur':'1.6 - 8.0','Cr':'36 - 130','Na':'130 - 146','K':'3.3 - 5.0','Cl':'90 - 108','HC02-':'20 - 32','Tca':'2.20 - 2.70','ica':'1.20 - 1.40','Ag':'10 - 24','TB':'≤ 25','DB':'≤ 8.3','IB':'≤ 16.7','AST':'0 - 40','ALT':'0 - 40','ALP':'44 - 147','TC':'< 5.2','TG':'< 1.7','HDL':'> 1.0','LDL':'< 3.4','TP':'64 - 83','ALB':'35 - 52','GLB':'20 - 36','FBS/2HPP':'3.9 - 5.5 / < 7.8','LDH':'135 - 214','Uric acid':'M: 208-428 / F: 155-357','phosphate':'0.81 - 1.45','Mg':'0.65 - 1.05','ACR':'< 3.0'};
+// Live reference-ranges tab (REFERENCE_RANGES) on the Result Entry Sheet.
+const REFERENCE_GID = '1214031418';
 
-const HAEM_MAP = {'PCV':'PCV','HB':'HAEMOGLOBIN','WBC':'TOTAL WBC','PLT':'PLATELET COUNT','RBC':'RBC COUNT','NEUTROPHILS':'NEUTROPHILS','LYMPHOCYTES':'LYMPHOCYTES','EOSINOPHILS':'EOSINOPHILS','MONOCYTES':'MONOCYTES','BASOPHIL':'BASOPHILS','RBC Morphology':'RBC MORPHOLOGY','Comment':'COMMENT','MCV':'MCV','MCH':'MCH','MCHC':'MCHC','RDW-SD':'RDW-SD','Aso titre':'ASO TITRE','MP':'MALARIA PARASITE','WIDAL':'WIDAL','BG':'BLOOD GROUP','genotype':'GENOTYPE','PT':'PROTHROMBIN TIME','INR':'INR','PTTK':'PTTK','GT':'THROMBIN TIME','Bleeding time':'BLEEDING TIME','clotting time':'CLOTTING TIME','RF':'RHEUMATOID FACTOR','ICT':'ICT','DCT':'DCT','RETICS':'RETICULOCYTE COUNT','ESR':'ESR','RVS':'RVS (HIV)','HAV':'HAV','HCV':'HCV','HBV':'HBV','VDRL':'VDRL','HSV1':'HSV-1','HSV2':'HSV-2','H.PYLORI BLOOD':'H. PYLORI (BLOOD)','STOOL H PYLORI':'H. PYLORI (STOOL)','HBsAg':'HBsAg','HBsAb':'HBsAb','HBeAg':'HBeAg','HBeAb':'HBeAb','HBcAb':'HBcAb'};
-const HAEM_UNIT = {'PCV':'%','HB':'g/dL','WBC':'cells/mm³','PLT':'cells/mm³','RBC':'×10¹²/L','NEUTROPHILS':'%','LYMPHOCYTES':'%','EOSINOPHILS':'%','MONOCYTES':'%','BASOPHIL':'%','MCV':'fL','MCH':'pg','MCHC':'g/L','RDW-SD':'fL','PT':'secs','PTTK':'secs','Bleeding time':'mins','clotting time':'mins','Aso titre':'IU/mL','RF':'IU/mL','ESR':'mm/hr','RETICS':'%'};
-const HAEM_REF_NUM = {'PCV':[36,54],'HB':[11.5,17.5],'WBC':[4000,11000],'PLT':[150000,450000],'RBC':[3.8,6.0],'NEUTROPHILS':[40,75],'LYMPHOCYTES':[20,45],'EOSINOPHILS':[1,6],'MONOCYTES':[2,10],'BASOPHIL':[0,1],'MCV':[80,95],'MCH':[26,33],'MCHC':[320,360],'RDW-SD':[39,46],'PT':[11,16],'INR':[0.8,1.2],'PTTK':[25,40],'Bleeding time':[2,7],'clotting time':[5,11],'ESR':[0,20],'RETICS':[0.5,2.5],'Aso titre':[0,200],'RF':[0,10]};
-const HAEM_REF_STR = {'PCV':'M: 40-54 / F: 36-46','HB':'M: 13.5-17.5 / F: 11.5-15.5','WBC':'4,000 - 11,000','PLT':'150,000 - 450,000','RBC':'M: 4.2-6.0 / F: 3.8-5.2','NEUTROPHILS':'40 - 75','LYMPHOCYTES':'20 - 45','EOSINOPHILS':'1 - 6','MONOCYTES':'2 - 10','BASOPHIL':'0 - 1','MCV':'80 - 95','MCH':'26 - 33','MCHC':'320 - 360','RDW-SD':'39 - 46','PT':'11 - 16','INR':'0.8 - 1.2','PTTK':'25 - 40','Bleeding time':'2 - 7','clotting time':'5 - 11','ESR':'M: ≤15 / F: ≤20','RETICS':'0.5 - 2.5','Aso titre':'< 200','RF':'0 - 10'};
+// These get populated at load time from the reference tab.
+// Structure per key: {section, label, unit, group, gLow, gHigh, mLow, mHigh, fLow, fHigh, displayText}
+let REF = null;                       // { sheetColumn: {definition} }
+let REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+let REF_GROUPS = {};                  // { section: { groupLabel: [sheetColumn,...] } }
 
-const HORM_MAP = {'PSA':'PSA (TOTAL)','B-HCG':'BETA HCG','T3':'T3','T4':'T4','Cortisol':'CORTISOL','TSH':'TSH','FT3':'FREE T3','FT4':'FREE T4','HbA1C':'HbA1c','AFP':'AFP','FPSA':'FREE PSA','Nt Pro bnp':'NT-proBNP','CTN I':'CTN I','CTN T':'CTN T','CK-MB':'CK-MB','MYO':'MYOGLOBIN','LH':'LH','PRL':'PROLACTIN','TESTO':'TESTOSTERONE','CA125':'CA-125','hs Crp':'hs-CRP','CRP':'CRP','FERRITIN':'FERRITIN','D-DIMER':'D-DIMER','vit B12':'VITAMIN B12','Vit D':'VITAMIN D','FSH':'FSH','folate':'FOLATE','PROGESTERONE':'PROGESTERONE','CEA':'CEA','E2':'OESTRADIOL (E2)','H.PYLORI BLOOD':'H. PYLORI (BLOOD)','STOOL H PYLORI':'H. PYLORI (STOOL)','AMH':'AMH','CA-153':'CA 15-3','CA 19-9':'CA 19-9'};
-const HORM_UNIT = {'PSA':'ng/mL','B-HCG':'mIU/mL','T3':'nmol/L','T4':'nmol/L','Cortisol':'nmol/L','TSH':'mIU/L','FT3':'pmol/L','FT4':'pmol/L','HbA1C':'%','AFP':'IU/mL','FPSA':'ng/mL','LH':'mIU/mL','PRL':'ng/mL','TESTO':'nmol/L','CA125':'U/mL','CRP':'mg/L','FERRITIN':'µg/L','D-DIMER':'mg/L','vit B12':'pg/mL','FSH':'mIU/mL','PROGESTERONE':'ng/mL','CEA':'ng/mL','E2':'pg/mL','AMH':'ng/mL','CTN T':'ng/mL','CTN I':'ng/mL','CK-MB':'ng/mL','MYO':'ng/mL'};
-const HORM_REF_NUM = {'PSA':[0,4.0],'CA125':[0,35],'HbA1C':[0,5.7],'D-DIMER':[0,0.5],'TSH':[0.4,4.0],'T3':[0.8,2.0],'T4':[60,140],'FT3':[3.5,6.5],'FT4':[9.0,25.0],'CRP':[0,10],'CTN T':[0,0.1],'CTN I':[0,0.3],'CK-MB':[0,5.0],'MYO':[0,60]};
-const HORM_REF_STR = {'PSA':'< 4.0','FPSA':'> 0.25 (ratio)','CA125':'≤ 35','CA 19-9':'≤ 37','HbA1C':'< 5.7','D-DIMER':'0.0 - 0.5','TSH':'0.4 - 4.0','T3':'0.8 - 2.0','T4':'60 - 140','FT3':'3.5 - 6.5','FT4':'9.0 - 25.0','LH':'M: 1.7-8.6','FSH':'M: 1.5-12.4','PRL':'M: 2-18 / F: 2-29','TESTO':'M: 9.9-27.8','Cortisol':'140 - 690 (AM)','CEA':'< 5.0','AFP':'< 10','CRP':'< 10','FERRITIN':'M: 22-322 / F: 10-291','Vit D':'≥ 50','vit B12':'200 - 900','CTN T':'≤ 0.100','CTN I':'≤ 0.300','CK-MB':'≤ 5.00','MYO':'≤ 60.00'};
 
-const MICRO_MAP = {'Macro':'MACROSCOPY','ur pus cells':'PUS CELLS','Epth cells':'EPITHELIAL CELLS','yeast':'YEAST CELLS','RBC':'RBC (URINE)','cast':'CASTS','crystals':'CRYSTALS','others':'OTHERS','Culture':'CULTURE','sensitivity':'SENSITIVITY','Resistant':'RESISTANT'};
-const MICRO_REF_STR = {'ur pus cells':'0 - 5/hpf','Epth cells':'0 - 2/hpf','yeast':'Nil','RBC':'0 - 3/hpf','cast':'Nil'};
 
-const CARDIAC_KEYS = new Set(['CTN I','CTN T','CK-MB','MYO']);
+
+
 
 let currentPatient = null, currentResults = null;
 
@@ -183,14 +177,7 @@ function formatNumber(val) {
   if (Number.isInteger(num) && num >= 1000) return num.toLocaleString('en-GB');
   return clean !== val ? clean : val;
 }
-function checkAbnormal(key, value, refMap) {
-  const ref = refMap[key];
-  const num = parseFloat(cleanValue(value));
-  if (!ref || isNaN(num)) return null;
-  if (num < ref[0]) return 'low';
-  if (num > ref[1]) return 'high';
-  return null;
-}
+
 // Tab GIDs — the number after #gid= in the URL when you click each tab.
 // IMPORTANT: update these with the real gid values from your sheets.
 const PATIENT_GID = '16221607';            // 2026 tab on Patient Tracker
@@ -236,11 +223,100 @@ async function fetchTabCsv(sheetId, gid) {
   const rows = all.slice(1).map(r => r.map(v => (v || '').trim()));
   return { cols, rows };
 }
-function extractResults(cols, row, colMap) {
+
+// Map the SECTION value in the reference tab to the app's internal section names
+const SECTION_NAME_MAP = {
+  'CHEMISTRY': 'Chemistry',
+  'HAEMATOLOGY': 'Haematology',
+  'HORMONES': 'Hormones & Serology',
+  'MICROBIOLOGY': 'Microbiology'
+};
+
+function numOrNull(v) {
+  if (v === undefined || v === null) return null;
+  const s = String(v).trim();
+  if (s === '') return null;
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
+// Load the reference tab once and build all lookups the app needs.
+async function loadReference() {
+  if (REF) return; // already loaded this session
+  const raw = await fetchTabCsv(RESULT_ID, REFERENCE_GID);
+  // The reference tab has title/instruction/header rows plus section dividers.
+  // We detect data rows by: column 0 is a known SECTION value AND column 1 (sheet column) is non-empty.
+  REF = {};
+  REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+  REF_GROUPS = {};
+  // Reference rows live in raw.rows; but raw.cols took row 1 (the title) as header.
+  // So we scan ALL rows (including raw.cols re-prepended) for safety.
+  const allRows = [raw.cols].concat(raw.rows);
+  allRows.forEach(function(row) {
+    if (!row || row.length < 3) return;
+    const sectionRaw = (row[0] || '').trim().toUpperCase();
+    const sheetCol = (row[1] || '').trim();
+    const section = SECTION_NAME_MAP[sectionRaw];
+    if (!section || !sheetCol) return; // skip titles, dividers, blanks
+    const def = {
+      section: section,
+      label: (row[2] || sheetCol).trim(),
+      unit: (row[3] || '').trim(),
+      group: (row[4] || '').trim(),
+      gLow: numOrNull(row[5]), gHigh: numOrNull(row[6]),
+      mLow: numOrNull(row[7]), mHigh: numOrNull(row[8]),
+      fLow: numOrNull(row[9]), fHigh: numOrNull(row[10]),
+      displayText: (row[11] || '').trim()
+    };
+    REF[sheetCol] = def;
+    REF_BY_SECTION[section].push(sheetCol);
+    if (def.group) {
+      if (!REF_GROUPS[section]) REF_GROUPS[section] = {};
+      if (!REF_GROUPS[section][def.group]) REF_GROUPS[section][def.group] = [];
+      REF_GROUPS[section][def.group].push(sheetCol);
+    }
+  });
+}
+
+// Pick the right [low,high] for a patient based on gender, falling back to general.
+function rangeFor(def, gender) {
+  const g = (gender || '').trim().toUpperCase();
+  if (g === 'M' || g === 'MALE') {
+    if (def.mLow !== null || def.mHigh !== null) return [def.mLow, def.mHigh];
+  } else if (g === 'F' || g === 'FEMALE') {
+    if (def.fLow !== null || def.fHigh !== null) return [def.fLow, def.fHigh];
+  }
+  if (def.gLow !== null || def.gHigh !== null) return [def.gLow, def.gHigh];
+  // fall back to whichever sex range exists
+  if (def.mLow !== null || def.mHigh !== null) return [def.mLow, def.mHigh];
+  if (def.fLow !== null || def.fHigh !== null) return [def.fLow, def.fHigh];
+  return null;
+}
+
+// Reference-driven abnormal check (gender aware)
+function checkAbnormalRef(sheetCol, value, gender) {
+  const def = REF[sheetCol];
+  if (!def) return null;
+  const range = rangeFor(def, gender);
+  if (!range) return null;
+  const num = parseFloat(cleanValue(value));
+  if (isNaN(num)) return null;
+  const lo = range[0], hi = range[1];
+  if (lo !== null && num < lo) return 'low';
+  if (hi !== null && num > hi) return 'high';
+  return null;
+}
+// Extract results for a section using the live REF definitions.
+// Only columns that exist in REF for that section are picked up.
+function extractResults(cols, row, sectionName) {
   const results = [];
   cols.forEach((col, i) => {
+    const key = (col || '').trim();
     const val = (row[i] || '').trim();
-    if (val && colMap[col]) results.push({ key: col, label: colMap[col], value: val });
+    const def = REF[key];
+    if (val && def && def.section === sectionName) {
+      results.push({ key: key, label: def.label, value: val });
+    }
   });
   return results;
 }
@@ -266,6 +342,7 @@ async function searchPatient() {
   document.getElementById('patientCard').classList.add('hidden');
   showStatus('Loading patient record...', 'loading');
   try {
+    await loadReference();
     const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
     const rowIndex = labNum - 2;
     const pRow = patientData.rows[rowIndex] || [];
@@ -288,10 +365,10 @@ async function searchPatient() {
       fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] }))
     ]);
     currentResults = {
-      chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], CHEM_MAP),
-      haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], HAEM_MAP),
-      hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], HORM_MAP),
-      microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], MICRO_MAP)
+      chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], 'Chemistry'),
+      haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], 'Haematology'),
+      hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], 'Hormones & Serology'),
+      microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology')
     };
     renderPatientCard(); hideStatus();
   } catch(err) { console.error(err); showStatus('Error: ' + err.message, 'error'); }
@@ -320,10 +397,10 @@ function renderPatientCard() {
     return '<div class="sc ' + (has?'has':'no') + '"><div class="sc-head"><span class="sc-name">' + s.name + '</span><div class="dot ' + (has?'dot-g':'dot-x') + '"></div></div><div class="sc-params">' + params + '</div></div>';
   }).join('');
   let preview = '';
-  if (r.chemistry.length)    preview += makeTable('Chemistry Results',           r.chemistry,    CHEM_REF_NUM,  CHEM_REF_STR,  CHEM_UNIT);
-  if (r.haematology.length)  preview += makeTable('Haematology Results',         r.haematology,  HAEM_REF_NUM,  HAEM_REF_STR,  HAEM_UNIT);
-  if (r.hormones.length)     preview += makeTable('Hormones & Serology Results', r.hormones,     HORM_REF_NUM,  HORM_REF_STR,  HORM_UNIT);
-  if (r.microbiology.length) preview += makeTable('Microbiology Results',        r.microbiology, {},            MICRO_REF_STR, {});
+  if (r.chemistry.length)    preview += makeTable('Chemistry Results',           r.chemistry,    'Chemistry');
+  if (r.haematology.length)  preview += makeTable('Haematology Results',         r.haematology,  'Haematology');
+  if (r.hormones.length)     preview += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
+  if (r.microbiology.length) preview += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
   document.getElementById('resultsPreview').innerHTML = preview;
   const total = r.chemistry.length + r.haematology.length + r.hormones.length + r.microbiology.length;
   const sc = sections.filter(s => s.results.length > 0).length;
@@ -331,17 +408,21 @@ function renderPatientCard() {
   document.getElementById('patientCard').classList.remove('hidden');
 }
 
-function makeTable(title, results, refNumMap, refStrMap, unitMap) {
+function makeTable(title, results, sectionName) {
+  const gender = currentPatient ? currentPatient.gender : '';
   let rows = '';
-  let cardiacDone = false;
+  const seenGroups = {};
   results.forEach(function(res) {
-    if (CARDIAC_KEYS.has(res.key) && !cardiacDone) {
-      cardiacDone = true;
-      rows += '<tr class="subhdr"><td colspan="4">Cardiac Enzyme</td></tr>';
+    const def = REF[res.key] || {};
+    if (def.group && !seenGroups[def.group]) {
+      seenGroups[def.group] = true;
+      rows += '<tr class="subhdr"><td colspan="4">' + def.group + '</td></tr>';
     }
-    const abn = checkAbnormal(res.key, res.value, refNumMap);
+    const abn = checkAbnormalRef(res.key, res.value, gender);
     const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
-    rows += '<tr><td class="pn">' + res.label + '</td><td class="rv' + (abn?' abn':'') + '">' + formatNumber(res.value) + flag + '</td><td class="rr">' + (unitMap[res.key]||'—') + '</td><td class="rr">' + (refStrMap[res.key]||'—') + '</td></tr>';
+    const unit = def.unit || '—';
+    const refTxt = def.displayText || '—';
+    rows += '<tr><td class="pn">' + res.label + '</td><td class="rv' + (abn?' abn':'') + '">' + formatNumber(res.value) + flag + '</td><td class="rr">' + unit + '</td><td class="rr">' + refTxt + '</td></tr>';
   });
   return '<div class="card-title" style="margin-bottom:.75rem;">' + title + '</div><table class="rtable"><thead><tr><th>Test Name</th><th>Result</th><th>Unit</th><th>Reference Range</th></tr></thead><tbody>' + rows + '</tbody></table>';
 }
@@ -388,8 +469,9 @@ async function generateReport() {
       ]});
     });
 
-    function buildTable(sectionLabel, results, refNumMap, refStrMap, unitMap) {
+    function buildTable(sectionLabel, results, sectionName) {
       if (!results || results.length === 0) return [];
+      const gender = p.gender;
       const colW = [4200,2000,1720,2520];
       const rows = [];
       rows.push(new TableRow({children:[mkCell(par(run(sectionLabel,{bold:true,sz:20,color:'FFFFFF'})),{w:W,span:4,borders:allB(6,NAVY),fill:NAVY,pad:pd(100,100,160,160)})]}));
@@ -399,21 +481,25 @@ async function generateReport() {
         mkCell(par(run('UNIT',{bold:true,sz:17,color:NAVY}),{align:AlignmentType.CENTER}),{w:colW[2],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,80,80)}),
         mkCell(par(run('REFERENCE RANGE',{bold:true,sz:17,color:NAVY}),{align:AlignmentType.CENTER}),{w:colW[3],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,80,80)})
       ]}));
-      let cardiacDone = false, ri = 0;
+      const seenGroups = {};
+      let ri = 0;
       results.forEach(function(res) {
-        if (CARDIAC_KEYS.has(res.key) && !cardiacDone) {
-          cardiacDone = true;
-          rows.push(new TableRow({children:[mkCell(par(run('CARDIAC ENZYME',{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
+        const def = REF[res.key] || {};
+        if (def.group && !seenGroups[def.group]) {
+          seenGroups[def.group] = true;
+          rows.push(new TableRow({children:[mkCell(par(run(def.group,{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
         }
-        const abn = checkAbnormal(res.key, res.value, refNumMap);
+        const abn = checkAbnormalRef(res.key, res.value, gender);
         const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
         const rColor = abn ? 'CC0000' : NAVY;
         const rowFill = ri%2===0 ? 'FFFFFF' : GRAY_ROW;
+        const unit = def.unit || '';
+        const refTxt = def.displayText || '—';
         rows.push(new TableRow({children:[
           mkCell(par(run(res.label,{sz:19})),{w:colW[0],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,120,120)}),
           mkCell(par(run(formatNumber(res.value)+flag,{bold:true,sz:19,color:rColor}),{align:AlignmentType.CENTER}),{w:colW[1],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)}),
-          mkCell(par(run(unitMap[res.key]||'',{sz:17,color:'777777'}),{align:AlignmentType.CENTER}),{w:colW[2],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)}),
-          mkCell(par(run(refStrMap[res.key]||'—',{sz:17,color:'555555'}),{align:AlignmentType.CENTER}),{w:colW[3],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)})
+          mkCell(par(run(unit,{sz:17,color:'777777'}),{align:AlignmentType.CENTER}),{w:colW[2],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)}),
+          mkCell(par(run(refTxt,{sz:17,color:'555555'}),{align:AlignmentType.CENTER}),{w:colW[3],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)})
         ]}));
         ri++;
       });
@@ -459,10 +545,10 @@ async function generateReport() {
         par('',{after:120}),
         new Table({width:{size:W,type:WidthType.DXA},columnWidths:[1700,3420,1700,3620],rows:infoRows}),
         par('',{after:200}),
-        ...buildTable('CHEMISTRY SECTION',    r.chemistry,    CHEM_REF_NUM, CHEM_REF_STR, CHEM_UNIT),
-        ...buildTable('HAEMATOLOGY SECTION',  r.haematology,  HAEM_REF_NUM, HAEM_REF_STR, HAEM_UNIT),
-        ...buildTable('HORMONES & SEROLOGY',  r.hormones,     HORM_REF_NUM, HORM_REF_STR, HORM_UNIT),
-        ...buildTable('MICROBIOLOGY SECTION', r.microbiology, {},           MICRO_REF_STR, {}),
+        ...buildTable('CHEMISTRY SECTION',    r.chemistry,    'Chemistry'),
+        ...buildTable('HAEMATOLOGY SECTION',  r.haematology,  'Haematology'),
+        ...buildTable('HORMONES & SEROLOGY',  r.hormones,     'Hormones & Serology'),
+        ...buildTable('MICROBIOLOGY SECTION', r.microbiology, 'Microbiology'),
         new Paragraph({border:{top:{style:BorderStyle.SINGLE,size:8,color:NAVY,space:1}},children:[run('')],spacing:{before:200,after:120}}),
         par([run('NOTE: ',{bold:true,sz:17,color:'555555'}),run('Results should be interpreted in the context of clinical findings. Abnormal values are flagged with ↑ (high) or ↓ (low).',{sz:17,color:'666666',italic:true})],{after:200}),
         new Table({width:{size:W,type:WidthType.DXA},columnWidths:[5220,5220],rows:[sigRow]})
@@ -483,12 +569,12 @@ async function generateReport() {
 
 // ========================= ENTRY VIEW =========================
 
-// Which section each map belongs to, for building entry fields
-const SECTION_DEFS = [
-  {name:'Chemistry',    gid:GIDS.CHEMISTRY,    map:CHEM_MAP, unit:CHEM_UNIT, refStr:CHEM_REF_STR, refNum:CHEM_REF_NUM},
-  {name:'Haematology',  gid:GIDS.HAEMATOLOGY,  map:HAEM_MAP, unit:HAEM_UNIT, refStr:HAEM_REF_STR, refNum:HAEM_REF_NUM},
-  {name:'Hormones & Serology', gid:GIDS.HORMONES, map:HORM_MAP, unit:HORM_UNIT, refStr:HORM_REF_STR, refNum:HORM_REF_NUM},
-  {name:'Microbiology', gid:GIDS.MICROBIOLOGY, map:MICRO_MAP, unit:{}, refStr:MICRO_REF_STR, refNum:{}}
+// Section -> gid lookup for entry view (definitions now come from REF)
+const SECTION_GIDS = [
+  {name:'Chemistry',           gid:GIDS.CHEMISTRY},
+  {name:'Haematology',         gid:GIDS.HAEMATOLOGY},
+  {name:'Hormones & Serology', gid:GIDS.HORMONES},
+  {name:'Microbiology',        gid:GIDS.MICROBIOLOGY}
 ];
 
 let entryPatient = null;
@@ -518,6 +604,7 @@ async function loadEntryPatient() {
   document.getElementById('entryCard').classList.add('hidden');
   showEntryStatus('Loading patient...', 'loading');
   try {
+    await loadReference();
     const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
     const rowIndex = labNum - 2;
     const pRow = patientData.rows[rowIndex] || [];
@@ -533,9 +620,9 @@ async function loadEntryPatient() {
     };
     // Fetch existing results so we can pre-fill any already-entered values
     showEntryStatus('Loading existing results...', 'loading');
-    const fetched = await Promise.all(SECTION_DEFS.map(s => fetchTabCsv(RESULT_ID, s.gid).catch(() => ({cols:[],rows:[]}))));
+    const fetched = await Promise.all(SECTION_GIDS.map(s => fetchTabCsv(RESULT_ID, s.gid).catch(() => ({cols:[],rows:[]}))));
     entrySheetData = {};
-    SECTION_DEFS.forEach((s, i) => { entrySheetData[s.name] = fetched[i]; });
+    SECTION_GIDS.forEach((s, i) => { entrySheetData[s.name] = fetched[i]; });
     renderEntryForm();
     hideEntryStatus();
   } catch(err) { console.error(err); showEntryStatus('Error: ' + err.message, 'error'); }
@@ -558,17 +645,18 @@ function renderEntryForm() {
   // Build input fields for EVERY parameter in each section.
   // Pre-fill with any existing value already in the sheet for this row.
   let html = '';
-  SECTION_DEFS.forEach(section => {
+  SECTION_GIDS.forEach(section => {
     const sheet = entrySheetData[section.name];
     const existingRow = (sheet.rows[p.rowIndex]) || [];
-    const paramKeys = Object.keys(section.map);
+    const paramKeys = REF_BY_SECTION[section.name] || [];
     let fieldsHtml = '';
     paramKeys.forEach(key => {
+      const def = REF[key]; if (!def) return;
       const colIndex = sheet.cols.indexOf(key);
       const existingVal = (colIndex >= 0 && existingRow[colIndex]) ? existingRow[colIndex] : '';
-      const label = section.map[key];
-      const unit = section.unit[key] || '';
-      const ref = section.refStr[key] || '';
+      const label = def.label;
+      const unit = def.unit || '';
+      const ref = def.displayText || '';
       const hint = [unit, ref ? 'Ref: ' + ref : ''].filter(Boolean).join('  \u2022  ');
       const safeId = 'entry__' + section.name.replace(/[^a-zA-Z]/g,'') + '__' + key.replace(/[^a-zA-Z0-9]/g,'_');
       fieldsHtml += '<div class="entry-field">'
@@ -585,11 +673,9 @@ function renderEntryForm() {
 }
 
 function validateEntryField(input) {
-  const section = input.getAttribute('data-section');
   const key = input.getAttribute('data-key');
-  const def = SECTION_DEFS.find(s => s.name === section);
-  if (!def) return;
-  const abn = checkAbnormal(key, input.value, def.refNum);
+  const gender = entryPatient ? entryPatient.gender : '';
+  const abn = checkAbnormalRef(key, input.value, gender);
   input.classList.toggle('flagged', !!abn);
 }
 
