@@ -240,6 +240,10 @@ function numOrNull(v) {
   return isNaN(n) ? null : n;
 }
 
+// Composite key so the same column name can exist in two sections (e.g. RBC).
+function refKey(section, col) { return section + '|||' + col; }
+function getRef(section, col) { return REF[refKey(section, col)] || null; }
+
 // Load the reference tab once and build all lookups the app needs.
 async function loadReference() {
   if (REF) return; // already loaded this session
@@ -268,7 +272,7 @@ async function loadReference() {
       fLow: numOrNull(row[9]), fHigh: numOrNull(row[10]),
       displayText: (row[11] || '').trim()
     };
-    REF[sheetCol] = def;
+    REF[refKey(section, sheetCol)] = def;
     REF_BY_SECTION[section].push(sheetCol);
     if (def.group) {
       if (!REF_GROUPS[section]) REF_GROUPS[section] = {};
@@ -293,9 +297,9 @@ function rangeFor(def, gender) {
   return null;
 }
 
-// Reference-driven abnormal check (gender aware)
-function checkAbnormalRef(sheetCol, value, gender) {
-  const def = REF[sheetCol];
+// Reference-driven abnormal check (gender aware, section-scoped)
+function checkAbnormalRef(section, sheetCol, value, gender) {
+  const def = getRef(section, sheetCol);
   if (!def) return null;
   const range = rangeFor(def, gender);
   if (!range) return null;
@@ -313,8 +317,8 @@ function extractResults(cols, row, sectionName) {
   cols.forEach((col, i) => {
     const key = (col || '').trim();
     const val = (row[i] || '').trim();
-    const def = REF[key];
-    if (val && def && def.section === sectionName) {
+    const def = getRef(sectionName, key);
+    if (val && def) {
       results.push({ key: key, label: def.label, value: val });
     }
   });
@@ -413,12 +417,12 @@ function makeTable(title, results, sectionName) {
   let rows = '';
   const seenGroups = {};
   results.forEach(function(res) {
-    const def = REF[res.key] || {};
+    const def = getRef(sectionName, res.key) || {};
     if (def.group && !seenGroups[def.group]) {
       seenGroups[def.group] = true;
       rows += '<tr class="subhdr"><td colspan="4">' + def.group + '</td></tr>';
     }
-    const abn = checkAbnormalRef(res.key, res.value, gender);
+    const abn = checkAbnormalRef(sectionName, res.key, res.value, gender);
     const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
     const unit = def.unit || '—';
     const refTxt = def.displayText || '—';
@@ -484,12 +488,12 @@ async function generateReport() {
       const seenGroups = {};
       let ri = 0;
       results.forEach(function(res) {
-        const def = REF[res.key] || {};
+        const def = getRef(sectionName, res.key) || {};
         if (def.group && !seenGroups[def.group]) {
           seenGroups[def.group] = true;
           rows.push(new TableRow({children:[mkCell(par(run(def.group,{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
         }
-        const abn = checkAbnormalRef(res.key, res.value, gender);
+        const abn = checkAbnormalRef(sectionName, res.key, res.value, gender);
         const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
         const rColor = abn ? 'CC0000' : NAVY;
         const rowFill = ri%2===0 ? 'FFFFFF' : GRAY_ROW;
@@ -651,7 +655,7 @@ function renderEntryForm() {
     const paramKeys = REF_BY_SECTION[section.name] || [];
     let fieldsHtml = '';
     paramKeys.forEach(key => {
-      const def = REF[key]; if (!def) return;
+      const def = getRef(section.name, key); if (!def) return;
       const colIndex = sheet.cols.indexOf(key);
       const existingVal = (colIndex >= 0 && existingRow[colIndex]) ? existingRow[colIndex] : '';
       const label = def.label;
@@ -674,8 +678,9 @@ function renderEntryForm() {
 
 function validateEntryField(input) {
   const key = input.getAttribute('data-key');
+  const section = input.getAttribute('data-section');
   const gender = entryPatient ? entryPatient.gender : '';
-  const abn = checkAbnormalRef(key, input.value, gender);
+  const abn = checkAbnormalRef(section, key, input.value, gender);
   input.classList.toggle('flagged', !!abn);
 }
 
