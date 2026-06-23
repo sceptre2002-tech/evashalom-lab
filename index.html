@@ -171,6 +171,9 @@ function cleanValue(val) {
   return m ? m[1].trim() : val;
 }
 function formatNumber(val) {
+  // Ratio/titre values like '1/20', '1/160' are shown exactly as typed
+  // (Widal, dilutions, etc.) - never strip or reformat them.
+  if (typeof val === 'string' && val.indexOf('/') !== -1) return val;
   const clean = cleanValue(val);
   const num = parseFloat(clean);
   if (isNaN(num)) return val;
