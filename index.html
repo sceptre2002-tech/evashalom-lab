@@ -54,6 +54,30 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-
 .view-toggle{display:flex;gap:0;background:rgba(255,255,255,0.12);border-radius:10px;padding:4px;margin-left:auto;}
 .view-toggle button{background:none;border:none;color:rgba(255,255,255,0.7);padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
 .view-toggle button.active{background:white;color:#0C447C;}
+.view-toggle button.icon-tab{padding:8px 14px;font-size:15px;line-height:1;}
+.search-results{margin-top:0.5rem;}
+.person-group{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;}
+.person-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;background:#F7F9FC;transition:background .12s;}
+.person-head:hover{background:#EEF3FA;}
+.person-name{font-weight:600;font-size:15px;color:#0C447C;}
+.person-count{font-size:12px;color:var(--text-muted);font-weight:500;}
+.person-chevron{color:var(--text-muted);font-size:13px;transition:transform .15s;}
+.person-group.open .person-chevron{transform:rotate(90deg);}
+.visit-list{display:none;border-top:1px solid var(--border);}
+.person-group.open .visit-list{display:block;}
+.visit-row{padding:12px 16px;border-bottom:1px solid #f0efe9;}
+.visit-row:last-child{border-bottom:none;}
+.visit-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-bottom:8px;}
+.visit-meta .vm{color:var(--text);}
+.visit-meta .vm b{color:#0C447C;}
+.visit-meta .vm-tests{color:var(--text-muted);width:100%;}
+.visit-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.visit-actions button{height:34px;padding:0 14px;border-radius:7px;border:1px solid var(--border);background:white;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;}
+.visit-actions .btn-rep{background:var(--teal);color:white;border-color:var(--teal);}
+.visit-actions .btn-rep:hover{background:#085041;}
+.visit-actions .btn-view{color:#0C447C;}
+.visit-actions .btn-view:hover{background:var(--blue-light);}
+.inline-results{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
 .entry-section{margin-bottom:1.5rem;}
 .entry-section-title{font-size:13px;font-weight:700;color:#0C447C;margin-bottom:.75rem;padding-bottom:6px;border-bottom:2px solid #E6F1FB;}
 .entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
@@ -75,6 +99,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-
   <div class="view-toggle">
     <button id="tabReport" class="active" onclick="switchView('report')">Generate Report</button>
     <button id="tabEntry" onclick="switchView('entry')">Enter Results</button>
+    <button id="tabSearch" class="icon-tab" onclick="switchView('search')" title="Search by name">&#128269;</button>
   </div>
 </div>
 <div class="container">
@@ -136,6 +161,22 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-
         <button class="btn btn-success" onclick="saveResults()" id="saveBtn">Save Results</button>
       </div>
     </div>
+  </div>
+
+  <!-- ============ SEARCH VIEW ============ -->
+  <div id="searchView" class="hidden">
+    <div class="card">
+      <div class="card-title">Search Patient by Name</div>
+      <div class="search-row">
+        <div class="field">
+          <label>Patient Name (type any part of the name)</label>
+          <input type="text" id="nameInput" placeholder="e.g. esther, ezenyili"/>
+        </div>
+        <button class="btn btn-primary" onclick="searchByName()" id="nameSearchBtn">Search</button>
+      </div>
+    </div>
+    <div id="searchStatusBar" class="hidden"></div>
+    <div id="searchResults" class="search-results"></div>
   </div>
 </div>
 <script>
@@ -341,6 +382,39 @@ function showStatus(msg, type) {
 }
 function hideStatus() { document.getElementById('statusBar').classList.add('hidden'); }
 
+// Reusable: load a patient + their results by lab number into currentPatient/currentResults.
+// Returns true on success, false if not found. Throws on fetch error.
+async function loadPatientByLab(labNum) {
+  await loadReference();
+  const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+  const rowIndex = labNum - 2;
+  const pRow = patientData.rows[rowIndex] || [];
+  if (!pRow || !pRow[1]) return false;
+  let patientDate = '';
+  for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
+  const rawAge = pRow[3] ? pRow[3].trim() : '';
+  const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
+  currentPatient = {
+    labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+    age: age, phone: pRow[4] || '', investigations: pRow[5] || '',
+    referredBy: pRow[6] || '', amount: pRow[8] || '',
+    paymentStatus: pRow[11] || '', date: formatDate(patientDate), rowIndex: rowIndex
+  };
+  const results = await Promise.all([
+    fetchTabCsv(RESULT_ID, GIDS.CHEMISTRY).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.HAEMATOLOGY).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.HORMONES).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] }))
+  ]);
+  currentResults = {
+    chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], 'Chemistry'),
+    haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], 'Haematology'),
+    hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], 'Hormones & Serology'),
+    microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology')
+  };
+  return true;
+}
+
 async function searchPatient() {
   const labNum = parseInt(document.getElementById('labInput').value);
   if (!labNum || labNum < 2) { showStatus('Please enter a valid lab number (minimum 2).', 'error'); return; }
@@ -349,34 +423,8 @@ async function searchPatient() {
   document.getElementById('patientCard').classList.add('hidden');
   showStatus('Loading patient record...', 'loading');
   try {
-    await loadReference();
-    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
-    const rowIndex = labNum - 2;
-    const pRow = patientData.rows[rowIndex] || [];
-    if (!pRow || !pRow[1]) { showStatus('No patient found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Search'; return; }
-    let patientDate = '';
-    for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
-    const rawAge = pRow[3] ? pRow[3].trim() : '';
-    const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
-    currentPatient = {
-      labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
-      age: age, phone: pRow[4] || '', investigations: pRow[5] || '',
-      referredBy: pRow[6] || '', amount: pRow[8] || '',
-      paymentStatus: pRow[11] || '', date: formatDate(patientDate), rowIndex: rowIndex
-    };
-    showStatus('Loading laboratory results...', 'loading');
-    const results = await Promise.all([
-      fetchTabCsv(RESULT_ID, GIDS.CHEMISTRY).catch(() => ({ cols: [], rows: [] })),
-      fetchTabCsv(RESULT_ID, GIDS.HAEMATOLOGY).catch(() => ({ cols: [], rows: [] })),
-      fetchTabCsv(RESULT_ID, GIDS.HORMONES).catch(() => ({ cols: [], rows: [] })),
-      fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] }))
-    ]);
-    currentResults = {
-      chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], 'Chemistry'),
-      haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], 'Haematology'),
-      hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], 'Hormones & Serology'),
-      microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology')
-    };
+    const found = await loadPatientByLab(labNum);
+    if (!found) { showStatus('No patient found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Search'; return; }
     renderPatientCard(); hideStatus();
   } catch(err) { console.error(err); showStatus('Error: ' + err.message, 'error'); }
   btn.disabled = false; btn.innerHTML = 'Search';
@@ -588,11 +636,12 @@ let entryPatient = null;
 let entrySheetData = null; // {sectionName: {cols, rows}}
 
 function switchView(view) {
-  const isReport = view === 'report';
-  document.getElementById('reportView').classList.toggle('hidden', !isReport);
-  document.getElementById('entryView').classList.toggle('hidden', isReport);
-  document.getElementById('tabReport').classList.toggle('active', isReport);
-  document.getElementById('tabEntry').classList.toggle('active', !isReport);
+  document.getElementById('reportView').classList.toggle('hidden', view !== 'report');
+  document.getElementById('entryView').classList.toggle('hidden', view !== 'entry');
+  document.getElementById('searchView').classList.toggle('hidden', view !== 'search');
+  document.getElementById('tabReport').classList.toggle('active', view === 'report');
+  document.getElementById('tabEntry').classList.toggle('active', view === 'entry');
+  document.getElementById('tabSearch').classList.toggle('active', view === 'search');
 }
 
 function showEntryStatus(msg, type) {
@@ -733,6 +782,156 @@ async function saveResults() {
 }
 
 document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
+
+// ========================= SEARCH BY NAME =========================
+
+function showSearchStatus(msg, type) {
+  const bar = document.getElementById('searchStatusBar');
+  bar.className = 'status-bar status-' + type;
+  bar.innerHTML = msg;
+  bar.classList.remove('hidden');
+}
+function hideSearchStatus() { document.getElementById('searchStatusBar').classList.add('hidden'); }
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function searchByName() {
+  const term = (document.getElementById('nameInput').value || '').trim().toLowerCase();
+  if (term.length < 2) { showSearchStatus('Type at least 2 letters of a name to search.', 'error'); return; }
+  const btn = document.getElementById('nameSearchBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Searching...';
+  document.getElementById('searchResults').innerHTML = '';
+  showSearchStatus('Searching patient records...', 'loading');
+  try {
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    // Each tracker row: index 0 in rows = sheet row 2 = lab number 2.
+    // So lab number = arrayIndex + 2. Carry the date down for blank date cells.
+    let lastDate = '';
+    const matches = [];
+    patientData.rows.forEach(function(row, i) {
+      const dateCell = (row[0] || '').trim();
+      if (dateCell) lastDate = dateCell;
+      const name = (row[1] || '').trim();
+      if (!name) return;
+      if (name.toLowerCase().indexOf(term) === -1) return;
+      const labNum = i + 2;
+      matches.push({
+        labNum: labNum,
+        name: name,
+        date: formatDate(lastDate),
+        age: (row[3] || '').trim(),
+        tests: (row[5] || '').replace(/"/g,'').trim(),
+        referredBy: (row[6] || '').trim()
+      });
+    });
+
+    if (matches.length === 0) {
+      showSearchStatus('No patients found matching "' + escHtml(term) + '".', 'error');
+      btn.disabled = false; btn.innerHTML = 'Search'; return;
+    }
+
+    // Group by normalized name (case-insensitive, collapsed whitespace)
+    const groups = {};
+    const order = [];
+    matches.forEach(function(m) {
+      const key = m.name.toLowerCase().replace(/\s+/g,' ').trim();
+      if (!groups[key]) { groups[key] = { display: m.name, visits: [] }; order.push(key); }
+      groups[key].visits.push(m);
+    });
+    // Within each person, newest visit first (highest lab number = most recent)
+    order.forEach(function(k){ groups[k].visits.sort(function(a,b){ return b.labNum - a.labNum; }); });
+
+    renderSearchResults(groups, order);
+    const totalVisits = matches.length, totalPeople = order.length;
+    showSearchStatus('Found ' + totalVisits + ' visit' + (totalVisits!==1?'s':'') + ' across ' + totalPeople + ' patient' + (totalPeople!==1?'s':'') + '. Tap a name to expand.', 'success');
+  } catch(err) {
+    console.error(err);
+    showSearchStatus('Search failed: ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.innerHTML = 'Search';
+}
+
+function renderSearchResults(groups, order) {
+  let html = '';
+  order.forEach(function(key, gi) {
+    const g = groups[key];
+    const n = g.visits.length;
+    let visitsHtml = '';
+    g.visits.forEach(function(v) {
+      visitsHtml += '<div class="visit-row" id="visit_' + v.labNum + '">'
+        + '<div class="visit-meta">'
+        + '<span class="vm"><b>Lab ' + v.labNum + '</b></span>'
+        + '<span class="vm">' + escHtml(v.date || '—') + '</span>'
+        + (v.age ? '<span class="vm">Age: ' + escHtml(v.age) + '</span>' : '')
+        + (v.referredBy ? '<span class="vm">Ref: ' + escHtml(v.referredBy) + '</span>' : '')
+        + '<span class="vm vm-tests">' + escHtml(v.tests || 'No tests listed') + '</span>'
+        + '</div>'
+        + '<div class="visit-actions">'
+        + '<button class="btn-rep" onclick="searchGenerateReport(' + v.labNum + ')">Generate Report</button>'
+        + '<button class="btn-view" onclick="searchViewResults(' + v.labNum + ')">View Results</button>'
+        + '</div>'
+        + '<div class="inline-results hidden" id="inline_' + v.labNum + '"></div>'
+        + '</div>';
+    });
+    html += '<div class="person-group" id="group_' + gi + '">'
+      + '<div class="person-head" onclick="togglePersonGroup(' + gi + ')">'
+      + '<span class="person-name">' + escHtml(g.display) + ' <span class="person-count">(' + n + ' visit' + (n!==1?'s':'') + ')</span></span>'
+      + '<span class="person-chevron">&#9654;</span>'
+      + '</div>'
+      + '<div class="visit-list">' + visitsHtml + '</div>'
+      + '</div>';
+  });
+  document.getElementById('searchResults').innerHTML = html;
+}
+
+function togglePersonGroup(gi) {
+  const el = document.getElementById('group_' + gi);
+  if (el) el.classList.toggle('open');
+}
+
+// Tapping "Generate Report" on a visit: load it and jump to the report view.
+async function searchGenerateReport(labNum) {
+  showSearchStatus('Loading lab ' + labNum + ' into report view...', 'loading');
+  try {
+    const found = await loadPatientByLab(labNum);
+    if (!found) { showSearchStatus('Could not load lab ' + labNum + '.', 'error'); return; }
+    switchView('report');
+    renderPatientCard();
+    hideStatus();
+    window.scrollTo(0, 0);
+  } catch(err) { console.error(err); showSearchStatus('Error: ' + err.message, 'error'); }
+}
+
+// Tapping "View Results" on a visit: show results inline under that row.
+async function searchViewResults(labNum) {
+  const box = document.getElementById('inline_' + labNum);
+  if (!box) return;
+  // Toggle: if already shown, hide it
+  if (!box.classList.contains('hidden') && box.innerHTML.trim() !== '') {
+    box.classList.add('hidden'); box.innerHTML = ''; return;
+  }
+  box.classList.remove('hidden');
+  box.innerHTML = '<div class="spinner" style="border-top-color:#0C447C;"></div>';
+  try {
+    const found = await loadPatientByLab(labNum);
+    if (!found) { box.innerHTML = '<div style="color:var(--red);font-size:13px;padding:8px 0;">Could not load this visit.</div>'; return; }
+    const r = currentResults;
+    let html = '';
+    if (r.chemistry.length)    html += makeTable('Chemistry Results',           r.chemistry,    'Chemistry');
+    if (r.haematology.length)  html += makeTable('Haematology Results',         r.haematology,  'Haematology');
+    if (r.hormones.length)     html += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
+    if (r.microbiology.length) html += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
+    if (!html) html = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">No results entered for this visit yet.</div>';
+    box.innerHTML = html;
+  } catch(err) {
+    console.error(err);
+    box.innerHTML = '<div style="color:var(--red);font-size:13px;padding:8px 0;">Error: ' + err.message + '</div>';
+  }
+}
+
+document.getElementById('nameInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchByName(); });
 
 document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
 </script>
