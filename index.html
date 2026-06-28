@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-height:100vh;}
 .header{background:#0C447C;color:white;padding:1rem 2rem;display:flex;align-items:center;gap:1rem;}
-.header-logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:white;flex-shrink:0;}
+.header-logo{width:44px;height:44px;border-radius:50%;background:white;object-fit:cover;flex-shrink:0;padding:3px;}
 .header h1{font-size:18px;font-weight:600;}
 .header p{font-size:13px;opacity:.75;margin-top:2px;}
 .container{max-width:880px;margin:2rem auto;padding:0 1.5rem;}
@@ -94,7 +94,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f4f0;color:var(--text);min-
 </head>
 <body>
 <div class="header">
-  <div class="header-logo">ES</div>
+  <img class="header-logo" id="headerLogo" alt="Evashalom logo"/>
   <div><h1>Evashalom Medical Diagnostic Services</h1><p>Laboratory Information System</p></div>
   <div class="view-toggle">
     <button id="tabReport" class="active" onclick="switchView('report')">Generate Report</button>
@@ -932,6 +932,12 @@ async function searchViewResults(labNum) {
 }
 
 document.getElementById('nameInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchByName(); });
+
+// Set the header logo from the embedded base64 image (same logo used on reports)
+(function(){
+  var img = document.getElementById('headerLogo');
+  if (img) img.src = 'data:image/jpeg;base64,' + LOGO_B64;
+})();
 
 document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
 </script>
