@@ -72,7 +72,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;color:var(--
         <div class="card-title">Patient Details</div>
         <div class="field"><label>Full Name</label><input type="text" id="pName" placeholder="Patient's full name"/></div>
         <div class="row2">
-          <div class="field"><label>Gender</label><select id="pGender"><option value="">\u2014</option><option>M</option><option>F</option></select></div>
+          <div class="field"><label>Gender</label><select id="pGender"><option value="">—</option><option>M</option><option>F</option></select></div>
           <div class="field"><label>Age</label><input type="text" id="pAge" placeholder="e.g. 34"/></div>
         </div>
         <div class="field"><label>Phone</label><input type="text" id="pPhone" placeholder="Phone number"/></div>
@@ -95,10 +95,28 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;color:var(--
             <select id="refType"><option value="none">Walk-in (no rebate)</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select>
           </div>
           <div class="field"><label>Referrer</label>
-            <select id="refName"><option value="">\u2014</option></select>
+            <select id="refName"><option value="">—</option></select>
           </div>
         </div>
         <div class="note" id="rebateNote"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Payment &amp; Registration</div>
+        <div class="row2">
+          <div class="field"><label>Payment Mode</label>
+            <select id="payMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select>
+          </div>
+          <div class="field"><label>Payment Status</label>
+            <select id="payStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Registered By</label><input type="text" id="regBy" placeholder="Your name"/></div>
+          <div class="field"><label>Lab Location</label>
+            <select id="labLoc"><option>Fred Ejiofor Crescent</option><option>Governor Street</option></select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -106,9 +124,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;color:var(--
       <div class="card bill">
         <div class="card-title">Bill Summary</div>
         <div class="bill-line"><span class="lbl">Tests</span><span class="val" id="billCount">0</span></div>
-        <div class="bill-line"><span class="lbl">Gross Total</span><span class="val" id="billGross">\u20a60</span></div>
-        <div class="bill-line"><span class="lbl">Rebate (<span id="billRebatePct">0</span>%)</span><span class="val rebate" id="billRebate">\u2212\u20a60</span></div>
-        <div class="bill-line total"><span>Net Payable</span><span id="billNet">\u20a60</span></div>
+        <div class="bill-line"><span class="lbl">Gross Total</span><span class="val" id="billGross">₦0</span></div>
+        <div class="bill-line"><span class="lbl">Rebate (<span id="billRebatePct">0</span>%)</span><span class="val rebate" id="billRebate">−₦0</span></div>
+        <div class="bill-line total"><span>Net Payable</span><span id="billNet">₦0</span></div>
         <div class="editable-net">
           <label>Final Amount (editable for negotiation)</label>
           <input type="text" id="finalAmount" inputmode="numeric"/>
@@ -123,6 +141,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;color:var(--
 
 <script>
 const RESULT_ID='1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
+const REG_ENDPOINT='https://script.google.com/macros/s/AKfycbyDImO401CsDR7-HNFY0U1Z_x4zffHGL2gcaoGqoJeP9kLUuCmo-d-Asz9ArIh94G4bTw/exec';
+const REG_TOKEN='evashalom-registration-sandbox-2026';
 const PRICE_GID='390825168';
 const DOCTORS_GID='382518314';
 const HOSPITALS_GID='1743965856';
@@ -148,8 +168,8 @@ async function fetchTab(gid){
   if(!res.ok) throw new Error('Fetch failed for gid '+gid);
   return parseCSV(await res.text());
 }
-function num(v){const n=parseFloat(String(v==null?'':v).replace(/[,\s\u20a6]/g,''));return isNaN(n)?0:n;}
-function naira(n){return '\u20a6'+Math.round(n).toLocaleString('en-NG');}
+function num(v){const n=parseFloat(String(v==null?'':v).replace(/[,\s₦]/g,''));return isNaN(n)?0:n;}
+function naira(n){return '₦'+Math.round(n).toLocaleString('en-NG');}
 
 async function loadAll(){
   try{
@@ -176,7 +196,7 @@ async function loadAll(){
     initUI();
   }catch(err){
     document.getElementById('loadStatus').className='status err';
-    document.getElementById('loadStatus').textContent='Could not load data: '+err.message+'. (If testing locally, this may be a network/CORS issue \u2014 the sheets must be shared as "anyone with the link can view".)';
+    document.getElementById('loadStatus').textContent='Could not load data: '+err.message+'. (If testing locally, this may be a network/CORS issue — the sheets must be shared as "anyone with the link can view".)';
   }
 }
 function parseRebateList(rows){
@@ -223,7 +243,7 @@ function populateReferrers(){
   let list=[];
   if(type==='doctor') list=DOCTORS;
   else if(type==='hospital') list=HOSPITALS;
-  sel.innerHTML='<option value="">\u2014</option>'+list.map(function(x,i){return '<option value="'+i+'">'+x.name+' ('+x.rebate+'%)</option>';}).join('');
+  sel.innerHTML='<option value="">—</option>'+list.map(function(x,i){return '<option value="'+i+'">'+x.name+' ('+x.rebate+'%)</option>';}).join('');
   sel.disabled = (type==='none');
   recalc();
 }
@@ -256,7 +276,7 @@ function renderChosen(){
   const box=document.getElementById('chosenTests');
   if(!chosen.length){box.innerHTML='<div class="empty-hint">No tests added yet.</div>';recalc();return;}
   box.innerHTML=chosen.map(function(c){
-    return '<div class="chip"><span class="nm">'+c.name+'</span><span class="amt">'+naira(c.price)+'</span><button onclick="removeTest(\''+c.name.replace(/'/g,"\'")+'\')">\u00d7</button></div>';
+    return '<div class="chip"><span class="nm">'+c.name+'</span><span class="amt">'+naira(c.price)+'</span><button onclick="removeTest(\''+c.name.replace(/'/g,"\'")+'\')">×</button></div>';
   }).join('');
   recalc();
 }
@@ -269,7 +289,7 @@ function recalc(){
   document.getElementById('billCount').textContent=chosen.length;
   document.getElementById('billGross').textContent=naira(gross);
   document.getElementById('billRebatePct').textContent=pct;
-  document.getElementById('billRebate').textContent='\u2212'+naira(rebate);
+  document.getElementById('billRebate').textContent='−'+naira(rebate);
   document.getElementById('billNet').textContent=naira(net);
   if(!netEditedByUser){
     document.getElementById('finalAmount').value=Math.round(net).toLocaleString('en-NG');
@@ -278,10 +298,40 @@ function recalc(){
   const type=document.getElementById('refType').value;
   if(type!=='none'&&pct>0) note.textContent='This referrer earns '+pct+'% rebate, applied automatically. You can still adjust the final amount.';
   else if(type!=='none') note.textContent='Select a referrer to apply their rebate.';
-  else note.textContent='Walk-in patient \u2014 no rebate applied.';
+  else note.textContent='Walk-in patient — no rebate applied.';
 }
 
-window.doRegister=function(){
+async function postWithRetry(payload, maxTries){
+  maxTries = maxTries || 4;
+  let lastErr='';
+  for(let attempt=1; attempt<=maxTries; attempt++){
+    try{
+      const res=await fetch(REG_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+      const text=await res.text();
+      // If Apps Script returned its HTML 'busy' page, treat as retryable
+      if(text.trim().charAt(0)==='<'){ lastErr='busy'; }
+      else {
+        const json=JSON.parse(text);
+        if(json.ok===false && /busy/i.test(json.error||'')){ lastErr='busy'; }
+        else return json;
+      }
+    }catch(e){ lastErr=e.message; }
+    // show retrying message and wait a beat (increasing)
+    setStatus('Busy, retrying\u2026 (attempt '+(attempt+1)+')','load');
+    await new Promise(r=>setTimeout(r, 400*attempt + Math.random()*300));
+  }
+  return {ok:false,error:'Still busy after '+maxTries+' tries ('+lastErr+'). Please try again.'};
+}
+
+function setStatus(msg,kind){
+  let el=document.getElementById('regStatus');
+  if(!el){ el=document.createElement('div'); el.id='regStatus'; el.className='status';
+    document.getElementById('afterRegister').before(el); }
+  el.className='status '+(kind==='ok'?'ok':kind==='err'?'err':'load');
+  el.innerHTML=(kind==='load'?'<span class="spinner"></span>':'')+msg;
+}
+
+window.doRegister=async function(){
   const name=document.getElementById('pName').value.trim();
   if(!name){alert('Please enter the patient name.');return;}
   if(!chosen.length){alert('Please add at least one test.');return;}
@@ -291,23 +341,51 @@ window.doRegister=function(){
   const type=document.getElementById('refType').value;
   const refIdx=document.getElementById('refName').value;
   const refName=(type!=='none'&&refIdx!=='')?(type==='doctor'?DOCTORS:HOSPITALS)[parseInt(refIdx)].name:'Walk-in';
-  const summary={
-    patient:name, gender:document.getElementById('pGender').value, age:document.getElementById('pAge').value,
-    phone:document.getElementById('pPhone').value, tests:chosen.map(function(c){return c.name;}),
-    gross:gross, rebatePct:pct, finalAmount:finalAmt, referredBy:refName
+
+  const btn=document.getElementById('registerBtn');
+  btn.disabled=true; btn.textContent='Registering\u2026';
+  setStatus('Registering patient\u2026','load');
+
+  const payload={
+    token:REG_TOKEN, action:'register',
+    name:name, gender:document.getElementById('pGender').value,
+    age:document.getElementById('pAge').value, phone:document.getElementById('pPhone').value,
+    investigation:chosen.map(function(c){return c.name;}).join(', '),
+    requestor:refName, amount:finalAmt, rebate:pct,
+    payMode:document.getElementById('payMode').value, payStatus:document.getElementById('payStatus').value,
+    registeredBy:document.getElementById('regBy').value||'APP', location:document.getElementById('labLoc').value
   };
-  console.log('REGISTRATION (prototype):',summary);
-  document.getElementById('afterRegister').innerHTML=
-    '<div class="card"><div class="card-title">Prototype \u2014 Registration Preview</div>'+
-    '<div class="status ok">This is what would be saved &amp; issued a lab number in the live version.</div>'+
-    '<div class="bill-line"><span class="lbl">Patient</span><span class="val">'+name+' ('+(summary.gender||'?')+', '+(summary.age||'?')+')</span></div>'+
-    '<div class="bill-line"><span class="lbl">Tests</span><span class="val">'+summary.tests.join(', ')+'</span></div>'+
-    '<div class="bill-line"><span class="lbl">Referred By</span><span class="val">'+refName+'</span></div>'+
-    '<div class="bill-line"><span class="lbl">Gross</span><span class="val">'+naira(gross)+'</span></div>'+
-    '<div class="bill-line"><span class="lbl">Rebate</span><span class="val rebate">'+pct+'%</span></div>'+
-    '<div class="bill-line total"><span>Final Amount</span><span>'+naira(finalAmt)+'</span></div>'+
-    '</div>';
-  document.getElementById('afterRegister').scrollIntoView({behavior:'smooth'});
+
+  const r=await postWithRetry(payload);
+  btn.disabled=false; btn.textContent='Register Patient & Issue Lab No.';
+
+  if(r.ok){
+    setStatus('\u2705 Registered! Lab number issued: ES'+r.labNum+'/26 (row '+r.row+')','ok');
+    document.getElementById('afterRegister').innerHTML=
+      '<div class="card"><div class="card-title">Registration Complete</div>'+
+      '<div class="bill-line"><span class="lbl">Lab Number</span><span class="val">ES'+r.labNum+'/26</span></div>'+
+      '<div class="bill-line"><span class="lbl">Patient</span><span class="val">'+name+'</span></div>'+
+      '<div class="bill-line"><span class="lbl">Tests</span><span class="val">'+chosen.map(function(c){return c.name;}).join(', ')+'</span></div>'+
+      '<div class="bill-line"><span class="lbl">Referred By</span><span class="val">'+refName+'</span></div>'+
+      '<div class="bill-line total"><span>Amount</span><span>'+naira(finalAmt)+'</span></div>'+
+      '<button class="btn btn-primary" onclick="resetForm()" style="margin-top:1rem;">Register Another Patient</button>'+
+      '</div>';
+    // reset chosen tests for next patient
+    chosen=[]; netEditedByUser=false;
+  }else{
+    setStatus('\u274c '+(r.error||'Registration failed'),'err');
+  }
+};
+
+window.resetForm=function(){
+  document.getElementById('pName').value='';
+  document.getElementById('pGender').value='';
+  document.getElementById('pAge').value='';
+  document.getElementById('pPhone').value='';
+  chosen=[]; netEditedByUser=false; renderChosen();
+  document.getElementById('afterRegister').innerHTML='';
+  const st=document.getElementById('regStatus'); if(st) st.remove();
+  window.scrollTo(0,0);
 };
 
 loadAll();
