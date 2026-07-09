@@ -1933,8 +1933,7 @@ async function initRebates() {
   try {
     showRebStatus('Reading the tracker for available months…', 'loading');
     const [patientData] = await Promise.all([fetchTabCsv(PATIENT_ID, PATIENT_GID), ensureRefData()]);
-    const seen = {};
-    const monthsInOrder = [];
+    const counts = {};
     let carry = '';
     patientData.rows.forEach(function(row) {
       const dt = (row[0] || '').trim(); if (dt) carry = dt;
@@ -1942,17 +1941,27 @@ async function initRebates() {
       const my = parseMonthYear(carry);
       if (!my) return;
       const key = my.y + '-' + ('0' + my.m).slice(-2);
-      if (!seen[key]) { seen[key] = true; monthsInOrder.push(key); }
+      counts[key] = (counts[key] || 0) + 1;
     });
-    monthsInOrder.reverse(); // newest first
+    // Chronological, newest first. Months carrying only a handful of rows are
+    // almost always date typos in the tracker — label them so they stand out.
+    const months = Object.keys(counts).sort().reverse();
     const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const sel = document.getElementById('rebMonth');
-    if (!monthsInOrder.length) {
+    if (!months.length) {
       sel.innerHTML = '<option value="">No dated rows found</option>';
     } else {
-      sel.innerHTML = monthsInOrder.map(function(k) {
+      // A month is suspect if it's tiny OR far behind the newest month —
+      // one mistyped date cell carries down over whole runs of rows, so a
+      // typo month can look well-populated.
+      const idxOf = function(k){ const p = k.split('-'); return parseInt(p[0]) * 12 + parseInt(p[1]); };
+      const newestIdx = idxOf(months[0]);
+      sel.innerHTML = months.map(function(k) {
         const p = k.split('-');
-        return '<option value="' + k + '">' + MN[parseInt(p[1]) - 1] + ' ' + p[0] + '</option>';
+        const label = MN[parseInt(p[1]) - 1] + ' ' + p[0];
+        const suspect = counts[k] <= 3 || (newestIdx - idxOf(k)) > 11;
+        const flag = suspect ? ' — ' + counts[k] + ' row' + (counts[k] !== 1 ? 's' : '') + ', date typo?' : '';
+        return '<option value="' + k + '">' + label + flag + '</option>';
       }).join('');
     }
     hideRebStatus();
