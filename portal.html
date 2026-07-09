@@ -7,11 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=Poppins:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 <style>
 :root{
   --ink:#15303A; --teal:#0F4C5C; --teal-deep:#0A3743; --gold:#C9A227;
   --mist:#9BB8C0; --bone:#F1EFE8; --white:#FFFFFF; --line:rgba(21,48,58,.12);
-  --red:#A32D2D; --green:#2F6B4F; --rail:250px;
+  --line-soft:rgba(21,48,58,.08); --border:rgba(21,48,58,.18);
+  --red:#A32D2D; --green:#2F6B4F; --rail:238px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -41,91 +43,302 @@ button,input,select{font:inherit;color:inherit}
 .gate .hint{margin-top:1rem;font-size:12px;color:var(--mist)}
 .gate .err{margin-top:.8rem;font-size:12.5px;color:var(--red);min-height:1em}
 
+/* ---------- SECTION GATE (restricted views) ---------- */
+.sgate{position:fixed;inset:0;background:rgba(21,48,58,.5);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:110;padding:1.5rem}
+.sgate-in{width:100%;max-width:340px;background:var(--white);border-radius:14px;padding:28px 26px 22px;text-align:center;box-shadow:0 24px 60px rgba(21,48,58,.35);animation:rise .3s cubic-bezier(.2,.7,.3,1)}
+.sgate-in .cg{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.sgate-in h3{font-family:'Poppins',sans-serif;font-size:21px;color:var(--teal);font-weight:600;margin:8px 0 4px}
+.sgate-in .d{font-size:12.5px;color:var(--mist);margin-bottom:18px}
+.sgate-in .cancel{margin-top:14px;background:none;border:none;font-size:12.5px;color:var(--mist);cursor:pointer;text-decoration:underline}
+.sgate-in .cancel:hover{color:var(--ink)}
+
 /* ---------- WELCOME ---------- */
 .welcome{min-height:100vh;background:var(--bone);display:flex;flex-direction:column;position:relative;overflow:hidden}
 .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 46px,rgba(21,48,58,.035) 46px,rgba(21,48,58,.035) 47px);pointer-events:none}
 .motif{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.wl-head{display:flex;align-items:center;gap:12px;padding:22px 30px;position:relative;z-index:1}
-.wl-head img{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;padding:2px}
+.wl-head{background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--line-soft);padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;z-index:2}
+.wl-head img{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#fff;padding:2px}
+.wl-head .t{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink)}
 .wl-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:9vh 24px 64px;position:relative;z-index:1}
 .wl-eyebrow{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.wl-h1{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;font-size:clamp(36px,5vw,56px);color:var(--ink);margin:18px 0 0;text-align:center;line-height:1.12;max-width:18ch}
+.wl-h1{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;font-size:clamp(38px,5vw,58px);color:var(--ink);margin:18px 0 0;text-align:center;line-height:1.12;max-width:18ch;text-wrap:balance}
 .wl-h1 em{color:var(--teal);font-style:normal}
-.specimen{margin:34px 0 0;background:var(--white);border:1px solid var(--line);border-radius:4px;display:inline-flex;align-items:stretch;overflow:hidden;box-shadow:0 2px 10px rgba(21,48,58,.05)}
-.specimen .strip{width:6px;background:var(--gold)}
+.wl-q{font-size:17px;color:rgba(21,48,58,.7);margin-top:8vh;font-weight:700}
+.wl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,300px));gap:20px;justify-content:center;margin-top:24px;width:100%;max-width:1000px}
+.wl-card{background:var(--white);border:1px solid var(--line-soft);border-radius:16px;padding:20px 18px 16px;box-shadow:0 10px 30px rgba(21,48,58,.06);text-align:left}
+.wl-card .hd{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px 14px}
+.wl-card .cg{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--teal)}
+.wl-card .rst{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.wl-card .tiles{display:flex;flex-direction:column;gap:8px}
+.wl-tile{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F6F4EE;border:1px solid rgba(21,48,58,.06);border-radius:10px;padding:13px 14px;color:var(--ink);font-size:14.5px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s}
+.wl-tile:hover{background:var(--white);border-color:rgba(15,76,92,.35)}
+.wl-tile .sub{display:block;font-size:11.5px;font-weight:400;color:rgba(21,48,58,.5);margin-top:2px}
+.wl-tile .go{width:30px;height:30px;flex-shrink:0;border-radius:50%;border:1px solid rgba(21,48,58,.15);display:grid;place-items:center;color:var(--teal);font-size:13px}
+
+/* ---------- SPECIMEN STICKER ---------- */
+.specimen{background:var(--white);border-radius:6px;display:inline-flex;align-items:stretch;overflow:hidden;box-shadow:0 14px 34px rgba(21,48,58,.14),0 2px 6px rgba(21,48,58,.08);transform:rotate(-1deg)}
+.specimen .perf{width:12px;background:repeating-linear-gradient(180deg,var(--bone) 0,var(--bone) 5px,transparent 5px,transparent 11px);border-right:1px dashed rgba(21,48,58,.22)}
 .specimen .body{padding:12px 22px 11px 16px}
 .specimen .cap{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
 .specimen .num{font-family:'DM Mono',monospace;font-size:27px;font-weight:500;color:var(--ink);line-height:1;margin-top:5px}
-.wl-q{font-size:17px;color:rgba(21,48,58,.7);margin-top:8vh;font-weight:700}
-.wl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,300px));gap:20px;justify-content:center;margin-top:24px;width:100%;max-width:1000px}
-.wl-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:left;cursor:pointer;transition:transform .16s,box-shadow .16s,border-color .16s}
-.wl-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(21,48,58,.09);border-color:rgba(15,76,92,.3)}
-.wl-card .cg{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.wl-card ul{list-style:none;margin:12px 0 0}
-.wl-card li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px;font-weight:500}
-.wl-card li:last-child{border-bottom:none}
-.wl-card li .go{margin-left:auto;color:var(--mist);transition:color .15s,transform .15s}
-.wl-card li:hover .go{color:var(--gold);transform:translateX(3px)}
-.wl-card li .lock{color:var(--gold);font-size:9px}
+.specimen .spine{width:6px;background:var(--gold)}
 
 /* ---------- SHELL ---------- */
 .shell{display:none;min-height:100%}
 .shell.on{display:block}
-.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--teal-deep);color:#fff;display:flex;flex-direction:column;padding:22px 0;z-index:40}
-.brand{display:flex;align-items:center;gap:11px;padding:0 20px 18px}
-.brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#fff;padding:2px}
-.brand .nm{font-family:'Poppins',sans-serif;font-size:18px;line-height:1;color:#fff;font-weight:600}
-.brand .sb{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);margin-top:4px;font-weight:700}
-.nav{margin-top:4px;flex:1;overflow-y:auto}
-.nav-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(155,184,192,.55);padding:0 20px;margin:16px 0 6px;font-weight:700}
-.nav a{display:flex;align-items:center;gap:10px;margin:2px 12px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.72);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,color .15s}
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--ink);color:#fff;display:flex;flex-direction:column;padding:24px 0;z-index:40}
+.brand{display:block;padding:0 22px 18px;border-bottom:1px solid rgba(155,184,192,.15);cursor:pointer}
+.brand .nm{font-family:'Poppins',sans-serif;font-size:23px;line-height:1;color:#fff;font-weight:600;letter-spacing:-.02em;display:block}
+.brand .sb{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--mist);margin-top:6px;font-weight:700;display:block}
+.nav{margin-top:10px;flex:1;overflow-y:auto}
+.nav-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(155,184,192,.55);padding:16px 22px 7px;font-weight:700}
+.nav a{display:flex;align-items:center;gap:10px;margin:2px 12px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.68);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,color .15s}
 .nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
-.nav a.on{color:#fff;background:rgba(255,255,255,.08)}
-.nav a .ic{width:16px;text-align:center;opacity:.85;font-size:13px}
-.nav a .lock{margin-left:auto;color:var(--gold);font-size:9px;opacity:.9}
-.rail-foot{padding:14px 20px 0;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(155,184,192,.7);line-height:1.5}
+.nav a.on{color:#fff;font-weight:700;background:rgba(155,184,192,.14);box-shadow:inset 2px 0 0 var(--gold)}
+.nav a .lbl{flex:1}
+.nav a .dot-r{width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;flex-shrink:0}
+.rail-foot{padding:16px 22px 0;border-top:1px solid rgba(155,184,192,.15);font-size:11px;color:rgba(155,184,192,.75);line-height:1.6}
 .rail-foot .priv{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11.5px}
 .rail-foot .priv .dot{width:30px;height:17px;border-radius:9px;background:rgba(255,255,255,.15);position:relative;transition:background .15s;flex-shrink:0}
 .rail-foot .priv .dot::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .15s}
 .rail-foot .priv.on .dot{background:var(--gold)}
 .rail-foot .priv.on .dot::after{transform:translateX(13px)}
 
-.main{margin-left:var(--rail);padding:34px 44px 64px;max-width:1180px}
-.eyebrow{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.main{margin-left:var(--rail);padding:36px 44px 64px;max-width:1080px}
+.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
 .eyebrow.rest{color:var(--gold)}
 h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;font-size:34px;color:var(--teal);margin:6px 0 0}
-.vsub{font-size:13.5px;color:rgba(21,48,58,.6);margin-top:7px;max-width:58ch;line-height:1.55}
-
-.figs{display:flex;gap:46px;flex-wrap:wrap;padding:24px 0 4px;border-top:1px solid var(--line);margin-top:30px}
-.fig .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.fig .v{font-family:'DM Mono',monospace;font-size:25px;margin-top:7px;color:var(--ink);font-weight:500}
-.fig .v.warn{color:var(--gold)}
-
-.mods{margin-top:36px;border-top:1px solid var(--line)}
-.mod{display:flex;align-items:center;gap:20px;padding:18px 4px;border-bottom:1px solid var(--line);cursor:pointer;color:inherit;transition:padding-left .16s,background .16s}
-.mod:hover{padding-left:12px;background:rgba(255,255,255,.5)}
-.mod .idx{font-family:'DM Mono',monospace;font-size:11px;color:var(--mist);width:22px}
-.mod .t{font-size:15.5px;font-weight:700}
-.mod .d{font-size:12.5px;color:rgba(21,48,58,.55);margin-top:2px}
-.mod .go{margin-left:auto;color:var(--mist);font-size:15px;transition:color .16s,transform .16s}
-.mod:hover .go{color:var(--gold);transform:translateX(3px)}
-.mod .keytag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,162,39,.4);padding:3px 7px;border-radius:3px;font-weight:700}
+.vsub{font-size:13.5px;color:rgba(21,48,58,.6);margin-top:8px;max-width:56ch;line-height:1.6}
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.privchk{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mist);cursor:pointer;font-weight:500}
+.privchk input{accent-color:var(--teal)}
 
 .view{display:none}
 .view.on{display:block;animation:fade .28s ease}
 @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.stub-note{margin-top:22px;padding:16px 18px;background:rgba(155,184,192,.1);border-radius:8px;font-size:13px;color:rgba(21,48,58,.7);max-width:60ch;line-height:1.6}
 
+/* ---------- TODAY ---------- */
+.band{margin-top:26px;background:var(--ink);border-radius:14px;padding:30px 34px;display:flex;align-items:center;gap:40px;flex-wrap:wrap;position:relative;overflow:hidden}
+.band::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 7px,rgba(155,184,192,.05) 7px,rgba(155,184,192,.05) 8px);pointer-events:none}
+.band .sticker{background:var(--white);border-radius:5px;display:flex;align-items:stretch;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.25);transform:rotate(-1.2deg);position:relative}
+.band .sticker .perf{width:14px;background:repeating-linear-gradient(180deg,var(--bone) 0,var(--bone) 5px,transparent 5px,transparent 11px);border-right:1px dashed rgba(21,48,58,.25)}
+.band .sticker .body{padding:16px 26px 14px 20px}
+.band .sticker .cap{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.band .sticker .num{font-family:'DM Mono',monospace;font-size:40px;font-weight:500;color:var(--ink);line-height:1;margin-top:8px;letter-spacing:-.01em}
+.band .sticker .bars{margin-top:10px;height:14px;background:repeating-linear-gradient(90deg,var(--ink) 0,var(--ink) 2px,transparent 2px,transparent 4px,var(--ink) 4px,var(--ink) 5px,transparent 5px,transparent 9px);opacity:.85}
+.band .sticker .spine{width:7px;background:var(--gold)}
+.band .cap-txt{color:var(--mist);font-size:13px;line-height:1.7;max-width:34ch;position:relative}
+.band .cap-txt .prev{margin-top:8px;font-size:12px}
+.band .cap-txt .prev b{font-family:'DM Mono',monospace;color:#fff;font-weight:500}
+
+.figs{display:flex;gap:52px;flex-wrap:wrap;padding:24px 2px 20px;border-bottom:1px solid var(--line)}
+.fig .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.fig .v{font-family:'DM Mono',monospace;font-size:25px;margin-top:7px;color:var(--ink);font-weight:500}
+.fig .v.warn{color:var(--red)}
+.fig .v.teal{color:var(--teal)}
+
+.reg-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:30px}
+.reg-head .l{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.reg-head .r{font-size:12px;color:var(--mist)}
+.reg-list{margin-top:10px;border-top:2px solid var(--ink)}
+.regrow{display:flex;align-items:center;gap:18px;padding:14px 4px;border-bottom:1px solid var(--line);color:var(--ink);cursor:pointer;transition:background .15s,padding-left .15s}
+.regrow:hover{background:rgba(255,255,255,.6);padding-left:12px}
+.regrow .lab{font-family:'DM Mono',monospace;font-size:13.5px;color:var(--teal);width:86px;flex-shrink:0}
+.regrow .mid{flex:1;min-width:0}
+.regrow .nm{font-size:14.5px;font-weight:700;display:block}
+.regrow .ts{font-size:12px;color:rgba(21,48,58,.55);display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.regrow .pay{font-family:'DM Mono',monospace;font-size:12.5px;width:110px;text-align:right;flex-shrink:0;color:rgba(21,48,58,.45)}
+.regrow .pay.due{color:var(--red)}
+.reg-empty{padding:16px 4px;font-size:13px;color:var(--mist);font-style:italic}
+
+/* ---------- SECTIONS & FORMS ---------- */
+.sec-h{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700;padding-bottom:9px;border-bottom:2px solid var(--ink)}
+.sec-h .note-r{float:right;font-size:12px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--mist)}
+.fgrid{display:grid;gap:14px;margin-top:16px}
+.fgrid.c211{grid-template-columns:2fr 1fr 1fr}
+.fgrid.c11{grid-template-columns:1fr 1fr}
+.fld{min-width:0;display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:500;color:rgba(21,48,58,.6)}
+.fld input,.fld select{width:100%;box-sizing:border-box;min-width:0;height:42px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:15px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
+.fld select{padding:0 10px}
+.fld input:focus,.fld select:focus{border-color:var(--teal)}
+.fld input.mono-in{font-family:'DM Mono',monospace}
+.btn{height:46px;padding:0 20px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-size:14px;font-weight:800;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;letter-spacing:.02em;transition:background .15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn:hover{background:var(--teal-deep)}
+.btn:disabled{background:var(--border);cursor:not-allowed}
+.btn.ghost{background:var(--white);border:1px solid var(--border);color:var(--ink);font-weight:700}
+.btn.ghost:hover{background:var(--bone)}
+.searchbar{margin-top:24px;display:flex;gap:10px;max-width:520px}
+.searchbar input{flex:1;height:46px;border:1px solid var(--border);border-radius:8px;padding:0 14px;font-size:16px;font-family:'DM Mono',monospace;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
+.searchbar input:focus{border-color:var(--teal)}
+.foot-note{font-size:12px;color:var(--mist);margin-top:18px;line-height:1.6;max-width:60ch}
+
+/* status bars */
+.status{padding:12px 16px;border-radius:8px;font-size:14px;margin-top:18px;display:flex;align-items:center;gap:10px}
+.status.load{background:rgba(15,76,92,.07);color:var(--teal)}
+.status.err{background:rgba(163,45,45,.08);color:var(--red)}
+.status.ok{background:rgba(47,107,79,.1);color:var(--green)}
+.spinner{width:15px;height:15px;border:2px solid rgba(21,48,58,.15);border-top-color:var(--teal);border-radius:50%;display:inline-block;animation:spin .6s linear infinite;flex-shrink:0}
+.btn .spinner{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* cards & patient info */
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:18px}
+.card-title{font-size:10.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.18em;margin-bottom:1rem}
+.patient-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1.2rem}
+.pf{display:flex;flex-direction:column;gap:4px}
+.pf .lbl{font-size:9.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.14em}
+.pf .val{font-size:15px;font-weight:500;color:var(--ink)}
+.pf .val.empty{color:var(--border);font-style:italic;font-weight:400}
+.pf .val.mono-v{font-family:'DM Mono',monospace}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem}
+.badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(15,76,92,.08);color:var(--teal)}
+.sections-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.2rem}
+.sc{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.sc.has{border-color:var(--teal);background:rgba(15,76,92,.05)}
+.sc.no{opacity:.5}
+.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sc-name{font-size:13px;font-weight:600}.sc.has .sc-name{color:var(--teal)}
+.dot{width:8px;height:8px;border-radius:50%}.dot-g{background:var(--teal)}.dot-x{background:var(--border)}
+.sc-params{font-size:12px;color:rgba(21,48,58,.55);line-height:1.5}
+.divider{border:none;border-top:1px solid var(--line);margin:1.4rem 0}
+.gen-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.gen-note{font-size:13px;color:rgba(21,48,58,.55)}
+
+/* results table */
+.rtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1.4rem}
+.rtable th{text-align:left;padding:8px 10px;background:var(--bone);font-size:10px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--line)}
+.rtable td{padding:8px 10px;border-bottom:1px solid rgba(21,48,58,.06)}
+.rtable tr:last-child td{border-bottom:none}
+.rtable .pn{font-weight:500}
+.rtable .rv{font-weight:600;color:var(--teal);font-family:'DM Mono',monospace;font-size:12.5px}
+.rtable .rv.abn{color:var(--red)}
+.rtable .rr{color:rgba(21,48,58,.5);font-size:12px}
+.subhdr td{background:rgba(15,76,92,.06);font-weight:700;color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+
+/* register view */
+.reg-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:28px;align-items:start;margin-top:26px}
+.reg-left{display:flex;flex-direction:column;gap:26px;min-width:0}
+.test-search{position:relative;margin-top:16px}
+.test-search input{width:100%;box-sizing:border-box;height:44px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:15px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
+.test-search input:focus{border-color:var(--teal)}
+.test-results{position:absolute;top:46px;left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:8px;max-height:280px;overflow-y:auto;z-index:20;box-shadow:0 10px 26px rgba(21,48,58,.16);display:none}
+.test-results.show{display:block}
+.test-opt{display:flex;justify-content:space-between;gap:12px;padding:10px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid rgba(21,48,58,.07)}
+.test-opt:hover{background:var(--bone)}
+.test-opt .sec{font-size:11px;color:var(--mist)}
+.test-opt .p{font-family:'DM Mono',monospace;color:var(--teal);white-space:nowrap}
+.chosen-list{margin-top:12px;border-top:1px solid var(--line)}
+.chosen-row{display:flex;align-items:center;gap:14px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.chosen-row .nm{flex:1;font-weight:500}
+.chosen-row .sec{font-size:11px;color:var(--mist)}
+.chosen-row .amt{font-family:'DM Mono',monospace;font-size:13.5px;color:var(--ink)}
+.chosen-row button{background:none;border:none;color:var(--red);font-size:16px;line-height:1;cursor:pointer;padding:0 4px}
+.empty-hint{margin-top:12px;font-size:13px;color:var(--mist);font-style:italic}
+.reb-note{margin-top:10px;font-size:12px;color:var(--mist);line-height:1.5}
+.bill-wrap{position:sticky;top:24px}
+.bill-hd{background:var(--ink);border-radius:12px 12px 0 0;padding:18px 20px}
+.bill-hd .cap{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.bill-hd .num{font-family:'DM Mono',monospace;font-size:28px;color:#fff;margin-top:6px}
+.bill-hd .bars{margin-top:8px;height:10px;background:repeating-linear-gradient(90deg,var(--mist) 0,var(--mist) 2px,transparent 2px,transparent 4px,var(--mist) 4px,var(--mist) 5px,transparent 5px,transparent 9px);opacity:.4}
+.bill-bd{background:var(--white);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:18px 20px}
+.bill-line{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;border-bottom:1px solid var(--line-soft)}
+.bill-line .lbl{color:rgba(21,48,58,.55)}
+.bill-line .val{font-family:'DM Mono',monospace}
+.bill-line .val.neg{color:var(--red)}
+.bill-line.total{border-bottom:none;font-size:16px;font-weight:800;padding:12px 0 2px;color:var(--teal)}
+.bill-line.total .val{font-weight:500}
+.editable-net{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+.editable-net label{font-size:10px;color:var(--mist);font-weight:700;text-transform:uppercase;letter-spacing:.14em}
+.editable-net input{height:44px;border:2px solid var(--teal);border-radius:8px;padding:0 12px;font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--teal);outline:none}
+.bill-bd .btn{width:100%;margin-top:16px}
+.bill-note{margin-top:12px;font-size:12px;color:var(--mist);line-height:1.5}
+.reg-done{margin-top:12px;font-size:12.5px;color:var(--teal);background:rgba(15,76,92,.07);border-radius:8px;padding:10px 12px;line-height:1.5}
+
+/* find patient */
+.person-group{border:1px solid var(--line);border-radius:10px;margin-top:12px;overflow:hidden;background:var(--white)}
+.person-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;transition:background .12s}
+.person-head:hover{background:var(--bone)}
+.person-name{font-weight:700;font-size:15px;color:var(--teal)}
+.person-count{font-size:12px;color:var(--mist);font-weight:500}
+.person-chevron{color:var(--mist);font-size:13px;transition:transform .15s}
+.person-group.open .person-chevron{transform:rotate(90deg)}
+.visit-list{display:none;border-top:1px solid var(--line)}
+.person-group.open .visit-list{display:block}
+.visit-row{padding:12px 16px;border-bottom:1px solid rgba(21,48,58,.06)}
+.visit-row:last-child{border-bottom:none}
+.visit-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-bottom:8px}
+.visit-meta .vm b{color:var(--teal);font-family:'DM Mono',monospace;font-weight:500}
+.visit-meta .vm-tests{color:rgba(21,48,58,.55);width:100%}
+.visit-actions{display:flex;gap:8px;flex-wrap:wrap}
+.visit-actions button{height:34px;padding:0 14px;border-radius:7px;border:1px solid var(--border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
+.visit-actions .btn-rep{background:var(--teal);color:#fff;border-color:var(--teal)}
+.visit-actions .btn-rep:hover{background:var(--teal-deep)}
+.visit-actions .btn-view{color:var(--teal)}
+.visit-actions .btn-view:hover{background:rgba(15,76,92,.08)}
+.inline-results{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+
+/* entry view */
+.entry-section{margin-bottom:1.5rem}
+.entry-section-title{font-size:10.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.85rem;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.entry-field{display:flex;flex-direction:column;gap:5px}
+.entry-field label{font-size:13px;font-weight:600;color:var(--ink)}
+.entry-field .ref-hint{font-size:11px;color:var(--mist);font-weight:400}
+.entry-field input{height:40px;border:1px solid var(--border);border-radius:7px;padding:0 10px;font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color .15s;background:var(--white)}
+.entry-field input:focus{border-color:var(--teal)}
+.entry-field input.flagged{border-color:var(--red);background:rgba(163,45,45,.06)}
+.analyst-row{display:flex;gap:12px;align-items:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);flex-wrap:wrap}
+.analyst-row .fld{max-width:320px;flex:1}
+
+/* rebates */
+.reb-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.reb-controls select{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13.5px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink)}
+.reb-controls .btn{height:38px;font-size:12.5px;padding:0 16px}
+.rtbl{margin-top:28px}
+.rtbl .hd{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:9px;border-bottom:2px solid var(--ink)}
+.rtbl .hd .t{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.rtbl .hd .n{font-size:12px;color:var(--mist)}
+.rtbl .cols,.rtbl .row{display:grid;grid-template-columns:1fr 74px 70px 110px 70px 120px 96px;gap:8px;align-items:baseline}
+.rtbl .cols{padding:9px 4px 7px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);font-weight:700;border-bottom:1px solid var(--line)}
+.rtbl .cols span,.rtbl .row span{text-align:right}
+.rtbl .cols span:first-child,.rtbl .row span:first-child{text-align:left}
+.rtbl .row{padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.rtbl .row:hover{background:rgba(255,255,255,.6)}
+.rtbl .row .who{font-weight:500}
+.rtbl .row .m{font-family:'DM Mono',monospace;font-size:13.5px}
+.rtbl .row .m.due{color:var(--teal);font-weight:500}
+.rtbl .row .stmt{text-align:right}
+.rtbl .row .stmt button{height:26px;padding:0 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);font-size:11.5px;font-weight:700;color:var(--teal);cursor:pointer}
+.rtbl .row .stmt button:hover{background:rgba(15,76,92,.08)}
+.rtbl .tot{display:grid;grid-template-columns:1fr 120px 96px;padding:13px 4px;font-size:13.5px;font-weight:700;color:var(--teal)}
+.rtbl .tot .m{text-align:right;font-family:'DM Mono',monospace}
+.reb-warn{margin-top:18px;padding:12px 16px;background:rgba(201,162,39,.1);border:1px solid rgba(201,162,39,.35);border-radius:8px;font-size:12.5px;color:#6b5715;line-height:1.6}
+.rtbl-empty{padding:16px 4px;font-size:13px;color:var(--mist);font-style:italic}
+
+/* edit records */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:1.2rem}
+.rec-actions{display:flex;gap:12px;align-items:flex-end;padding-top:1rem;border-top:1px solid var(--line);flex-wrap:wrap}
+.rec-actions .fld{max-width:260px;flex:1}
+
+@media(max-width:960px){
+  .reg-grid{grid-template-columns:1fr}
+  .bill-wrap{position:static}
+  .rtbl .cols,.rtbl .row{grid-template-columns:1fr 70px 100px 60px 110px 80px;font-size:13px}
+  .rtbl .cols span:nth-child(3),.rtbl .row span:nth-child(3){display:none}
+}
 @media(max-width:860px){
   .rail{left:0;right:0;top:auto;bottom:0;width:auto;height:auto;flex-direction:row;padding:0;overflow-x:auto}
   .brand,.nav-label,.rail-foot{display:none}
   .nav{display:flex;margin:0;width:100%;overflow-x:auto}
-  .nav a{flex-direction:column;gap:3px;padding:9px 12px;font-size:9px;margin:0;border-radius:0;min-width:64px;text-align:center}
-  .nav a .lock{display:none}
-  .nav a .ic{font-size:15px}
-  .main{margin-left:0;padding:24px 20px 92px}
+  .nav a{flex-direction:column;gap:3px;padding:10px 12px;font-size:9.5px;margin:0;border-radius:0;min-width:70px;text-align:center;justify-content:center}
+  .nav a.on{box-shadow:inset 0 2px 0 var(--gold)}
+  .nav a .dot-r{display:none}
+  .main{margin-left:0;padding:24px 20px 100px}
   h2.vt{font-size:27px}
   .figs{gap:28px}
+  .band{padding:22px 20px;gap:22px}
+  .band .sticker .num{font-size:30px}
+  .sections-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -143,7 +356,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       <button type="submit" aria-label="Enter">&rarr;</button>
     </form>
     <div class="err" id="gateErr" role="status"></div>
-    <div class="hint">Passcode <span class="mono">2026</span></div>
+    <div class="hint">Ask the MD for the passcode.</div>
   </div>
 </div>
 
@@ -153,17 +366,20 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
   <div class="motif" aria-hidden="true">
     <div style="position:absolute;top:20vh;left:5vw;width:30px;height:128px;border:3px solid rgba(15,76,92,.14);border-top:none;border-radius:0 0 16px 16px;transform:rotate(-11deg)"><div style="position:absolute;left:3px;right:3px;bottom:3px;height:46px;background:rgba(15,76,92,.12);border-radius:2px 2px 12px 12px"></div></div>
     <div style="position:absolute;top:26vh;left:calc(5vw + 52px);width:24px;height:96px;border:3px solid rgba(15,76,92,.11);border-top:none;border-radius:0 0 13px 13px;transform:rotate(9deg)"><div style="position:absolute;left:3px;right:3px;bottom:3px;height:30px;background:rgba(201,162,39,.18);border-radius:2px 2px 9px 9px"></div></div>
-    <div style="position:absolute;top:15vh;right:5vw;width:112px;height:112px;border:3px solid rgba(15,76,92,.13);border-radius:50%"><div style="position:absolute;inset:18px;border:2px dashed rgba(15,76,92,.12);border-radius:50%"></div><div style="position:absolute;top:34px;left:38px;width:10px;height:10px;background:rgba(201,162,39,.22);border-radius:50%"></div><div style="position:absolute;top:58px;left:60px;width:7px;height:7px;background:rgba(15,76,92,.16);border-radius:50%"></div></div>
-    <div style="position:absolute;bottom:14vh;right:9vw;width:30px;height:120px;border:3px solid rgba(15,76,92,.12);border-top:none;border-radius:0 0 16px 16px;transform:rotate(6deg)"><div style="position:absolute;left:3px;right:3px;bottom:3px;height:56px;background:rgba(15,76,92,.1);border-radius:2px 2px 12px 12px"></div></div>
+    <div style="position:absolute;top:15vh;right:5vw;width:112px;height:112px;border:3px solid rgba(15,76,92,.13);border-radius:50%"><div style="position:absolute;inset:18px;border:2px dashed rgba(15,76,92,.12);border-radius:50%"></div><div style="position:absolute;top:34px;left:38px;width:10px;height:10px;background:rgba(201,162,39,.22);border-radius:50%"></div><div style="position:absolute;top:58px;left:60px;width:7px;height:7px;background:rgba(15,76,92,.16);border-radius:50%"></div><div style="position:absolute;top:64px;left:34px;width:6px;height:6px;background:rgba(15,76,92,.14);border-radius:50%"></div></div>
+    <div style="position:absolute;bottom:12vh;left:7vw;width:150px;height:120px"><div style="position:absolute;top:52px;left:20px;width:96px;height:3px;background:rgba(15,76,92,.11);transform:rotate(-24deg);transform-origin:left center"></div><div style="position:absolute;top:52px;left:20px;width:86px;height:3px;background:rgba(15,76,92,.11);transform:rotate(32deg);transform-origin:left center"></div><div style="position:absolute;top:44px;left:6px;width:20px;height:20px;border:3px solid rgba(15,76,92,.15);border-radius:50%;background:#F1EFE8"></div><div style="position:absolute;top:4px;left:102px;width:16px;height:16px;background:rgba(201,162,39,.2);border-radius:50%"></div><div style="position:absolute;top:94px;left:90px;width:16px;height:16px;background:rgba(15,76,92,.13);border-radius:50%"></div></div>
+    <div style="position:absolute;bottom:24vh;right:12vw;width:30px;height:30px;background:rgba(15,76,92,.1);border-radius:50% 50% 50% 0;transform:rotate(-45deg)"></div>
+    <div style="position:absolute;bottom:9vh;right:6vw;width:92px;height:92px"><div style="position:absolute;top:33px;left:0;width:92px;height:26px;background:rgba(15,76,92,.08);border-radius:8px"></div><div style="position:absolute;top:0;left:33px;width:26px;height:92px;background:rgba(15,76,92,.08);border-radius:8px"></div></div>
+    <div style="position:absolute;top:8vh;left:-60px;width:260px;height:100px;background:#FFFFFF;opacity:.4;border-radius:6px;transform:rotate(-8deg);border-right:8px solid rgba(201,162,39,.3)"></div>
   </div>
-  <div class="wl-head"><img id="wlLogo" alt=""><div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink)">Evashalom Medical Diagnostic Services</div></div>
+  <header class="wl-head"><img id="wlLogo" alt=""><div class="t">Evashalom Medical Diagnostic Services</div></header>
   <div class="wl-body">
     <div class="wl-eyebrow" id="wlDate">Asaba</div>
     <h1 class="wl-h1">One lab number, from <em>counter</em> to <em>signed report</em>.</h1>
-    <div class="specimen">
-      <div class="strip"></div>
+    <div class="specimen" style="margin-top:26px">
+      <div class="perf"></div>
       <div class="body"><div class="cap">Next lab number</div><div class="num" id="wlNextLab">ES&mdash;/26</div></div>
-      <div class="strip"></div>
+      <div class="spine"></div>
     </div>
     <div class="wl-q">What would you like to do?</div>
     <div class="wl-grid" id="wlGrid"></div>
@@ -173,73 +389,357 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 <!-- SHELL -->
 <div class="shell" id="shell">
   <nav class="rail">
-    <div class="brand"><img id="railLogo" alt=""><div><div class="nm">Evashalom</div><div class="sb">Operations</div></div></div>
+    <a class="brand" onclick="goWelcome()" title="Back to the front door">
+      <span class="nm pop">Evashalom</span>
+      <span class="sb">Medical Diagnostics &middot; Asaba</span>
+    </a>
     <div class="nav" id="nav"></div>
     <div class="rail-foot">
-      Asaba, Delta State<br>Fred Ejiofor &middot; Governor St
+      Fred Ejiofor Crescent<br>Governor Street &middot; Asaba
       <div class="priv" id="privToggle" onclick="togglePrivacy()"><span class="dot"></span> Privacy mode</div>
     </div>
   </nav>
   <main class="main">
-    <!-- TODAY -->
+
+    <!-- ======== TODAY ======== -->
     <section class="view on" id="v-home">
-      <div class="eyebrow" id="todayDate"></div>
-      <h2 class="vt">Today</h2>
-      <p class="vsub">The next patient through the door takes this number. Everything downstream &mdash; results, report, receipt &mdash; hangs off it.</p>
-      <div class="specimen" style="margin-top:26px">
-        <div class="strip"></div>
-        <div class="body"><div class="cap">Next lab number</div><div class="num" id="todayNextLab">ES&mdash;/26</div><div style="font-size:11.5px;color:rgba(21,48,58,.5);margin-top:8px" id="todayPrev"></div></div>
+      <div class="vhead">
+        <div>
+          <div class="eyebrow" id="todayDate"></div>
+          <h2 class="vt">Today</h2>
+        </div>
+        <label class="privchk"><input type="checkbox" id="privChk" onchange="setPrivacy(this.checked)"> Hide money (patient at counter)</label>
+      </div>
+      <div class="band">
+        <div class="sticker">
+          <div class="perf"></div>
+          <div class="body"><div class="cap">Next lab number</div><div class="num" id="todayNextLab">ES&mdash;/26</div><div class="bars"></div></div>
+          <div class="spine"></div>
+        </div>
+        <div class="cap-txt">
+          The next patient through the door takes this number. Results, report and receipt all hang off it.
+          <div class="prev" id="todayPrev"></div>
+        </div>
       </div>
       <div class="figs">
         <div class="fig"><div class="k">Registered today</div><div class="v" id="figToday">&mdash;</div></div>
         <div class="fig"><div class="k">On the tracker</div><div class="v" id="figTotal">&mdash;</div></div>
+        <div class="fig"><div class="k">Unpaid today</div><div class="v warn money" id="figUnpaid">&mdash;</div></div>
         <div class="fig"><div class="k">Collected today</div><div class="v money" id="figMoney">&mdash;</div></div>
       </div>
-      <div class="mods" id="homeMods"></div>
+      <div class="reg-head"><span class="l">The register &middot; today</span><span class="r">newest first</span></div>
+      <div class="reg-list" id="regList"><div class="reg-empty">Loading the tracker&hellip;</div></div>
     </section>
-    <!-- Placeholder views, same design language -->
-    <section class="view" id="v-register"><div class="eyebrow">Front desk</div><h2 class="vt">Register patient</h2><p class="vsub">Take details, pick tests, price the bill, issue the lab number.</p><div class="stub-note">Porting your tested registration flow (pricing, rebate, surcharge, receipt) into this shell next.</div></section>
-    <section class="view" id="v-find"><div class="eyebrow">Front desk</div><h2 class="vt">Find patient</h2><p class="vsub">Search by any part of a name; visits group under the person, newest first.</p><div class="stub-note">Porting the search-by-name feature from your main app into this shell.</div></section>
-    <section class="view" id="v-results"><div class="eyebrow">Laboratory</div><h2 class="vt">Enter results</h2><p class="vsub">Labelled fields per section, out-of-range values flagged as you type.</p><div class="stub-note">Porting result entry from your main app.</div></section>
-    <section class="view" id="v-report"><div class="eyebrow">Laboratory</div><h2 class="vt">Generate report</h2><p class="vsub">Pull a lab number, review results, download the signed report.</p><div class="stub-note">Porting report generation from your main app.</div></section>
-    <section class="view" id="v-rebates"><div class="eyebrow rest">Management &middot; Restricted</div><h2 class="vt">Rebates</h2><p class="vsub">Monthly statements for doctors and hospitals, totalled from every registration they sent.</p><div class="stub-note">The rebate generator &mdash; reads a whole month from the tracker, totals per referrer. Building as a focused step.</div></section>
-    <section class="view" id="v-records"><div class="eyebrow rest">Management &middot; Restricted</div><h2 class="vt">Edit records</h2><p class="vsub">Open a lab number and correct it &mdash; most often, marking an unpaid bill as paid once the patient settles.</p><div class="stub-note">The edit path &mdash; uses the update action already built into the registration endpoint.</div></section>
+
+    <!-- ======== REGISTER PATIENT ======== -->
+    <section class="view" id="v-register">
+      <div class="eyebrow">Front desk</div>
+      <h2 class="vt">Register patient</h2>
+      <div id="regLoadStatus" class="status load"><span class="spinner"></span>Loading price list, doctors and hospitals&hellip;</div>
+      <div class="reg-grid" id="regMain" style="display:none">
+        <div class="reg-left">
+          <div>
+            <div class="sec-h">01 &middot; Patient</div>
+            <div class="fgrid c211">
+              <label class="fld">Full name<input type="text" id="pName" placeholder="Surname first"></label>
+              <label class="fld">Sex<select id="pGender"><option value="">&mdash;</option><option>F</option><option>M</option></select></label>
+              <label class="fld">Age<input type="text" id="pAge" class="mono-in" placeholder="34"></label>
+            </div>
+            <div class="fgrid c11">
+              <label class="fld">Phone<input type="text" id="pPhone" class="mono-in" placeholder="0803 &hellip;"></label>
+              <label class="fld">Lab location<select id="labLoc"><option>Fred Ejiofor Crescent</option><option>Governor Street</option></select></label>
+            </div>
+          </div>
+          <div>
+            <div class="sec-h">02 &middot; Tests</div>
+            <div class="test-search">
+              <input type="text" id="testSearch" placeholder="Type to add &mdash; FBC, PSA, widal&hellip;" autocomplete="off">
+              <div class="test-results" id="testResults"></div>
+            </div>
+            <div id="chosenTests"><div class="empty-hint">No tests added yet.</div></div>
+          </div>
+          <div>
+            <div class="sec-h">03 &middot; Referral &amp; payment</div>
+            <div class="fgrid c11">
+              <label class="fld">Referral type<select id="refType"><option value="none">Walk-in (no rebate)</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
+              <label class="fld">Referrer<select id="refName"><option value="">&mdash;</option></select></label>
+            </div>
+            <div class="fgrid c11">
+              <label class="fld">Payment mode<select id="payMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
+              <label class="fld">Payment status<select id="payStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
+            </div>
+            <div class="fgrid c11">
+              <label class="fld">Registered by<input type="text" id="regBy" placeholder="Your name"></label>
+            </div>
+            <div class="reb-note" id="rebateNote"></div>
+          </div>
+        </div>
+        <div class="bill-wrap">
+          <div class="bill-hd">
+            <div class="cap">Will be issued</div>
+            <div class="num" id="regNextLab">ES&mdash;/26</div>
+            <div class="bars"></div>
+          </div>
+          <div class="bill-bd">
+            <div class="bill-line"><span class="lbl">Tests</span><span class="val" id="billCount">0</span></div>
+            <div class="bill-line"><span class="lbl">Gross</span><span class="val" id="billGross">&#8358;0</span></div>
+            <div class="bill-line" id="surchargeLine" style="display:none"><span class="lbl">Surcharge (<span id="billSurRate">0</span>/test)</span><span class="val" id="billSurcharge">+&#8358;0</span></div>
+            <div class="bill-line" id="subtotalLine" style="display:none"><span class="lbl">Subtotal</span><span class="val" id="billSubtotal">&#8358;0</span></div>
+            <div class="bill-line" style="align-items:center"><span class="lbl">MD discount %</span><input type="text" id="mdDisc" inputmode="numeric" placeholder="0" style="width:64px;height:32px;border:1px solid var(--border);border-radius:6px;text-align:right;padding:0 8px;font-family:'DM Mono',monospace;font-size:13.5px;background:var(--white)"></div>
+            <div class="bill-line" id="discLine" style="display:none"><span class="lbl">Discount (<span id="billDiscPct">0</span>%)</span><span class="val neg" id="billDiscount">&minus;&#8358;0</span></div>
+            <div class="bill-line"><span class="lbl">Referrer rebate (<span id="billRebatePct">0</span>%) &middot; monthly</span><span class="val" style="color:var(--mist)" id="billRebate">&#8358;0</span></div>
+            <div class="bill-line total"><span>Total payable</span><span class="val" id="billNet">&#8358;0</span></div>
+            <div class="editable-net">
+              <label>Final amount (editable)</label>
+              <input type="text" id="finalAmount" inputmode="numeric">
+            </div>
+            <button class="btn" id="registerBtn" onclick="doRegister()">Register &amp; issue lab no.</button>
+            <div class="bill-note" id="targetNote"></div>
+          </div>
+        </div>
+      </div>
+      <div id="afterRegister"></div>
+    </section>
+
+    <!-- ======== FIND PATIENT ======== -->
+    <section class="view" id="v-find">
+      <div class="eyebrow">Front desk</div>
+      <h2 class="vt">Find patient</h2>
+      <p class="vsub">Search by any part of a name. Visits group under the person, newest first.</p>
+      <div class="searchbar">
+        <input type="text" id="nameInput" placeholder="e.g. esther, ezenyili">
+        <button class="btn" onclick="searchByName()" id="nameSearchBtn">Search</button>
+      </div>
+      <div id="searchStatusBar" class="hidden"></div>
+      <div id="searchResults"></div>
+      <p class="foot-note">Every visit keeps its own lab number &mdash; open one to re-print a report or check payment.</p>
+    </section>
+
+    <!-- ======== ENTER RESULTS ======== -->
+    <section class="view" id="v-results">
+      <div class="eyebrow">Laboratory</div>
+      <h2 class="vt">Enter results</h2>
+      <p class="vsub">Pull a lab number, type values against labelled fields. Out-of-range values flag as you type.</p>
+      <div class="searchbar">
+        <input type="number" id="entryLabInput" placeholder="Lab number &mdash; e.g. 6208" min="2">
+        <button class="btn" onclick="loadEntryPatient()" id="entrySearchBtn">Load</button>
+      </div>
+      <div id="entryStatusBar" class="hidden"></div>
+      <div id="entryCard" class="card hidden">
+        <div class="card-title">Patient</div>
+        <div class="patient-grid" id="entryPatientGrid"></div>
+        <div class="card-title" style="margin-top:.5rem">Tests requested</div>
+        <div class="badges" id="entryTestsBadges"></div>
+        <hr class="divider">
+        <div id="entryFields"></div>
+        <div class="analyst-row">
+          <label class="fld">Analyst name<input type="text" id="analystName" placeholder="Who is entering these results?"></label>
+          <button class="btn" onclick="saveResults()" id="saveBtn">Save results</button>
+        </div>
+      </div>
+      <p class="foot-note">Fields group by section &mdash; Chemistry, Haematology, Hormones &amp; Serology, Microbiology.</p>
+    </section>
+
+    <!-- ======== GENERATE REPORT ======== -->
+    <section class="view" id="v-report">
+      <div class="eyebrow">Laboratory</div>
+      <h2 class="vt">Generate report</h2>
+      <p class="vsub">Review the entered results against reference ranges, then download the signed report.</p>
+      <div class="searchbar">
+        <input type="number" id="labInput" placeholder="Lab number &mdash; e.g. 6207" min="2">
+        <button class="btn" onclick="searchPatient()" id="searchBtn">Load</button>
+      </div>
+      <div id="statusBar" class="hidden"></div>
+      <div id="patientCard" class="card hidden">
+        <div class="card-title">Patient</div>
+        <div class="patient-grid" id="patientGrid"></div>
+        <div class="card-title" style="margin-top:.5rem">Tests requested</div>
+        <div class="badges" id="testsBadges"></div>
+        <hr class="divider">
+        <div class="card-title">Sections with data</div>
+        <div class="sections-grid" id="sectionsGrid"></div>
+        <div id="resultsPreview"></div>
+        <hr class="divider">
+        <div class="gen-row">
+          <div class="gen-note" id="genNote"></div>
+          <button class="btn" onclick="generateReport()" id="genBtn">Download report (.docx)</button>
+        </div>
+      </div>
+      <p class="foot-note">The report header carries the lab number and both lab addresses.</p>
+    </section>
+
+    <!-- ======== REBATES ======== -->
+    <section class="view" id="v-rebates">
+      <div class="vhead">
+        <div>
+          <div class="eyebrow rest">Management &middot; Restricted</div>
+          <h2 class="vt">Rebates</h2>
+          <p class="vsub">What you owe each referrer for the month: their percentage of every referred patient's full bill, rebuilt registration by registration from the tracker.</p>
+        </div>
+        <div class="reb-controls">
+          <select id="rebMonth"><option value="">Loading months&hellip;</option></select>
+          <button class="btn" id="rebBuildBtn" onclick="buildRebates()">Build statements</button>
+        </div>
+      </div>
+      <div id="rebStatus" class="hidden"></div>
+      <div id="rebWarn" class="hidden"></div>
+      <div id="rebTable"></div>
+      <p class="foot-note">Payouts are the referrer's rate &times; what each patient actually paid: price-list gross plus any per-test surcharge, less any MD discount recorded as a <span class="mono">DISC:n%</span> tag in the comments &mdash; never read from the AMOUNT column, which records the payment net of the rebate.</p>
+    </section>
+
+    <!-- ======== EDIT RECORDS ======== -->
+    <section class="view" id="v-records">
+      <div class="eyebrow rest">Management &middot; Restricted</div>
+      <h2 class="vt">Edit records</h2>
+      <p class="vsub">Open a lab number and correct it &mdash; most often, marking an unpaid bill as paid once the patient settles.</p>
+      <div class="searchbar">
+        <input type="number" id="recLabInput" placeholder="Lab number &mdash; e.g. 6206" min="2">
+        <button class="btn" onclick="loadRecord()" id="recLoadBtn">Open</button>
+      </div>
+      <div id="recStatusBar" class="hidden"></div>
+      <div id="recCard" class="card hidden">
+        <div class="card-title">Record</div>
+        <div class="rec-grid" id="recGrid"></div>
+        <div class="rec-actions">
+          <label class="fld">Payment status<select id="recPayStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
+          <button class="btn" onclick="updateRecord()" id="recUpdateBtn">Update payment status</button>
+        </div>
+        <div class="bill-note" id="recNote"></div>
+      </div>
+      <p class="foot-note">Updates go through the registration endpoint's update action and land on its target sheet (currently the TEST SANDBOX tab while you test). This view reads the live tracker, so a sandbox update won't change what you see here until cutover.</p>
+    </section>
+
   </main>
+</div>
+
+<!-- SECTION GATE (Rebates / Edit records) -->
+<div class="sgate hidden" id="sgate">
+  <div class="sgate-in">
+    <div class="cg">&#9679; Restricted</div>
+    <h3 id="sgateTitle">Rebates</h3>
+    <div class="d">This section needs the management passcode.</div>
+    <form class="pass" onsubmit="event.preventDefault();sgateSubmit()">
+      <input id="sgateCode" type="password" inputmode="numeric" maxlength="6" placeholder="Passcode" autocomplete="off" aria-label="Management passcode">
+      <button type="submit" aria-label="Enter">&rarr;</button>
+    </form>
+    <div class="err" id="sgateErr" role="status" style="margin-top:.8rem;font-size:12.5px;color:var(--red);min-height:1em"></div>
+    <button class="cancel" type="button" onclick="sgateCancel()">Cancel</button>
+  </div>
 </div>
 
 <script>
 const LOGO='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';
-const PATIENT_ID='1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ', PATIENT_GID='16221607';
-const REG_ENDPOINT='https://script.google.com/macros/s/AKfycbyDImO401CsDR7-HNFY0U1Z_x4zffHGL2gcaoGqoJeP9kLUuCmo-d-Asz9ArIh94G4bTw/exec', REG_TOKEN='evashalom-registration-sandbox-2026';
-['gateLogo','wlLogo','railLogo'].forEach(function(id){var e=document.getElementById(id);if(e)e.src='data:image/jpeg;base64,'+LOGO;});
+const LOGO_B64 = LOGO;
 
+/* ================= CONFIG (unchanged from the proven apps) ================= */
+const PATIENT_ID = '1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ';
+const PATIENT_GID = '16221607';
+const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
+const REFERENCE_GID = '1214031418';
+const GIDS = { CHEMISTRY:'0', HAEMATOLOGY:'2121568916', HORMONES:'60958540', MICROBIOLOGY:'1870622744' };
+const SAVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycby_rnWGmLhfnN5HbcWs49kU-Ox4shOjJPZdQF2K1ddb16KNTPoN5i08-iO5eVtUrqIEdA/exec';
+const SAVE_TOKEN    = 'evashalom-lab-secure-gateway-2026';
+const REG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyDImO401CsDR7-HNFY0U1Z_x4zffHGL2gcaoGqoJeP9kLUuCmo-d-Asz9ArIh94G4bTw/exec';
+const REG_TOKEN    = 'evashalom-registration-sandbox-2026';
+const PRICE_GID = '390825168';
+const DOCTORS_GID = '382518314';
+const HOSPITALS_GID = '1743965856';
+const REBATE_CAP = 15;
+const DEFAULT_SURCHARGE = {'lead neuro':500,'divine mercy':500,'st lukes':500,'saint lukes':500,'ag care':500,'ark medical centre':500,'ark medical':500};
+
+['gateLogo','wlLogo'].forEach(function(id){var e=document.getElementById(id);if(e)e.src='data:image/jpeg;base64,'+LOGO;});
+
+/* ================= SHARED UTILS ================= */
+function parseCSV(text){
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else{if(c==='"')q=true;else if(c===','){row.push(f);f='';}else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}else if(c==='\r'){}else f+=c;}}
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return rows;
+}
+// index.html style: header split off, every data row preserved so sheet row N = rows[N-2]
+async function fetchTabCsv(sheetId, gid) {
+  const url = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Sheet fetch failed (gid ' + gid + ')');
+  const text = await res.text();
+  const all = parseCSV(text);
+  const cols = (all[0] || []).map(c => (c || '').trim());
+  const rows = all.slice(1).map(r => r.map(v => (v || '').trim()));
+  return { cols, rows };
+}
+// register.html style: raw rows including any header/title rows
+async function fetchTab(gid){
+  const url='https://docs.google.com/spreadsheets/d/'+RESULT_ID+'/export?format=csv&gid='+gid;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('Fetch failed for gid '+gid);
+  return parseCSV(await res.text());
+}
+function num(v){const n=parseFloat(String(v==null?'':v).replace(/[,\s₦]/g,''));return isNaN(n)?0:n;}
+function naira(n){return '₦'+Math.round(n).toLocaleString('en-NG');}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cleanValue(val) {
+  if (!val) return val;
+  const m = val.match(/^([<>]?\s*[\d.]+)/);
+  return m ? m[1].trim() : val;
+}
+function formatNumber(val) {
+  if (typeof val === 'string' && val.indexOf('/') !== -1) return val;
+  const clean = cleanValue(val);
+  const n = parseFloat(clean);
+  if (isNaN(n)) return val;
+  if (Number.isInteger(n) && n >= 1000) return n.toLocaleString('en-GB');
+  return clean !== val ? clean : val;
+}
+function formatDate(raw) {
+  if (!raw) return '—';
+  const m = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if (m) { const d = new Date(parseInt(m[1]), parseInt(m[2]), parseInt(m[3])); return d.toLocaleDateString('en-GB'); }
+  return raw;
+}
+function ddmmyyyy(dt){return ('0'+dt.getDate()).slice(-2)+'/'+('0'+(dt.getMonth()+1)).slice(-2)+'/'+dt.getFullYear();}
+// Parse a tracker date cell to {m (1-12), y} or null. Handles dd/mm/yyyy, d/m/yy and Date(y,m,d).
+function parseMonthYear(raw){
+  if(!raw) return null;
+  const g = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if(g) return { m: parseInt(g[2]) + 1, y: parseInt(g[1]) };
+  const m = raw.match(/^\s*\d{1,2}[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(!m) return null;
+  let y = parseInt(m[2]); if (y < 100) y += 2000;
+  return { m: parseInt(m[1]), y: y };
+}
+
+/* ================= PRIVACY ================= */
 var privacy=false;
-function togglePrivacy(){
-  privacy=!privacy;
+function setPrivacy(v){
+  privacy=!!v;
   document.getElementById('privToggle').classList.toggle('on',privacy);
+  var chk=document.getElementById('privChk'); if(chk) chk.checked=privacy;
   applyPrivacy();
 }
+function togglePrivacy(){ setPrivacy(!privacy); }
 function applyPrivacy(){
   document.querySelectorAll('.money').forEach(function(el){ el.classList.toggle('blurmoney',privacy); });
 }
 
+/* ================= DATE / NAV / SHELL ================= */
 var d=new Date();
 var dateStr=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-document.getElementById('wlDate').textContent=dateStr+' \u00b7 Asaba';
+document.getElementById('wlDate').textContent=dateStr+' · Asaba';
 document.getElementById('todayDate').textContent=dateStr;
 
 var NAV=[
-  {label:'Front desk',items:[['home','\u25c8','Today'],['register','\uff0b','Register patient'],['find','\u2315','Find patient']]},
-  {label:'Laboratory',items:[['results','\u25a4','Enter results'],['report','\u25a3','Generate report']]},
-  {label:'Management',items:[['rebates','\u20a6','Rebates',true],['records','\u270e','Edit records',true]]}
-];
-var MODS=[
-  ['register','01','Register patient','Take details, pick tests, price the bill, issue the lab number',false],
-  ['results','02','Enter results','Type values against a lab number, flagged as you go',false],
-  ['report','03','Generate report','Build the signed lab report and download it',false],
-  ['find','04','Find patient','Search by name across every visit',false],
-  ['rebates','05','Rebates','Monthly statements for doctors and hospitals',true],
-  ['records','06','Edit records','Correct a registration \u2014 mark unpaid bills as paid',true]
+  {label:'Front desk',items:[
+    ['home','Today',false,"Everything moving through the lab right now"],
+    ['register','Register patient',false,'Take details, price the bill, issue the number'],
+    ['find','Find patient',false,'Search every visit by name']]},
+  {label:'Laboratory',items:[
+    ['results','Enter results',false,'Type values against a lab number'],
+    ['report','Generate report',false,'Review and download the signed report']]},
+  {label:'Management',items:[
+    ['rebates','Rebates',true,'Monthly statements for doctors and hospitals'],
+    ['records','Edit records',true,'Correct a registration, mark bills paid']]}
 ];
 
 function buildNav(){
@@ -247,51 +747,93 @@ function buildNav(){
   NAV.forEach(function(g){
     html+='<div class="nav-label">'+g.label+'</div>';
     g.items.forEach(function(it){
-      var restricted=it[3]?'<span class="lock">\u25cf</span>':'';
-      html+='<a data-v="'+it[0]+'"><span class="ic">'+it[1]+'</span> '+it[2]+restricted+'</a>';
+      var dot=it[2]?'<span class="dot-r"></span>':'';
+      html+='<a data-v="'+it[0]+'"><span class="lbl">'+it[1]+'</span>'+dot+'</a>';
     });
   });
   document.getElementById('nav').innerHTML=html;
   document.querySelectorAll('#nav a').forEach(function(a){ a.onclick=function(){show(a.dataset.v);}; });
 }
-function buildMods(){
-  var html='';
-  MODS.forEach(function(m){
-    var tag=m[4]?'<span class="keytag">Restricted</span>':'';
-    html+='<div class="mod" data-v="'+m[0]+'"><span class="idx mono">'+m[1]+'</span><span style="flex:1"><div class="t">'+m[2]+'</div><div class="d">'+m[3]+'</div></span>'+tag+'<span class="go">\u2192</span></div>';
-  });
-  document.getElementById('homeMods').innerHTML=html;
-  document.querySelectorAll('#homeMods .mod').forEach(function(el){ el.onclick=function(){show(el.dataset.v);}; });
-}
 function buildWelcomeCards(){
   var html='';
   NAV.forEach(function(g){
-    html+='<div class="wl-card"><div class="cg">'+g.label+'</div><ul>';
+    var restricted=g.items.some(function(it){return it[2];});
+    html+='<div class="wl-card"><div class="hd"><span class="cg">'+g.label+'</span>'+(restricted?'<span class="rst">● Restricted</span>':'')+'</div><div class="tiles">';
     g.items.forEach(function(it){
-      var lock=it[3]?'<span class="lock">\u25cf</span>':'';
-      html+='<li data-v="'+it[0]+'">'+it[2]+lock+'<span class="go">\u2192</span></li>';
+      html+='<div class="wl-tile" data-v="'+it[0]+'"><span>'+it[1]+'<span class="sub">'+it[3]+'</span></span><span class="go">↗</span></div>';
     });
-    html+='</ul></div>';
+    html+='</div></div>';
   });
   document.getElementById('wlGrid').innerHTML=html;
-  document.querySelectorAll('#wlGrid li').forEach(function(li){ li.onclick=function(){enterShell(li.dataset.v);}; });
+  document.querySelectorAll('#wlGrid .wl-tile').forEach(function(t){ t.onclick=function(){enterShell(t.dataset.v);}; });
 }
-
+// Restricted views prompt for the management passcode once per session (until reload).
+const RESTRICTED_VIEWS = { rebates:true, records:true };
+var sectionUnlocked = {};
+var sgatePending = null;
 function show(v){
+  if(RESTRICTED_VIEWS[v] && !sectionUnlocked[v]){ openSectionGate(v); return; }
+  showNow(v);
+}
+function showNow(v){
   document.querySelectorAll('.view').forEach(function(s){ s.classList.toggle('on',s.id==='v-'+v); });
   document.querySelectorAll('#nav a').forEach(function(a){ a.classList.toggle('on',a.dataset.v===v); });
   window.scrollTo(0,0);
   applyPrivacy();
+  if(v==='register') ensureRefData();
+  if(v==='rebates') initRebates();
+}
+function openSectionGate(v){
+  sgatePending = v;
+  document.getElementById('sgateTitle').textContent = v==='rebates' ? 'Rebates' : 'Edit records';
+  document.getElementById('sgateErr').textContent = '';
+  document.getElementById('sgateCode').value = '';
+  document.getElementById('sgate').classList.remove('hidden');
+  document.getElementById('sgateCode').focus();
+}
+async function sgateSubmit(){
+  var v = document.getElementById('sgateCode').value.trim();
+  if(await checkCode(v, SECTION_HASH)){
+    sectionUnlocked[sgatePending] = true;
+    document.getElementById('sgate').classList.add('hidden');
+    showNow(sgatePending);
+    sgatePending = null;
+  }else{
+    document.getElementById('sgateErr').textContent = 'That passcode is not recognised.';
+    document.getElementById('sgateCode').value = '';
+    document.getElementById('sgateCode').focus();
+  }
+}
+function sgateCancel(){
+  sgatePending = null;
+  document.getElementById('sgate').classList.add('hidden');
 }
 function enterShell(v){
   document.getElementById('welcome').classList.add('hidden');
   document.getElementById('shell').classList.add('on');
   show(v||'home');
 }
-
-function unlock(){
+function goWelcome(){
+  document.getElementById('shell').classList.remove('on');
+  document.getElementById('welcome').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+// Passcodes are never stored in source — only salted SHA-256 digests are.
+// This keeps them out of casual View Source reading; it is deterrence, not
+// real security (nothing on a static page is).
+const GATE_HASH    = '6b5bb50849722e4e63617d60d32699100caae173481b59849c4dea87456d003f';
+const SECTION_HASH = '537aeb5240d0ad5ccca4a74c2861981f0e78fcf8298c8cd6bb3c8229a0ffab50';
+async function sha256hex(s){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+async function checkCode(code, hash){
+  try { return (await sha256hex('EVSH:' + code)) === hash; }
+  catch(e) { return false; } // crypto.subtle needs https or localhost
+}
+async function unlock(){
   var v=document.getElementById('code').value.trim();
-  if(v==='2026'){
+  if(await checkCode(v, GATE_HASH)){
     document.getElementById('gate').style.display='none';
     document.getElementById('welcome').classList.remove('hidden');
   }else{
@@ -300,42 +842,1415 @@ function unlock(){
   }
 }
 
-/* ---- live data ---- */
-function parseCSV(t){var rows=[],row=[],f='',q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}else{if(c==='"')q=true;else if(c===','){row.push(f);f='';}else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}else if(c==='\r'){}else f+=c;}}if(f!==''||row.length){row.push(f);rows.push(row);}return rows;}
-
-function ddmmyyyy(dt){return ('0'+dt.getDate()).slice(-2)+'/'+('0'+(dt.getMonth()+1)).slice(-2)+'/'+dt.getFullYear();}
-
+/* ================= TODAY (live tracker) ================= */
 async function loadToday(){
   try{
     var url='https://docs.google.com/spreadsheets/d/'+PATIENT_ID+'/export?format=csv&gid='+PATIENT_GID;
     var res=await fetch(url); var rows=parseCSV(await res.text());
-    var lastName='',lastRow=1,todayCount=0,total=0,money=0;
+    var lastName='',lastRow=1,todayCount=0,total=0,money=0,unpaid=0;
     var todayStr=ddmmyyyy(new Date());
     var carryDate='';
+    var todayRows=[];
     for(var i=1;i<rows.length;i++){
       var r=rows[i]; if(!r) continue;
       var dt=(r[0]||'').trim(); if(dt) carryDate=dt;
       var nm=(r[1]||'').trim(); if(!nm) continue;
       total++; lastName=nm; lastRow=i+1;
-      // crude today match (dd/mm or d/m)
-      if(carryDate && (carryDate===todayStr)){ todayCount++; var amt=parseFloat((r[8]||'').replace(/[,\s\u20a6]/g,'')); if(!isNaN(amt)) money+=amt; }
+      if(carryDate===todayStr){
+        todayCount++;
+        var amt=num(r[8]||'');
+        var ps=(r[11]||'').trim();
+        if(/not\s*paid/i.test(ps)){ unpaid+=amt; }
+        else { money+=amt; }
+        todayRows.push({lab:i+1,name:nm,tests:(r[5]||'').replace(/"/g,'').trim(),amount:amt,payStatus:ps});
+      }
     }
     var nextLab=lastRow+1;
-    document.getElementById('wlNextLab').textContent='ES'+nextLab+'/26';
-    document.getElementById('todayNextLab').textContent='ES'+nextLab+'/26';
-    document.getElementById('todayPrev').innerHTML='Continues from <b style="color:var(--teal)">ES'+lastRow+'/26</b> \u00b7 '+lastName;
+    ['wlNextLab','todayNextLab','regNextLab'].forEach(function(id){
+      var e=document.getElementById(id); if(e) e.textContent='ES'+nextLab+'/26';
+    });
+    document.getElementById('todayPrev').innerHTML='Continues from <b>ES'+lastRow+'/26</b> · '+escHtml(lastName);
     document.getElementById('figToday').textContent=todayCount;
     document.getElementById('figTotal').textContent=total.toLocaleString('en-GB');
-    document.getElementById('figMoney').textContent='\u20a6'+Math.round(money).toLocaleString('en-GB');
+    document.getElementById('figUnpaid').textContent=naira(unpaid);
+    document.getElementById('figMoney').textContent=naira(money);
+    renderTodayRows(todayRows.reverse());
     applyPrivacy();
   }catch(e){
-    document.getElementById('todayPrev').textContent='(could not reach the tracker \u2014 check sharing)';
+    document.getElementById('todayPrev').textContent='(could not reach the tracker — check sharing)';
+    document.getElementById('regList').innerHTML='<div class="reg-empty">Could not reach the tracker.</div>';
+  }
+}
+function renderTodayRows(list){
+  var box=document.getElementById('regList');
+  if(!list.length){ box.innerHTML='<div class="reg-empty">No registrations on the tracker yet today.</div>'; return; }
+  box.innerHTML=list.map(function(r){
+    var due=/not\s*paid/i.test(r.payStatus);
+    var pay=due?naira(r.amount)+' due':(r.payStatus||'—');
+    return '<div class="regrow" onclick="openLab('+r.lab+')">'
+      +'<span class="lab">ES'+r.lab+'/26</span>'
+      +'<span class="mid"><span class="nm">'+escHtml(r.name)+'</span><span class="ts">'+escHtml(r.tests||'—')+'</span></span>'
+      +'<span class="pay'+(due?' due':'')+(due?' money':'')+'">'+pay+'</span>'
+      +'</div>';
+  }).join('');
+}
+function openLab(labNum){
+  show('report');
+  var inp=document.getElementById('labInput');
+  inp.value=labNum;
+  searchPatient();
+}
+
+/* ================= REGISTER (ported from register.html — logic unchanged) ================= */
+let PRICES=[];   // {name, section, price}
+let DOCTORS=[];  // {name, rebate, surcharge}
+let HOSPITALS=[];// {name, rebate, surcharge}
+let chosen=[];   // chosen tests [{name, price}]
+let netEditedByUser=false;
+let lastRegistration=null;
+let refDataPromise=null;
+
+function ensureRefData(){
+  if(!refDataPromise) refDataPromise=loadAll();
+  return refDataPromise;
+}
+
+async function loadAll(){
+  try{
+    const [pr,dr,ho]=await Promise.all([fetchTab(PRICE_GID),fetchTab(DOCTORS_GID),fetchTab(HOSPITALS_GID)]);
+    // PRICE LIST: data rows have numeric price in col D(index3). Skip section dividers.
+    PRICES=[];
+    pr.forEach(function(r){
+      if(!r||r.length<4) return;
+      const name=(r[1]||'').trim();
+      const section=(r[2]||'').trim();
+      const price=num(r[3]);
+      const active=(r[4]||'').trim().toUpperCase();
+      if(!name||!section) return;
+      if(name.toUpperCase()==='TEST NAME') return;
+      if(price<=0) return;
+      if(active==='N') return;
+      PRICES.push({name:name,section:section,price:price});
+    });
+    DOCTORS=parseRebateList(dr,false);
+    HOSPITALS=parseRebateList(ho,true);
+    document.getElementById('regLoadStatus').style.display='none';
+    document.getElementById('regMain').style.display='grid';
+    initRegisterUI();
+  }catch(err){
+    document.getElementById('regLoadStatus').className='status err';
+    document.getElementById('regLoadStatus').textContent='Could not load data: '+err.message+'. (The sheets must be shared as "anyone with the link can view".)';
+    refDataPromise=null;
+    throw err;
+  }
+}
+function parseRebateList(rows, allowDefaults){
+  // SURCHARGE column (col E): if the header exists it is the sole authority
+  // (blank cell = no surcharge). Defaults only apply when the column is absent.
+  const hasSurchargeCol = rows.some(function(r){
+    return r && r.length>4 && String(r[4]||'').toUpperCase().indexOf('SURCHARGE')!==-1;
+  });
+  const useDefaults = allowDefaults && !hasSurchargeCol;
+
+  const out=[];
+  rows.forEach(function(r){
+    if(!r||r.length<3) return;
+    const name=(r[1]||'').trim();
+    if(!name||name.toUpperCase().indexOf('NAME')!==-1) return;
+    let reb=num(r[2]); if(reb>REBATE_CAP) reb=REBATE_CAP;
+    const active=(r[3]||'').trim().toUpperCase();
+    if(active==='N') return;
+    let sur = hasSurchargeCol ? ((r.length>4)?num(r[4]):0) : 0;
+    if(useDefaults && !sur){ sur=DEFAULT_SURCHARGE[name.toLowerCase().trim()]||0; }
+    out.push({name:name,rebate:reb,surcharge:sur});
+  });
+  return out;
+}
+
+function initRegisterUI(){
+  const search=document.getElementById('testSearch');
+  const box=document.getElementById('testResults');
+  search.addEventListener('input',function(){
+    const t=this.value.trim().toLowerCase();
+    if(t.length<1){box.classList.remove('show');return;}
+    const hits=PRICES.filter(function(p){return p.name.toLowerCase().indexOf(t)!==-1;}).slice(0,12);
+    if(!hits.length){box.innerHTML='<div class="test-opt"><span class="sec">No match</span></div>';box.classList.add('show');return;}
+    box.innerHTML=hits.map(function(p){
+      return '<div class="test-opt" onclick="addTest(\''+p.name.replace(/'/g,"\\'")+'\')"><span>'+escHtml(p.name)+' <span class="sec">'+escHtml(p.section)+'</span></span><span class="p">'+naira(p.price)+'</span></div>';
+    }).join('');
+    box.classList.add('show');
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.test-search')) box.classList.remove('show');
+  });
+
+  document.getElementById('refType').addEventListener('change',populateReferrers);
+  document.getElementById('refName').addEventListener('change',recalc);
+  document.getElementById('mdDisc').addEventListener('input',recalc);
+  document.getElementById('finalAmount').addEventListener('input',function(){netEditedByUser=true;});
+  populateReferrers();
+  renderChosen();
+  const tn=document.getElementById('targetNote');
+  if(tn) tn.textContent='Registering writes to the sheet and issues the next lab number.';
+}
+
+function populateReferrers(){
+  const type=document.getElementById('refType').value;
+  const sel=document.getElementById('refName');
+  let list=[];
+  if(type==='doctor') list=DOCTORS;
+  else if(type==='hospital') list=HOSPITALS;
+  sel.innerHTML='<option value="">—</option>'+list.map(function(x,i){return '<option value="'+i+'">'+escHtml(x.name)+' ('+x.rebate+'%)</option>';}).join('');
+  sel.disabled = (type==='none');
+  recalc();
+}
+
+function currentReferrer(){
+  const type=document.getElementById('refType').value;
+  const idx=document.getElementById('refName').value;
+  if(type==='none'||idx==='') return null;
+  const list=type==='doctor'?DOCTORS:HOSPITALS;
+  return list[parseInt(idx)]||null;
+}
+function currentRebatePct(){ const r=currentReferrer(); return r?r.rebate:0; }
+function currentSurchargePerTest(){ const r=currentReferrer(); return (r&&r.surcharge)?r.surcharge:0; }
+
+// Billing order (owner-specified, exact):
+//   1. subtotal = tests gross + (surcharge × number of tests)
+//   2. MD discount % off the subtotal → discounted subtotal (what the patient pays)
+//   3. referrer rebate % computed ON the discounted subtotal — monthly payout
+//      bookkeeping only, never deducted from the bill
+//   4. the editable final-amount field can override the figure directly
+function computeBill(){
+  const gross=chosen.reduce(function(s,c){return s+c.price;},0);
+  const surRate=currentSurchargePerTest();
+  const surcharge=surRate*chosen.length;
+  const subtotal=gross+surcharge;
+  const discPct=Math.min(100,Math.max(0,num(document.getElementById('mdDisc').value)));
+  const discount=subtotal*discPct/100;
+  const discounted=subtotal-discount;
+  const pct=currentRebatePct();
+  const rebate=discounted*pct/100;
+  const net=discounted;
+  return {gross:gross,surRate:surRate,surcharge:surcharge,subtotal:subtotal,discPct:discPct,discount:discount,discounted:discounted,pct:pct,rebate:rebate,net:net};
+}
+
+window.addTest=function(name){
+  const p=PRICES.find(function(x){return x.name===name;});
+  if(!p) return;
+  if(chosen.find(function(c){return c.name===name;})) return; // no dupes
+  chosen.push({name:p.name,price:p.price});
+  document.getElementById('testSearch').value='';
+  document.getElementById('testResults').classList.remove('show');
+  netEditedByUser=false;
+  renderChosen();
+};
+window.removeTest=function(name){
+  chosen=chosen.filter(function(c){return c.name!==name;});
+  netEditedByUser=false;
+  renderChosen();
+};
+function renderChosen(){
+  const box=document.getElementById('chosenTests');
+  if(!chosen.length){box.innerHTML='<div class="empty-hint">No tests added yet.</div>';recalc();return;}
+  const sect={};
+  PRICES.forEach(function(p){sect[p.name]=p.section;});
+  box.innerHTML='<div class="chosen-list">'+chosen.map(function(c){
+    return '<div class="chosen-row"><span class="nm">'+escHtml(c.name)+'</span><span class="sec">'+escHtml(sect[c.name]||'')+'</span><span class="amt">'+naira(c.price)+'</span><button onclick="removeTest(\''+c.name.replace(/'/g,"\\'")+'\')" aria-label="Remove test">×</button></div>';
+  }).join('')+'</div>';
+  recalc();
+}
+
+function recalc(){
+  const b=computeBill();
+  document.getElementById('billCount').textContent=chosen.length;
+  document.getElementById('billGross').textContent=naira(b.gross);
+
+  const surLine=document.getElementById('surchargeLine');
+  const subLine=document.getElementById('subtotalLine');
+  if(b.surRate>0 && chosen.length>0){
+    surLine.style.display='flex'; subLine.style.display='flex';
+    document.getElementById('billSurRate').textContent=naira(b.surRate);
+    document.getElementById('billSurcharge').textContent='+'+naira(b.surcharge);
+    document.getElementById('billSubtotal').textContent=naira(b.subtotal);
+  }else{
+    surLine.style.display='none'; subLine.style.display='none';
+  }
+
+  const discLine=document.getElementById('discLine');
+  if(b.discount>0){
+    discLine.style.display='flex';
+    document.getElementById('billDiscPct').textContent=b.discPct;
+    document.getElementById('billDiscount').textContent='−'+naira(b.discount);
+  }else{
+    discLine.style.display='none';
+  }
+
+  document.getElementById('billRebatePct').textContent=b.pct;
+  document.getElementById('billRebate').textContent=naira(b.rebate);
+  document.getElementById('billNet').textContent=naira(b.net);
+  if(!netEditedByUser){
+    document.getElementById('finalAmount').value=Math.round(b.net).toLocaleString('en-NG');
+  }
+  const note=document.getElementById('rebateNote');
+  const type=document.getElementById('refType').value;
+  let msg='';
+  if(type==='none'){ msg='Walk-in patient — no rebate applies.'; }
+  else if(!currentReferrer()){ msg='Select a referrer to track their monthly rebate.'; }
+  else {
+    msg='The patient pays in full. '+b.pct+'% of this bill goes on '+ (currentReferrer()?currentReferrer().name:'the referrer') +'’s monthly statement — nothing is deducted here.';
+    if(b.surRate>0) msg+=' A '+naira(b.surRate)+' per-test surcharge applies.';
+    msg+=' You can still adjust the final amount.';
+  }
+  note.textContent=msg;
+}
+
+async function postWithRetry(payload, maxTries, statusFn){
+  maxTries = maxTries || 4;
+  statusFn = statusFn || setStatus;
+  let lastErr='';
+  for(let attempt=1; attempt<=maxTries; attempt++){
+    try{
+      const res=await fetch(REG_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+      const text=await res.text();
+      // If Apps Script returned its HTML 'busy' page, treat as retryable
+      if(text.trim().charAt(0)==='<'){ lastErr='busy'; }
+      else {
+        const json=JSON.parse(text);
+        if(json.ok===false && /busy/i.test(json.error||'')){ lastErr='busy'; }
+        else return json;
+      }
+    }catch(e){ lastErr=e.message; }
+    statusFn('Busy, retrying… (attempt '+(attempt+1)+')','load');
+    await new Promise(r=>setTimeout(r, 400*attempt + Math.random()*300));
+  }
+  return {ok:false,error:'Still busy after '+maxTries+' tries ('+lastErr+'). Please try again.'};
+}
+
+function setStatus(msg,kind){
+  let el=document.getElementById('regStatus');
+  if(!el){ el=document.createElement('div'); el.id='regStatus'; el.className='status';
+    document.getElementById('afterRegister').before(el); }
+  el.className='status '+(kind==='ok'?'ok':kind==='err'?'err':'load');
+  el.innerHTML=(kind==='load'?'<span class="spinner"></span>':'')+msg;
+}
+
+window.doRegister=async function(){
+  const name=document.getElementById('pName').value.trim();
+  if(!name){alert('Please enter the patient name.');return;}
+  if(!chosen.length){alert('Please add at least one test.');return;}
+  const b=computeBill();
+  const finalAmt=num(document.getElementById('finalAmount').value);
+  const refObj=currentReferrer();
+  const refName=refObj?refObj.name:'Walk-in';
+
+  const btn=document.getElementById('registerBtn');
+  btn.disabled=true; btn.textContent='Registering…';
+  setStatus('Registering patient…','load');
+
+  const payload={
+    token:REG_TOKEN, action:'register',
+    name:name, gender:document.getElementById('pGender').value,
+    age:document.getElementById('pAge').value, phone:document.getElementById('pPhone').value,
+    investigation:chosen.map(function(c){return c.name;}).join(', '),
+    requestor:refName, amount:finalAmt, rebate:b.pct,
+    payMode:document.getElementById('payMode').value, payStatus:document.getElementById('payStatus').value,
+    registeredBy:document.getElementById('regBy').value||'APP', location:document.getElementById('labLoc').value
+  };
+  // Machine-readable tag so the rebate generator can rebuild the discounted
+  // figure later. The endpoint should APPEND this to the comments column.
+  if(b.discPct>0) payload.comments='DISC:'+b.discPct+'%';
+
+  const r=await postWithRetry(payload);
+  btn.disabled=false; btn.textContent='Register & issue lab no.';
+
+  if(r.ok){
+    setStatus('✅ Registered! Lab number issued: ES'+r.labNum+'/26 (row '+r.row+')','ok');
+    lastRegistration={
+      labNum:r.labNum, name:name, gender:document.getElementById('pGender').value,
+      age:document.getElementById('pAge').value, phone:document.getElementById('pPhone').value,
+      tests:chosen.slice(), bill:b, finalAmount:finalAmt, referredBy:refName,
+      payMode:document.getElementById('payMode').value, payStatus:document.getElementById('payStatus').value,
+      registeredBy:document.getElementById('regBy').value||'APP',
+      location:document.getElementById('labLoc').value, when:new Date()
+    };
+    const paid=/paid/i.test(lastRegistration.payStatus) && !/not/i.test(lastRegistration.payStatus);
+    document.getElementById('afterRegister').innerHTML=
+      '<div class="card"><div class="card-title">Registration complete</div>'+
+      '<div class="bill-line"><span class="lbl">Lab number</span><span class="val">ES'+r.labNum+'/26</span></div>'+
+      '<div class="bill-line"><span class="lbl">Patient</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(name)+'</span></div>'+
+      '<div class="bill-line"><span class="lbl">Tests</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(chosen.map(function(c){return c.name;}).join(', '))+'</span></div>'+
+      '<div class="bill-line"><span class="lbl">Referred by</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(refName)+'</span></div>'+
+      '<div class="bill-line total"><span>Amount</span><span class="val">'+naira(finalAmt)+'</span></div>'+
+      (paid?'<button class="btn" onclick="printReceipt()" style="margin-top:1rem;width:100%">Print / save receipt</button>':
+            '<div class="bill-note" style="margin-top:1rem">Receipt available once payment status is Paid.</div>')+
+      '<button class="btn ghost" onclick="resetForm()" style="margin-top:.5rem;width:100%">Register another patient</button>'+
+      '</div>';
+    chosen=[]; netEditedByUser=false;
+    loadToday();
+  }else{
+    setStatus('❌ '+(r.error||'Registration failed'),'err');
+  }
+};
+
+window.resetForm=function(){
+  document.getElementById('pName').value='';
+  document.getElementById('pGender').value='';
+  document.getElementById('pAge').value='';
+  document.getElementById('pPhone').value='';
+  document.getElementById('mdDisc').value='';
+  chosen=[]; netEditedByUser=false; renderChosen();
+  document.getElementById('afterRegister').innerHTML='';
+  const st=document.getElementById('regStatus'); if(st) st.remove();
+  window.scrollTo(0,0);
+};
+
+/* ===================== RECEIPT (ported verbatim) ===================== */
+window.printReceipt=function(){
+  if(!lastRegistration){alert('No registration to print.');return;}
+  const R=lastRegistration, b=R.bill;
+  const d=R.when;
+  const dateStr=('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
+  const timeStr=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+
+  let rows='';
+  R.tests.forEach(function(t,i){
+    rows+='<tr><td class="n">'+(i+1)+'</td><td>'+escHtml(t.name)+'</td><td class="r">'+naira(t.price)+'</td></tr>';
+  });
+
+  let adj='';
+  adj+='<tr class="sub"><td colspan="2">Subtotal (tests)</td><td class="r">'+naira(b.gross)+'</td></tr>';
+  if(b.surcharge>0){
+    adj+='<tr><td colspan="2">Surcharge ('+naira(b.surRate)+' × '+R.tests.length+' tests)</td><td class="r">+'+naira(b.surcharge)+'</td></tr>';
+    adj+='<tr class="sub"><td colspan="2">Subtotal</td><td class="r">'+naira(b.subtotal)+'</td></tr>';
+  }
+  if(b.discount>0){
+    adj+='<tr><td colspan="2">Discount ('+b.discPct+'%)</td><td class="r neg">−'+naira(b.discount)+'</td></tr>';
+    adj+='<tr class="sub"><td colspan="2">Subtotal after discount</td><td class="r">'+naira(b.discounted)+'</td></tr>';
+  }
+  // The referrer rebate is an internal monthly payout — it never appears on the
+  // patient's receipt and is never deducted from what they pay.
+
+  const win=window.open('','_blank','width=780,height=900');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt ES'+R.labNum+'/26</title><style>'+
+  '@page{size:A5;margin:12mm;}'+
+  'body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0;padding:16px;}'+
+  '.hd{display:flex;gap:14px;align-items:center;border-bottom:3px solid #1B3A6B;padding-bottom:12px;}'+
+  '.hd img{width:64px;height:64px;border-radius:50%;object-fit:cover;}'+
+  '.hd h1{font-size:16px;margin:0;color:#1B3A6B;letter-spacing:.01em;}'+
+  '.hd p{margin:2px 0 0;font-size:10px;color:#555;line-height:1.45;}'+
+  '.tag{text-align:center;background:#1B3A6B;color:#fff;font-weight:700;letter-spacing:.14em;font-size:12px;padding:7px;margin:14px 0;}'+
+  '.meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;font-size:12px;margin-bottom:14px;}'+
+  '.meta div span{color:#777;}'+
+  '.meta div b{color:#1B3A6B;}'+
+  'table{width:100%;border-collapse:collapse;font-size:12px;}'+
+  'th{background:#E8EEF6;color:#1B3A6B;text-align:left;padding:7px 8px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;}'+
+  'td{padding:6px 8px;border-bottom:1px solid #eee;}'+
+  'td.n{width:26px;color:#999;} td.r{text-align:right;white-space:nowrap;}'+
+  'tr.sub td{font-weight:600;background:#fafafa;}'+
+  'td.neg{color:#A32D2D;}'+
+  '.total{margin-top:10px;display:flex;justify-content:space-between;align-items:center;border-top:3px solid #1B3A6B;padding-top:10px;font-size:17px;font-weight:800;color:#1B3A6B;}'+
+  '.paid{margin-top:12px;text-align:center;border:2px solid #0F6E56;color:#0F6E56;font-weight:800;letter-spacing:.18em;padding:7px;font-size:13px;}'+
+  '.ft{margin-top:18px;font-size:10px;color:#777;text-align:center;line-height:1.6;border-top:1px solid #ddd;padding-top:10px;}'+
+  '@media print{.noprint{display:none;}}'+
+  '.noprint{margin-top:16px;text-align:center;}'+
+  '.noprint button{background:#0F6E56;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:14px;cursor:pointer;}'+
+  '</style></head><body>'+
+  '<div class="hd"><img src="data:image/jpeg;base64,'+LOGO_B64+'"/>'+
+  '<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'+
+  '<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'+
+  'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'+
+  'Tel: 07060904931, 08037068465 &nbsp;|&nbsp; shalomnwagodfmc@gmail.com</p></div></div>'+
+  '<div class="tag">PAYMENT RECEIPT</div>'+
+  '<div class="meta">'+
+  '<div><span>Receipt No:</span> <b>ES'+R.labNum+'/26</b></div>'+
+  '<div><span>Date:</span> <b>'+dateStr+' '+timeStr+'</b></div>'+
+  '<div><span>Patient:</span> <b>'+escHtml(R.name)+'</b></div>'+
+  '<div><span>Age / Sex:</span> <b>'+(escHtml(R.age)||'—')+' / '+(escHtml(R.gender)||'—')+'</b></div>'+
+  '<div><span>Referred By:</span> <b>'+escHtml(R.referredBy)+'</b></div>'+
+  '<div><span>Payment Mode:</span> <b>'+escHtml(R.payMode)+'</b></div>'+
+  '<div><span>Location:</span> <b>'+escHtml(R.location)+'</b></div>'+
+  '<div><span>Received By:</span> <b>'+escHtml(R.registeredBy)+'</b></div>'+
+  '</div>'+
+  '<table><thead><tr><th></th><th>Test / Investigation</th><th style="text-align:right;">Amount</th></tr></thead>'+
+  '<tbody>'+rows+adj+'</tbody></table>'+
+  '<div class="total"><span>TOTAL PAID</span><span>'+naira(R.finalAmount)+'</span></div>'+
+  '<div class="paid">PAID</div>'+
+  '<div class="ft">Thank you for choosing Evashalom Medical Diagnostic Services.<br>'+
+  'This receipt is computer generated. Please retain it as evidence of payment.</div>'+
+  '<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'+
+  '</body></html>');
+  win.document.close();
+  setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} }, 500);
+};
+
+/* ================= REFERENCE RANGES (ported from index.html) ================= */
+// These get populated at load time from the reference tab.
+// Structure per key: {section, label, unit, group, gLow, gHigh, mLow, mHigh, fLow, fHigh, displayText}
+let REF = null;
+let REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+let REF_GROUPS = {};
+let currentPatient = null, currentResults = null;
+
+const SECTION_NAME_MAP = {
+  'CHEMISTRY': 'Chemistry',
+  'HAEMATOLOGY': 'Haematology',
+  'HORMONES': 'Hormones & Serology',
+  'MICROBIOLOGY': 'Microbiology'
+};
+
+function numOrNull(v) {
+  if (v === undefined || v === null) return null;
+  const s = String(v).trim();
+  if (s === '') return null;
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+// Composite key so the same column name can exist in two sections (e.g. RBC).
+function refKey(section, col) { return section + '|||' + col; }
+function getRef(section, col) { return REF[refKey(section, col)] || null; }
+
+// Load the reference tab once and build all lookups the app needs.
+async function loadReference() {
+  if (REF) return; // already loaded this session
+  const raw = await fetchTabCsv(RESULT_ID, REFERENCE_GID);
+  REF = {};
+  REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+  REF_GROUPS = {};
+  const allRows = [raw.cols].concat(raw.rows);
+  allRows.forEach(function(row) {
+    if (!row || row.length < 3) return;
+    const sectionRaw = (row[0] || '').trim().toUpperCase();
+    const sheetCol = (row[1] || '').trim();
+    const section = SECTION_NAME_MAP[sectionRaw];
+    if (!section || !sheetCol) return; // skip titles, dividers, blanks
+    const def = {
+      section: section,
+      label: (row[2] || sheetCol).trim(),
+      unit: (row[3] || '').trim(),
+      group: (row[4] || '').trim(),
+      gLow: numOrNull(row[5]), gHigh: numOrNull(row[6]),
+      mLow: numOrNull(row[7]), mHigh: numOrNull(row[8]),
+      fLow: numOrNull(row[9]), fHigh: numOrNull(row[10]),
+      displayText: (row[11] || '').trim()
+    };
+    REF[refKey(section, sheetCol)] = def;
+    REF_BY_SECTION[section].push(sheetCol);
+    if (def.group) {
+      if (!REF_GROUPS[section]) REF_GROUPS[section] = {};
+      if (!REF_GROUPS[section][def.group]) REF_GROUPS[section][def.group] = [];
+      REF_GROUPS[section][def.group].push(sheetCol);
+    }
+  });
+}
+
+// Pick the right [low,high] for a patient based on gender, falling back to general.
+function rangeFor(def, gender) {
+  const g = (gender || '').trim().toUpperCase();
+  if (g === 'M' || g === 'MALE') {
+    if (def.mLow !== null || def.mHigh !== null) return [def.mLow, def.mHigh];
+  } else if (g === 'F' || g === 'FEMALE') {
+    if (def.fLow !== null || def.fHigh !== null) return [def.fLow, def.fHigh];
+  }
+  if (def.gLow !== null || def.gHigh !== null) return [def.gLow, def.gHigh];
+  if (def.mLow !== null || def.mHigh !== null) return [def.mLow, def.mHigh];
+  if (def.fLow !== null || def.fHigh !== null) return [def.fLow, def.fHigh];
+  return null;
+}
+
+// Reference-driven abnormal check (gender aware, section-scoped)
+function checkAbnormalRef(section, sheetCol, value, gender) {
+  const def = getRef(section, sheetCol);
+  if (!def) return null;
+  const range = rangeFor(def, gender);
+  if (!range) return null;
+  const n = parseFloat(cleanValue(value));
+  if (isNaN(n)) return null;
+  const lo = range[0], hi = range[1];
+  if (lo !== null && n < lo) return 'low';
+  if (hi !== null && n > hi) return 'high';
+  return null;
+}
+
+// Extract results for a section using the live REF definitions.
+function extractResults(cols, row, sectionName) {
+  const results = [];
+  cols.forEach((col, i) => {
+    const key = (col || '').trim();
+    const val = (row[i] || '').trim();
+    const def = getRef(sectionName, key);
+    if (val && def) {
+      results.push({ key: key, label: def.label, value: val });
+    }
+  });
+  return results;
+}
+
+/* status helpers (visuals adapted to the portal skin) */
+function paintStatus(id, msg, type) {
+  const bar = document.getElementById(id);
+  const cls = type === 'loading' ? 'load' : type === 'error' ? 'err' : 'ok';
+  bar.className = 'status ' + cls;
+  bar.innerHTML = (type === 'loading' ? '<span class="spinner"></span>' : '') + msg;
+  bar.classList.remove('hidden');
+}
+function showStatus(msg, type) { paintStatus('statusBar', msg, type); }
+function hideStatus() { document.getElementById('statusBar').classList.add('hidden'); }
+
+/* ================= GENERATE REPORT (ported from index.html) ================= */
+// Reusable: load a patient + their results by lab number into currentPatient/currentResults.
+async function loadPatientByLab(labNum) {
+  await loadReference();
+  const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+  const rowIndex = labNum - 2;
+  const pRow = patientData.rows[rowIndex] || [];
+  if (!pRow || !pRow[1]) return false;
+  let patientDate = '';
+  for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
+  const rawAge = pRow[3] ? pRow[3].trim() : '';
+  const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
+  currentPatient = {
+    labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+    age: age, phone: pRow[4] || '', investigations: pRow[5] || '',
+    referredBy: pRow[6] || '', amount: pRow[8] || '',
+    paymentStatus: pRow[11] || '', date: formatDate(patientDate), rowIndex: rowIndex
+  };
+  const results = await Promise.all([
+    fetchTabCsv(RESULT_ID, GIDS.CHEMISTRY).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.HAEMATOLOGY).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.HORMONES).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] }))
+  ]);
+  currentResults = {
+    chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], 'Chemistry'),
+    haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], 'Haematology'),
+    hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], 'Hormones & Serology'),
+    microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology')
+  };
+  return true;
+}
+
+async function searchPatient() {
+  const labNum = parseInt(document.getElementById('labInput').value);
+  if (!labNum || labNum < 2) { showStatus('Please enter a valid lab number (minimum 2).', 'error'); return; }
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Searching…';
+  document.getElementById('patientCard').classList.add('hidden');
+  showStatus('Loading patient record…', 'loading');
+  try {
+    const found = await loadPatientByLab(labNum);
+    if (!found) { showStatus('No patient found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Load'; return; }
+    renderPatientCard(); hideStatus();
+  } catch(err) { console.error(err); showStatus('Error: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Load';
+}
+
+function renderPatientCard() {
+  const p = currentPatient, r = currentResults;
+  const fields = [
+    {lbl:'Lab No.',val:p.labNo,mono:true},{lbl:'Patient Name',val:p.name},
+    {lbl:'Gender',val:p.gender},{lbl:'Age',val:p.age},
+    {lbl:'Referred By',val:p.referredBy||'—'},{lbl:'Request Date',val:p.date||'—'},
+    {lbl:'Payment',val:p.paymentStatus||'—'},{lbl:'Amount',val:p.amount||'—',money:true}
+  ];
+  document.getElementById('patientGrid').innerHTML = fields.map(f =>
+    '<div class="pf"><span class="lbl">' + f.lbl + '</span><span class="val' + (f.val==='—'?' empty':'') + (f.mono?' mono-v':'') + (f.money?' money':'') + '">' + escHtml(f.val) + '</span></div>'
+  ).join('');
+  document.getElementById('testsBadges').innerHTML = p.investigations.split(/[,\n]/).map(t => t.replace(/"/g,'').trim()).filter(Boolean).map(t => '<span class="badge">' + escHtml(t) + '</span>').join('');
+  const sections = [
+    {name:'Chemistry',results:r.chemistry},{name:'Haematology',results:r.haematology},
+    {name:'Hormones & Serology',results:r.hormones},{name:'Microbiology',results:r.microbiology}
+  ];
+  document.getElementById('sectionsGrid').innerHTML = sections.map(s => {
+    const has = s.results.length > 0;
+    const params = has ? s.results.slice(0,5).map(x => x.label).join(', ') + (s.results.length>5?'…':'') : 'No results on this row';
+    return '<div class="sc ' + (has?'has':'no') + '"><div class="sc-head"><span class="sc-name">' + s.name + '</span><div class="dot ' + (has?'dot-g':'dot-x') + '"></div></div><div class="sc-params">' + escHtml(params) + '</div></div>';
+  }).join('');
+  let preview = '';
+  if (r.chemistry.length)    preview += makeTable('Chemistry Results',           r.chemistry,    'Chemistry');
+  if (r.haematology.length)  preview += makeTable('Haematology Results',         r.haematology,  'Haematology');
+  if (r.hormones.length)     preview += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
+  if (r.microbiology.length) preview += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
+  document.getElementById('resultsPreview').innerHTML = preview;
+  const total = r.chemistry.length + r.haematology.length + r.hormones.length + r.microbiology.length;
+  const sc = sections.filter(s => s.results.length > 0).length;
+  document.getElementById('genNote').textContent = total + ' result' + (total!==1?'s':'') + ' across ' + sc + ' section' + (sc!==1?'s':'');
+  document.getElementById('patientCard').classList.remove('hidden');
+  applyPrivacy();
+}
+
+function makeTable(title, results, sectionName) {
+  const gender = currentPatient ? currentPatient.gender : '';
+  let rows = '';
+  const seenGroups = {};
+  results.forEach(function(res) {
+    const def = getRef(sectionName, res.key) || {};
+    if (def.group && !seenGroups[def.group]) {
+      seenGroups[def.group] = true;
+      rows += '<tr class="subhdr"><td colspan="4">' + escHtml(def.group) + '</td></tr>';
+    }
+    const abn = checkAbnormalRef(sectionName, res.key, res.value, gender);
+    const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
+    const unit = def.unit || '—';
+    const refTxt = def.displayText || '—';
+    rows += '<tr><td class="pn">' + escHtml(res.label) + '</td><td class="rv' + (abn?' abn':'') + '">' + escHtml(formatNumber(res.value)) + flag + '</td><td class="rr">' + escHtml(unit) + '</td><td class="rr">' + escHtml(refTxt) + '</td></tr>';
+  });
+  return '<div class="card-title" style="margin-bottom:.75rem;">' + title + '</div><table class="rtable"><thead><tr><th>Test Name</th><th>Result</th><th>Unit</th><th>Reference Range</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function generateReport() {
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generating…';
+  try {
+    const p = currentPatient, r = currentResults;
+    const {Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,AlignmentType,BorderStyle,WidthType,ShadingType,VerticalAlign,ImageRun} = docx;
+    const W = 10440, NAVY = '1B3A6B', LIGHT_BLUE = 'D6E4F7', GRAY_ROW = 'F7F8FA', MID_BLUE = '4A7BB7';
+    function solid(s,c) { return {style:BorderStyle.SINGLE,size:s,color:c||'CCCCCC'}; }
+    function allB(s,c) { const b=solid(s,c); return {top:b,bottom:b,left:b,right:b}; }
+    const noB = {style:BorderStyle.NONE,size:0,color:'FFFFFF'};
+    const noBorders = {top:noB,bottom:noB,left:noB,right:noB};
+    function pd(t,b,l,r) { return {top:t,bottom:b,left:l,right:r}; }
+    function run(t,o) {
+      o = o||{};
+      return new TextRun({text:String(t||''),font:'Calibri',size:o.sz||20,bold:!!o.bold,color:o.color||'000000',italics:!!o.italic});
+    }
+    function par(ch,o) {
+      o = o||{};
+      return new Paragraph({alignment:o.align||AlignmentType.LEFT,spacing:{before:o.before||0,after:o.after||0},children:Array.isArray(ch)?ch:[ch]});
+    }
+    function mkCell(ch,o) {
+      o = o||{};
+      return new TableCell({borders:o.borders||allB(4),width:{size:o.w||2000,type:WidthType.DXA},shading:o.fill?{fill:o.fill,type:ShadingType.CLEAR,color:'auto'}:undefined,margins:o.pad||pd(80,80,120,120),verticalAlign:VerticalAlign.CENTER,columnSpan:o.span||1,children:Array.isArray(ch)?ch:[ch]});
+    }
+    const logoData = Uint8Array.from(atob(LOGO_B64), function(c){return c.charCodeAt(0);});
+
+    const infoData = [
+      ['Patient Name:', p.name,              'Lab. No:',           p.labNo],
+      ['Age:',          p.age,               'Specimen:',          'BLOOD'],
+      ['Gender:',       p.gender,            'Request Date:',      p.date],
+      ['Referred By:',  p.referredBy||'—', 'Report Date:',   new Date().toLocaleDateString('en-GB')],
+      ['Report Status:','FINAL',             'Test(s) Requested:', p.investigations.replace(/"/g,'')]
+    ];
+    const infoRows = infoData.map(function(row,ri) {
+      return new TableRow({children:[
+        mkCell(par(run(row[0],{bold:true,sz:19,color:'333333'})),{w:1700,borders:allB(4,'E0E0E0'),fill:ri%2===0?'F0F4FA':'FAFBFD',pad:pd(70,70,120,100)}),
+        mkCell(par(run(row[1],{sz:19,color:NAVY,bold:true})),{w:3420,borders:allB(4,'E0E0E0'),fill:ri%2===0?'FFFFFF':'FAFBFD',pad:pd(70,70,100,100)}),
+        mkCell(par(run(row[2],{bold:true,sz:19,color:'333333'})),{w:1700,borders:allB(4,'E0E0E0'),fill:ri%2===0?'F0F4FA':'FAFBFD',pad:pd(70,70,120,100)}),
+        mkCell(par(run(row[3],{sz:19,color:NAVY,bold:true})),{w:3620,borders:allB(4,'E0E0E0'),fill:ri%2===0?'FFFFFF':'FAFBFD',pad:pd(70,70,100,100)})
+      ]});
+    });
+
+    function buildTable(sectionLabel, results, sectionName) {
+      if (!results || results.length === 0) return [];
+      const gender = p.gender;
+      const colW = [4200,2000,1720,2520];
+      const rows = [];
+      rows.push(new TableRow({children:[mkCell(par(run(sectionLabel,{bold:true,sz:20,color:'FFFFFF'})),{w:W,span:4,borders:allB(6,NAVY),fill:NAVY,pad:pd(100,100,160,160)})]}));
+      rows.push(new TableRow({children:[
+        mkCell(par(run('TEST NAME',{bold:true,sz:17,color:NAVY})),{w:colW[0],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,120,120)}),
+        mkCell(par(run('RESULT',{bold:true,sz:17,color:NAVY}),{align:AlignmentType.CENTER}),{w:colW[1],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,80,80)}),
+        mkCell(par(run('UNIT',{bold:true,sz:17,color:NAVY}),{align:AlignmentType.CENTER}),{w:colW[2],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,80,80)}),
+        mkCell(par(run('REFERENCE RANGE',{bold:true,sz:17,color:NAVY}),{align:AlignmentType.CENTER}),{w:colW[3],borders:allB(4,'C5D8EE'),fill:LIGHT_BLUE,pad:pd(70,70,80,80)})
+      ]}));
+      const seenGroups = {};
+      let ri = 0;
+      results.forEach(function(res) {
+        const def = getRef(sectionName, res.key) || {};
+        if (def.group && !seenGroups[def.group]) {
+          seenGroups[def.group] = true;
+          rows.push(new TableRow({children:[mkCell(par(run(def.group,{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
+        }
+        const abn = checkAbnormalRef(sectionName, res.key, res.value, gender);
+        const flag = abn === 'high' ? ' ↑' : abn === 'low' ? ' ↓' : '';
+        const rColor = abn ? 'CC0000' : NAVY;
+        const rowFill = ri%2===0 ? 'FFFFFF' : GRAY_ROW;
+        const unit = def.unit || '';
+        const refTxt = def.displayText || '—';
+        rows.push(new TableRow({children:[
+          mkCell(par(run(res.label,{sz:19})),{w:colW[0],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,120,120)}),
+          mkCell(par(run(formatNumber(res.value)+flag,{bold:true,sz:19,color:rColor}),{align:AlignmentType.CENTER}),{w:colW[1],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)}),
+          mkCell(par(run(unit,{sz:17,color:'777777'}),{align:AlignmentType.CENTER}),{w:colW[2],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)}),
+          mkCell(par(run(refTxt,{sz:17,color:'555555'}),{align:AlignmentType.CENTER}),{w:colW[3],borders:allB(4,'E8E8E8'),fill:rowFill,pad:pd(70,70,80,80)})
+        ]}));
+        ri++;
+      });
+      return [new Table({width:{size:W,type:WidthType.DXA},columnWidths:colW,rows:rows}), par('',{after:200})];
+    }
+
+    const logoRow = new TableRow({children:[
+      mkCell(par(new ImageRun({data:logoData,transformation:{width:72,height:72},type:'jpg'}),{align:AlignmentType.CENTER}),{w:1200,borders:noBorders,pad:pd(0,0,0,80)}),
+      mkCell([
+        par(run('EVASHALOM MEDICAL DIAGNOSTIC SERVICES',{bold:true,sz:26,color:NAVY}),{after:40}),
+        par(run('No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
+        par(run('No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
+        par(run('Tel: 07060904931  |  08037068465     Email: shalomnwagodfmc@gmail.com',{sz:16,color:'444444'}))
+      ],{w:9240,borders:noBorders,pad:pd(0,0,80,0)})
+    ]});
+
+    const titleRow = new TableRow({children:[
+      mkCell(par(run('LABORATORY RESULT REPORT',{bold:true,sz:22,color:'FFFFFF'}),{align:AlignmentType.CENTER}),{w:W,borders:allB(6,MID_BLUE),fill:MID_BLUE,pad:pd(120,120,160,160)})
+    ]});
+
+    const sigRow = new TableRow({children:[
+      mkCell([
+        par(run('_________________________________',{sz:20,color:'999999'}),{after:40}),
+        par(run('Authorized Signatory',{bold:true,sz:19,color:NAVY}),{after:20}),
+        par(run('Evashalom Medical Diagnostic Services',{sz:17,color:'555555'}))
+      ],{w:5220,borders:noBorders,pad:pd(80,80,0,0)}),
+      mkCell([
+        par(run('Date: '+new Date().toLocaleDateString('en-GB'),{sz:19,color:'333333'}),{after:40,align:AlignmentType.RIGHT}),
+        par(run('Report Status: FINAL',{bold:true,sz:19,color:NAVY}),{after:0,align:AlignmentType.RIGHT})
+      ],{w:5220,borders:noBorders,pad:pd(80,80,0,0)})
+    ]});
+
+    const doc = new Document({sections:[{
+      properties:{page:{
+        size:{width:11906,height:16838},
+        margin:{top:640,right:800,bottom:800,left:800},
+        borders:{top:solid(12,NAVY),bottom:solid(12,NAVY),left:solid(12,NAVY),right:solid(12,NAVY)}
+      }},
+      children:[
+        new Table({width:{size:W,type:WidthType.DXA},columnWidths:[1200,9240],rows:[logoRow]}),
+        new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:16,color:NAVY,space:1}},children:[run('')],spacing:{before:80,after:160}}),
+        new Table({width:{size:W,type:WidthType.DXA},rows:[titleRow]}),
+        par('',{after:120}),
+        new Table({width:{size:W,type:WidthType.DXA},columnWidths:[1700,3420,1700,3620],rows:infoRows}),
+        par('',{after:200}),
+        ...buildTable('CHEMISTRY SECTION',    r.chemistry,    'Chemistry'),
+        ...buildTable('HAEMATOLOGY SECTION',  r.haematology,  'Haematology'),
+        ...buildTable('HORMONES & SEROLOGY',  r.hormones,     'Hormones & Serology'),
+        ...buildTable('MICROBIOLOGY SECTION', r.microbiology, 'Microbiology'),
+        new Paragraph({border:{top:{style:BorderStyle.SINGLE,size:8,color:NAVY,space:1}},children:[run('')],spacing:{before:200,after:120}}),
+        par([run('NOTE: ',{bold:true,sz:17,color:'555555'}),run('Results should be interpreted in the context of clinical findings. Abnormal values are flagged with ↑ (high) or ↓ (low).',{sz:17,color:'666666',italic:true})],{after:200}),
+        new Table({width:{size:W,type:WidthType.DXA},columnWidths:[5220,5220],rows:[sigRow]})
+      ]
+    }]});
+
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = p.labNo.replace('/','_') + '-' + p.name.replace(/\s+/g,'_') + '.docx';
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus('Report downloaded: ' + p.labNo + ' — ' + escHtml(p.name), 'success');
+  } catch(err) { console.error(err); showStatus('Failed to generate: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Download report (.docx)';
+}
+
+/* ================= ENTER RESULTS (ported from index.html) ================= */
+const SECTION_GIDS = [
+  {name:'Chemistry',           gid:GIDS.CHEMISTRY},
+  {name:'Haematology',         gid:GIDS.HAEMATOLOGY},
+  {name:'Hormones & Serology', gid:GIDS.HORMONES},
+  {name:'Microbiology',        gid:GIDS.MICROBIOLOGY}
+];
+
+let entryPatient = null;
+let entrySheetData = null; // {sectionName: {cols, rows}}
+
+function showEntryStatus(msg, type) { paintStatus('entryStatusBar', msg, type); }
+function hideEntryStatus() { document.getElementById('entryStatusBar').classList.add('hidden'); }
+
+async function loadEntryPatient() {
+  const labNum = parseInt(document.getElementById('entryLabInput').value);
+  if (!labNum || labNum < 2) { showEntryStatus('Please enter a valid lab number (minimum 2).', 'error'); return; }
+  const btn = document.getElementById('entrySearchBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Loading…';
+  document.getElementById('entryCard').classList.add('hidden');
+  showEntryStatus('Loading patient…', 'loading');
+  try {
+    await loadReference();
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    const rowIndex = labNum - 2;
+    const pRow = patientData.rows[rowIndex] || [];
+    if (!pRow || !pRow[1]) { showEntryStatus('No patient found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Load'; return; }
+    let patientDate = '';
+    for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
+    const rawAge = pRow[3] ? pRow[3].trim() : '';
+    const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
+    entryPatient = {
+      labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+      age: age, investigations: pRow[5] || '', referredBy: pRow[6] || '',
+      date: formatDate(patientDate), rowIndex: rowIndex, labNum: labNum
+    };
+    showEntryStatus('Loading existing results…', 'loading');
+    const fetched = await Promise.all(SECTION_GIDS.map(s => fetchTabCsv(RESULT_ID, s.gid).catch(() => ({cols:[],rows:[]}))));
+    entrySheetData = {};
+    SECTION_GIDS.forEach((s, i) => { entrySheetData[s.name] = fetched[i]; });
+    renderEntryForm();
+    hideEntryStatus();
+  } catch(err) { console.error(err); showEntryStatus('Error: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Load';
+}
+
+function renderEntryForm() {
+  const p = entryPatient;
+  const fields = [
+    {lbl:'Lab No.',val:p.labNo,mono:true},{lbl:'Patient Name',val:p.name},
+    {lbl:'Gender',val:p.gender},{lbl:'Age',val:p.age},
+    {lbl:'Referred By',val:p.referredBy||'—'},{lbl:'Request Date',val:p.date||'—'}
+  ];
+  document.getElementById('entryPatientGrid').innerHTML = fields.map(f =>
+    '<div class="pf"><span class="lbl">' + f.lbl + '</span><span class="val' + (f.val==='—'?' empty':'') + (f.mono?' mono-v':'') + '">' + escHtml(f.val) + '</span></div>'
+  ).join('');
+  document.getElementById('entryTestsBadges').innerHTML = p.investigations.split(/[,\n]/).map(t => t.replace(/"/g,'').trim()).filter(Boolean).map(t => '<span class="badge">' + escHtml(t) + '</span>').join('');
+
+  // Build input fields for EVERY parameter in each section, pre-filled
+  // with any existing value already in the sheet for this row.
+  let html = '';
+  SECTION_GIDS.forEach(section => {
+    const sheet = entrySheetData[section.name];
+    const existingRow = (sheet.rows[p.rowIndex]) || [];
+    const paramKeys = REF_BY_SECTION[section.name] || [];
+    let fieldsHtml = '';
+    paramKeys.forEach(key => {
+      const def = getRef(section.name, key); if (!def) return;
+      const colIndex = sheet.cols.indexOf(key);
+      const existingVal = (colIndex >= 0 && existingRow[colIndex]) ? existingRow[colIndex] : '';
+      const label = def.label;
+      const unit = def.unit || '';
+      const ref = def.displayText || '';
+      const safeId = 'entry__' + section.name.replace(/[^a-zA-Z]/g,'') + '__' + key.replace(/[^a-zA-Z0-9]/g,'_');
+      fieldsHtml += '<div class="entry-field">'
+        + '<label>' + escHtml(label) + (unit ? ' <span class="ref-hint">(' + escHtml(unit) + ')</span>' : '') + '</label>'
+        + '<input type="text" id="' + safeId + '" data-section="' + section.name + '" data-key="' + escHtml(key) + '" value="' + existingVal.replace(/"/g,'&quot;') + '" '
+        + 'oninput="validateEntryField(this)" placeholder="—"/>'
+        + (ref ? '<span class="ref-hint">Ref: ' + escHtml(ref) + '</span>' : '')
+        + '</div>';
+    });
+    html += '<div class="entry-section"><div class="entry-section-title">' + section.name + '</div><div class="entry-grid">' + fieldsHtml + '</div></div>';
+  });
+  document.getElementById('entryFields').innerHTML = html;
+  document.getElementById('entryCard').classList.remove('hidden');
+}
+
+function validateEntryField(input) {
+  const key = input.getAttribute('data-key');
+  const section = input.getAttribute('data-section');
+  const gender = entryPatient ? entryPatient.gender : '';
+  const abn = checkAbnormalRef(section, key, input.value, gender);
+  input.classList.toggle('flagged', !!abn);
+}
+
+async function saveResults() {
+  const analyst = document.getElementById('analystName').value.trim();
+  if (!analyst) { showEntryStatus('Please enter the analyst name before saving.', 'error'); return; }
+  const inputs = document.querySelectorAll('#entryFields input');
+  const toSave = [];
+  inputs.forEach(inp => {
+    const val = inp.value.trim();
+    if (val) toSave.push({ section: inp.getAttribute('data-section'), key: inp.getAttribute('data-key'), value: val });
+  });
+  if (toSave.length === 0) { showEntryStatus('No results entered to save.', 'error'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
+  try {
+    const payload = { token: SAVE_TOKEN, labNum: entryPatient.labNum, analyst: analyst, results: toSave };
+    // Apps Script web apps don't return CORS headers, so we POST as text/plain
+    // and read the response.
+    const res = await fetch(SAVE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if (out.ok) {
+      let msg = 'Saved ' + out.written + ' result(s) for ' + escHtml(entryPatient.name) + ' (analyst: ' + escHtml(analyst) + ').';
+      if (out.skipped && out.skipped.length) msg += ' Skipped: ' + escHtml(out.skipped.join(', ')) + '.';
+      showEntryStatus(msg, 'success');
+    } else {
+      showEntryStatus('Save failed: ' + escHtml(out.error || 'unknown error'), 'error');
+    }
+  } catch(err) {
+    console.error(err);
+    showEntryStatus('Save failed: ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.innerHTML = 'Save results';
+}
+
+/* ================= FIND PATIENT (ported from index.html) ================= */
+function showSearchStatus(msg, type) { paintStatus('searchStatusBar', msg, type); }
+function hideSearchStatus() { document.getElementById('searchStatusBar').classList.add('hidden'); }
+
+async function searchByName() {
+  const term = (document.getElementById('nameInput').value || '').trim().toLowerCase();
+  if (term.length < 2) { showSearchStatus('Type at least 2 letters of a name to search.', 'error'); return; }
+  const btn = document.getElementById('nameSearchBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Searching…';
+  document.getElementById('searchResults').innerHTML = '';
+  showSearchStatus('Searching patient records…', 'loading');
+  try {
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    // Each tracker row: index 0 in rows = sheet row 2 = lab number 2.
+    // So lab number = arrayIndex + 2. Carry the date down for blank date cells.
+    let lastDate = '';
+    const matches = [];
+    patientData.rows.forEach(function(row, i) {
+      const dateCell = (row[0] || '').trim();
+      if (dateCell) lastDate = dateCell;
+      const name = (row[1] || '').trim();
+      if (!name) return;
+      if (name.toLowerCase().indexOf(term) === -1) return;
+      const labNum = i + 2;
+      matches.push({
+        labNum: labNum,
+        name: name,
+        date: formatDate(lastDate),
+        age: (row[3] || '').trim(),
+        tests: (row[5] || '').replace(/"/g,'').trim(),
+        referredBy: (row[6] || '').trim()
+      });
+    });
+
+    if (matches.length === 0) {
+      showSearchStatus('No patients found matching "' + escHtml(term) + '".', 'error');
+      btn.disabled = false; btn.innerHTML = 'Search'; return;
+    }
+
+    // Group by normalized name (case-insensitive, collapsed whitespace)
+    const groups = {};
+    const order = [];
+    matches.forEach(function(m) {
+      const key = m.name.toLowerCase().replace(/\s+/g,' ').trim();
+      if (!groups[key]) { groups[key] = { display: m.name, visits: [] }; order.push(key); }
+      groups[key].visits.push(m);
+    });
+    // Within each person, newest visit first (highest lab number = most recent)
+    order.forEach(function(k){ groups[k].visits.sort(function(a,b){ return b.labNum - a.labNum; }); });
+
+    renderSearchResults(groups, order);
+    const totalVisits = matches.length, totalPeople = order.length;
+    showSearchStatus('Found ' + totalVisits + ' visit' + (totalVisits!==1?'s':'') + ' across ' + totalPeople + ' patient' + (totalPeople!==1?'s':'') + '. Tap a name to expand.', 'success');
+  } catch(err) {
+    console.error(err);
+    showSearchStatus('Search failed: ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.innerHTML = 'Search';
+}
+
+function renderSearchResults(groups, order) {
+  let html = '';
+  order.forEach(function(key, gi) {
+    const g = groups[key];
+    const n = g.visits.length;
+    let visitsHtml = '';
+    g.visits.forEach(function(v) {
+      visitsHtml += '<div class="visit-row" id="visit_' + v.labNum + '">'
+        + '<div class="visit-meta">'
+        + '<span class="vm"><b>ES' + v.labNum + '/26</b></span>'
+        + '<span class="vm">' + escHtml(v.date || '—') + '</span>'
+        + (v.age ? '<span class="vm">Age: ' + escHtml(v.age) + '</span>' : '')
+        + (v.referredBy ? '<span class="vm">Ref: ' + escHtml(v.referredBy) + '</span>' : '')
+        + '<span class="vm vm-tests">' + escHtml(v.tests || 'No tests listed') + '</span>'
+        + '</div>'
+        + '<div class="visit-actions">'
+        + '<button class="btn-rep" onclick="searchGenerateReport(' + v.labNum + ')">Generate report</button>'
+        + '<button class="btn-view" onclick="searchViewResults(' + v.labNum + ')">View results</button>'
+        + '</div>'
+        + '<div class="inline-results hidden" id="inline_' + v.labNum + '"></div>'
+        + '</div>';
+    });
+    html += '<div class="person-group" id="group_' + gi + '">'
+      + '<div class="person-head" onclick="togglePersonGroup(' + gi + ')">'
+      + '<span class="person-name">' + escHtml(g.display) + ' <span class="person-count">(' + n + ' visit' + (n!==1?'s':'') + ')</span></span>'
+      + '<span class="person-chevron">&#9654;</span>'
+      + '</div>'
+      + '<div class="visit-list">' + visitsHtml + '</div>'
+      + '</div>';
+  });
+  document.getElementById('searchResults').innerHTML = html;
+}
+
+function togglePersonGroup(gi) {
+  const el = document.getElementById('group_' + gi);
+  if (el) el.classList.toggle('open');
+}
+
+// Tapping "Generate report" on a visit: load it and jump to the report view.
+async function searchGenerateReport(labNum) {
+  showSearchStatus('Loading lab ' + labNum + ' into the report view…', 'loading');
+  try {
+    const found = await loadPatientByLab(labNum);
+    if (!found) { showSearchStatus('Could not load lab ' + labNum + '.', 'error'); return; }
+    show('report');
+    document.getElementById('labInput').value = labNum;
+    renderPatientCard();
+    hideStatus();
+    hideSearchStatus();
+    window.scrollTo(0, 0);
+  } catch(err) { console.error(err); showSearchStatus('Error: ' + err.message, 'error'); }
+}
+
+// Tapping "View results" on a visit: show results inline under that row.
+async function searchViewResults(labNum) {
+  const box = document.getElementById('inline_' + labNum);
+  if (!box) return;
+  if (!box.classList.contains('hidden') && box.innerHTML.trim() !== '') {
+    box.classList.add('hidden'); box.innerHTML = ''; return;
+  }
+  box.classList.remove('hidden');
+  box.innerHTML = '<span class="spinner"></span>';
+  try {
+    const found = await loadPatientByLab(labNum);
+    if (!found) { box.innerHTML = '<div style="color:var(--red);font-size:13px;padding:8px 0;">Could not load this visit.</div>'; return; }
+    const r = currentResults;
+    let html = '';
+    if (r.chemistry.length)    html += makeTable('Chemistry Results',           r.chemistry,    'Chemistry');
+    if (r.haematology.length)  html += makeTable('Haematology Results',         r.haematology,  'Haematology');
+    if (r.hormones.length)     html += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
+    if (r.microbiology.length) html += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
+    if (!html) html = '<div style="color:var(--mist);font-size:13px;padding:8px 0;">No results entered for this visit yet.</div>';
+    box.innerHTML = html;
+  } catch(err) {
+    console.error(err);
+    box.innerHTML = '<div style="color:var(--red);font-size:13px;padding:8px 0;">Error: ' + err.message + '</div>';
   }
 }
 
-buildNav(); buildMods(); buildWelcomeCards();
-document.getElementById('code').focus();
+/* ================= REBATES (new — restricted) =================
+   Rules (owner-specified):
+   - The patient pays the FULL bill; the referrer's rate% of that full bill
+     is paid out to them at the end of each month.
+   - The full bill is REBUILT from PRICE_LIST × each patient's tests plus
+     any per-test surcharge, then reduced by any MD discount recorded as a
+     DISC:<n>% tag in the row's comments. The tracker's AMOUNT column is
+     never used as the payout base (it records the payment net of the rebate).
+   - Every registration in the month counts, regardless of payment status.
+   - Unknown referrers and unpriced tests are surfaced as warnings,
+     never guessed. */
+let rebInited = false;
+let REB_RESULT = [];   // per-referrer entries for statements
+let REB_MONTH_LABEL = '';
+
+function showRebStatus(msg, type) { paintStatus('rebStatus', msg, type); }
+function hideRebStatus() { document.getElementById('rebStatus').classList.add('hidden'); }
+
+async function initRebates() {
+  if (rebInited) return;
+  rebInited = true;
+  try {
+    showRebStatus('Reading the tracker for available months…', 'loading');
+    const [patientData] = await Promise.all([fetchTabCsv(PATIENT_ID, PATIENT_GID), ensureRefData()]);
+    const seen = {};
+    const monthsInOrder = [];
+    let carry = '';
+    patientData.rows.forEach(function(row) {
+      const dt = (row[0] || '').trim(); if (dt) carry = dt;
+      if (!(row[1] || '').trim()) return;
+      const my = parseMonthYear(carry);
+      if (!my) return;
+      const key = my.y + '-' + ('0' + my.m).slice(-2);
+      if (!seen[key]) { seen[key] = true; monthsInOrder.push(key); }
+    });
+    monthsInOrder.reverse(); // newest first
+    const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const sel = document.getElementById('rebMonth');
+    if (!monthsInOrder.length) {
+      sel.innerHTML = '<option value="">No dated rows found</option>';
+    } else {
+      sel.innerHTML = monthsInOrder.map(function(k) {
+        const p = k.split('-');
+        return '<option value="' + k + '">' + MN[parseInt(p[1]) - 1] + ' ' + p[0] + '</option>';
+      }).join('');
+    }
+    hideRebStatus();
+  } catch(err) {
+    console.error(err);
+    rebInited = false;
+    showRebStatus('Could not load months: ' + err.message, 'error');
+  }
+}
+
+async function buildRebates() {
+  const key = document.getElementById('rebMonth').value;
+  if (!key) { showRebStatus('Pick a month first.', 'error'); return; }
+  const btn = document.getElementById('rebBuildBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Building…';
+  document.getElementById('rebTable').innerHTML = '';
+  document.getElementById('rebWarn').classList.add('hidden');
+  showRebStatus('Reading the month’s registrations…', 'loading');
+  try {
+    await ensureRefData();
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    const p = key.split('-');
+    const selY = parseInt(p[0]), selM = parseInt(p[1]);
+    const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    REB_MONTH_LABEL = MN[selM - 1] + ' ' + selY;
+
+    // referrer directory: exact name (lowercased) → entry
+    const dir = {};
+    DOCTORS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Doctor'}, x); });
+    HOSPITALS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Hospital'}, x); });
+    const dirKeys = Object.keys(dir);
+    // price map: exact test name (lowercased) → price
+    const priceMap = {};
+    PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x.price; });
+
+    const perRef = {};        // refKey → accumulator
+    const unmatchedRefs = {}; // requestor string → row count
+    const unpricedTests = {}; // test name → count
+    let rowsInMonth = 0, walkIns = 0;
+    let carry = '';
+
+    patientData.rows.forEach(function(row, i) {
+      const dt = (row[0] || '').trim(); if (dt) carry = dt;
+      const name = (row[1] || '').trim(); if (!name) return;
+      const my = parseMonthYear(carry);
+      if (!my || my.y !== selY || my.m !== selM) return;
+      rowsInMonth++;
+      const req = (row[6] || '').trim();
+      if (!req || /^walk[\s-]?in$/i.test(req)) { walkIns++; return; }
+
+      // Match the requestor to the referrer lists — exact first, then a
+      // cautious contains-match; never guess beyond that.
+      const reqKey = req.toLowerCase().trim();
+      let ref = dir[reqKey] || null;
+      if (!ref) {
+        const hits = dirKeys.filter(function(k) {
+          return k.length >= 4 && (reqKey.indexOf(k) !== -1 || k.indexOf(reqKey) !== -1);
+        });
+        if (hits.length === 1) ref = dir[hits[0]];
+      }
+      if (!ref) { unmatchedRefs[req] = (unmatchedRefs[req] || 0) + 1; return; }
+
+      // Rebuild the gross from the price list × this patient's tests.
+      const tests = (row[5] || '').replace(/"/g, '').split(/[,\n]/).map(function(t){ return t.trim(); }).filter(Boolean);
+      let gross = 0, unpricedHere = 0;
+      tests.forEach(function(t) {
+        const price = priceMap[t.toLowerCase()];
+        if (price) gross += price;
+        else { unpricedHere++; unpricedTests[t] = (unpricedTests[t] || 0) + 1; }
+      });
+
+      // MD discount tag: the register writes DISC:<n>% into the comments
+      // column. Column position varies, so scan the whole row for the tag.
+      let discPct = 0;
+      for (let c = 0; c < row.length; c++) {
+        const dm = String(row[c] || '').match(/DISC:\s*(\d+(?:\.\d+)?)\s*%/i);
+        if (dm) { discPct = Math.min(100, parseFloat(dm[1])); break; }
+      }
+
+      // Same order as the register bill: (gross + surcharge) × (1 − disc%)
+      // = what the patient actually paid; the rebate is rated on that.
+      const rowSur = (ref.surcharge || 0) * tests.length;
+      const rowFull = gross + rowSur;
+      const rowDiscount = rowFull * discPct / 100;
+      const rowBase = rowFull - rowDiscount;
+
+      const rKey = ref.kind + '|' + ref.name.toLowerCase().trim();
+      if (!perRef[rKey]) perRef[rKey] = {
+        name: ref.name, kind: ref.kind, rate: ref.rebate,
+        surchargeRate: ref.surcharge || 0,
+        patients: 0, tests: 0, gross: 0, unpriced: 0,
+        surchargeTotal: 0, discountTotal: 0, base: 0, rows: []
+      };
+      const acc = perRef[rKey];
+      acc.patients++; acc.tests += tests.length; acc.gross += gross; acc.unpriced += unpricedHere;
+      acc.surchargeTotal += rowSur; acc.discountTotal += rowDiscount; acc.base += rowBase;
+      acc.rows.push({ lab: i + 2, date: formatDate(carry), patient: name, tests: tests.join(', '), nTests: tests.length, gross: gross, disc: discPct, base: rowBase, unpriced: unpricedHere });
+    });
+
+    // Payout = Σ per-patient [(gross + surcharge) × (1 − DISC%)] × rate%.
+    REB_RESULT = Object.keys(perRef).map(function(k, idx) {
+      const a = perRef[k];
+      a.id = idx;
+      a.due = a.base * a.rate / 100;
+      return a;
+    });
+    REB_RESULT.sort(function(x, y){ return y.due - x.due; });
+    REB_RESULT.forEach(function(a, idx){ a.id = idx; });
+
+    renderRebTable('rebTable', 'Amount payable to referrers', REB_RESULT);
+
+    // Warnings — anything the build refused to guess about.
+    const warns = [];
+    const urKeys = Object.keys(unmatchedRefs);
+    if (urKeys.length) warns.push('<b>' + urKeys.length + ' requestor name(s) not on the doctor/hospital lists</b> (their rows were skipped): ' + urKeys.map(function(n){ return escHtml(n) + ' ×' + unmatchedRefs[n]; }).join(' · '));
+    const upKeys = Object.keys(unpricedTests);
+    if (upKeys.length) warns.push('<b>' + upKeys.length + ' test name(s) not found on the price list</b> (counted at ₦0 in the gross): ' + upKeys.slice(0, 20).map(function(n){ return escHtml(n) + ' ×' + unpricedTests[n]; }).join(' · ') + (upKeys.length > 20 ? ' …' : ''));
+    const warnBox = document.getElementById('rebWarn');
+    if (warns.length) { warnBox.className = 'reb-warn'; warnBox.innerHTML = warns.join('<br><br>'); }
+    else warnBox.classList.add('hidden');
+
+    showRebStatus(rowsInMonth + ' registrations in ' + REB_MONTH_LABEL + ' — ' + walkIns + ' walk-in, ' + REB_RESULT.length + ' referrer(s) with activity.', 'success');
+    applyPrivacy();
+  } catch(err) {
+    console.error(err);
+    showRebStatus('Build failed: ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.innerHTML = 'Build statements';
+}
+
+function renderRebTable(boxId, title, list) {
+  const box = document.getElementById(boxId);
+  let html = '<div class="rtbl"><div class="hd"><span class="t">' + title + '</span><span class="n">' + REB_MONTH_LABEL + '</span></div>';
+  if (!list.length) {
+    html += '<div class="rtbl-empty">No referrers with activity this month.</div></div>';
+    box.innerHTML = html; return;
+  }
+  html += '<div class="cols"><span>Referrer</span><span>Patients</span><span>Tests</span><span>Full bill</span><span>Rate</span><span>Payable</span><span></span></div>';
+  let totDue = 0;
+  list.forEach(function(a) {
+    totDue += a.due;
+    html += '<div class="row">'
+      + '<span class="who">' + escHtml(a.name) + ' <span style="color:var(--mist);font-size:11px">' + a.kind + (a.unpriced ? ' · ' + a.unpriced + ' unpriced' : '') + '</span></span>'
+      + '<span class="m">' + a.patients + '</span>'
+      + '<span class="m">' + a.tests + '</span>'
+      + '<span class="m money">' + naira(a.base) + ((a.surchargeTotal || a.discountTotal) ? '<span style="color:var(--mist)">' + (a.surchargeTotal ? ' incl. ' + naira(a.surchargeTotal) + ' sur.' : '') + (a.discountTotal ? ' less ' + naira(a.discountTotal) + ' disc.' : '') + '</span>' : '') + '</span>'
+      + '<span class="m">' + a.rate + '%</span>'
+      + '<span class="m due money">' + naira(a.due) + '</span>'
+      + '<span class="stmt"><button onclick="printStatement(' + a.id + ')">Statement</button></span>'
+      + '</div>';
+  });
+  html += '<div class="tot"><span>Total payable</span><span class="m money">' + naira(totDue) + '</span><span></span></div></div>';
+  box.innerHTML = html;
+}
+
+function printStatement(id) {
+  const a = REB_RESULT[id];
+  if (!a) return;
+  let rows = '';
+  a.rows.forEach(function(r, i) {
+    rows += '<tr><td class="n">' + (i + 1) + '</td><td class="mono">ES' + r.lab + '/26</td><td>' + escHtml(r.date) + '</td><td>' + escHtml(r.patient) + '</td><td class="ts">' + escHtml(r.tests) + (r.unpriced ? ' <em>(' + r.unpriced + ' unpriced)</em>' : '') + '</td><td class="r">' + naira(r.gross) + '</td><td class="r">' + (r.disc ? r.disc + '%' : '—') + '</td><td class="r">' + naira(r.base) + '</td></tr>';
+  });
+  let totals = '<tr class="sub"><td colspan="7">Gross (from price list)</td><td class="r">' + naira(a.gross) + '</td></tr>';
+  if (a.surchargeTotal) {
+    totals += '<tr><td colspan="7">Logistics surcharge (' + naira(a.surchargeRate) + ' × ' + a.tests + ' tests)</td><td class="r">+' + naira(a.surchargeTotal) + '</td></tr>';
+  }
+  if (a.discountTotal) {
+    totals += '<tr><td colspan="7">MD discounts (DISC tags)</td><td class="r">−' + naira(a.discountTotal) + '</td></tr>';
+  }
+  totals += '<tr class="sub"><td colspan="7">Rebate base (what patients paid)</td><td class="r">' + naira(a.base) + '</td></tr>';
+  totals += '<tr class="grand"><td colspan="7">REBATE PAYABLE @ ' + a.rate + '%</td><td class="r">' + naira(a.due) + '</td></tr>';
+
+  const win = window.open('', '_blank', 'width=860,height=940');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rebate statement — ' + escHtml(a.name) + '</title><style>'
+  + '@page{size:A4;margin:14mm;}'
+  + 'body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0;padding:20px;}'
+  + '.hd{display:flex;gap:14px;align-items:center;border-bottom:3px solid #0F4C5C;padding-bottom:12px;}'
+  + '.hd img{width:58px;height:58px;border-radius:50%;object-fit:cover;}'
+  + '.hd h1{font-size:15px;margin:0;color:#0F4C5C;}'
+  + '.hd p{margin:2px 0 0;font-size:10px;color:#555;line-height:1.45;}'
+  + '.tag{text-align:center;background:#0F4C5C;color:#fff;font-weight:700;letter-spacing:.14em;font-size:12px;padding:7px;margin:14px 0;}'
+  + '.meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;font-size:12.5px;margin-bottom:14px;}'
+  + '.meta span{color:#777;} .meta b{color:#0F4C5C;}'
+  + 'table{width:100%;border-collapse:collapse;font-size:11.5px;}'
+  + 'th{background:#EAF0F2;color:#0F4C5C;text-align:left;padding:6px 7px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;}'
+  + 'td{padding:5px 7px;border-bottom:1px solid #eee;vertical-align:top;}'
+  + 'td.n{width:24px;color:#999;} td.r{text-align:right;white-space:nowrap;} td.mono{font-family:Consolas,monospace;white-space:nowrap;} td.ts{color:#555;} td em{color:#A32D2D;font-size:10px;}'
+  + 'tr.sub td{font-weight:600;background:#fafafa;}'
+  + 'tr.grand td{font-weight:800;color:#0F4C5C;border-top:2px solid #0F4C5C;font-size:13px;}'
+  + '.note{margin-top:14px;font-size:10.5px;color:#777;line-height:1.6;}'
+  + '.ft{margin-top:18px;font-size:10px;color:#777;text-align:center;line-height:1.6;border-top:1px solid #ddd;padding-top:10px;}'
+  + '@media print{.noprint{display:none;}}'
+  + '.noprint{margin-top:16px;text-align:center;}'
+  + '.noprint button{background:#0F4C5C;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:14px;cursor:pointer;}'
+  + '</style></head><body>'
+  + '<div class="hd"><img src="data:image/jpeg;base64,' + LOGO_B64 + '"/>'
+  + '<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'
+  + '<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'
+  + 'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'
+  + 'Tel: 07060904931, 08037068465 &nbsp;|&nbsp; shalomnwagodfmc@gmail.com</p></div></div>'
+  + '<div class="tag">REFERRER REBATE STATEMENT</div>'
+  + '<div class="meta">'
+  + '<div><span>Referrer:</span> <b>' + escHtml(a.name) + '</b> (' + a.kind + ')</div>'
+  + '<div><span>Period:</span> <b>' + REB_MONTH_LABEL + '</b></div>'
+  + '<div><span>Rate:</span> <b>' + a.rate + '% of each patient’s full bill</b></div>'
+  + '<div><span>Patients:</span> <b>' + a.patients + '</b></div>'
+  + '<div><span>Tests:</span> <b>' + a.tests + '</b></div>'
+  + '</div>'
+  + '<table><thead><tr><th></th><th>Lab No.</th><th>Date</th><th>Patient</th><th>Tests</th><th style="text-align:right;">Gross</th><th style="text-align:right;">Disc</th><th style="text-align:right;">Net</th></tr></thead>'
+  + '<tbody>' + rows + totals + '</tbody></table>'
+  + '<div class="note">Gross figures are rebuilt from the current price list applied to each patient’s registered tests; any per-test logistics surcharge is included in the rebate base, and any MD discount recorded as a DISC:<i>n</i>% tag is deducted before the rate is applied.'
+  + (a.unpriced ? ' <b>' + a.unpriced + ' test(s) could not be priced and are counted at ₦0 — verify before paying.</b>' : '') + '</div>'
+  + '<div class="ft">Generated ' + new Date().toLocaleDateString('en-GB') + ' — Evashalom Operations</div>'
+  + '<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'
+  + '</body></html>');
+  win.document.close();
+}
+
+/* ================= EDIT RECORDS (new — restricted) ================= */
+let recRecord = null; // {labNum, name, payStatus, ...}
+
+function showRecStatus(msg, type) { paintStatus('recStatusBar', msg, type); }
+function hideRecStatus() { document.getElementById('recStatusBar').classList.add('hidden'); }
+
+async function loadRecord() {
+  const labNum = parseInt(document.getElementById('recLabInput').value);
+  if (!labNum || labNum < 2) { showRecStatus('Please enter a valid lab number (minimum 2).', 'error'); return; }
+  const btn = document.getElementById('recLoadBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Opening…';
+  document.getElementById('recCard').classList.add('hidden');
+  showRecStatus('Loading record…', 'loading');
+  try {
+    const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+    const rowIndex = labNum - 2;
+    const pRow = patientData.rows[rowIndex] || [];
+    if (!pRow || !pRow[1]) { showRecStatus('No record found at lab number ' + labNum + '.', 'error'); btn.disabled = false; btn.innerHTML = 'Open'; return; }
+    let patientDate = '';
+    for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
+    recRecord = {
+      labNum: labNum, name: pRow[1] || '', gender: pRow[2] || '', age: pRow[3] || '',
+      phone: pRow[4] || '', tests: (pRow[5] || '').replace(/"/g, ''), referredBy: pRow[6] || '',
+      amount: pRow[8] || '', payStatus: (pRow[11] || '').trim(), date: formatDate(patientDate)
+    };
+    const fields = [
+      {lbl:'Lab No.', val:'ES' + labNum + '/26', mono:true}, {lbl:'Date', val:recRecord.date},
+      {lbl:'Patient', val:recRecord.name}, {lbl:'Sex / Age', val:(recRecord.gender || '—') + ' / ' + (recRecord.age || '—')},
+      {lbl:'Phone', val:recRecord.phone || '—', mono:true}, {lbl:'Referred By', val:recRecord.referredBy || '—'},
+      {lbl:'Tests', val:recRecord.tests || '—'}, {lbl:'Amount', val:recRecord.amount || '—', money:true},
+      {lbl:'Payment Status', val:recRecord.payStatus || '—'}
+    ];
+    document.getElementById('recGrid').innerHTML = fields.map(f =>
+      '<div class="pf"><span class="lbl">' + f.lbl + '</span><span class="val' + (f.val==='—'?' empty':'') + (f.mono?' mono-v':'') + (f.money?' money':'') + '">' + escHtml(f.val) + '</span></div>'
+    ).join('');
+    // Pre-select the current status; keep unusual sheet values selectable as-is.
+    const sel = document.getElementById('recPayStatus');
+    if (recRecord.payStatus && ![].slice.call(sel.options).some(function(o){ return o.value === recRecord.payStatus; })) {
+      const o = document.createElement('option'); o.textContent = recRecord.payStatus; sel.appendChild(o);
+    }
+    if (recRecord.payStatus) sel.value = recRecord.payStatus;
+    document.getElementById('recNote').textContent = '';
+    document.getElementById('recCard').classList.remove('hidden');
+    hideRecStatus();
+    applyPrivacy();
+  } catch(err) { console.error(err); showRecStatus('Error: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Open';
+}
+
+async function updateRecord() {
+  if (!recRecord) return;
+  const newStatus = document.getElementById('recPayStatus').value;
+  if (newStatus === recRecord.payStatus) { showRecStatus('Payment status is already "' + escHtml(newStatus) + '" — nothing to change.', 'error'); return; }
+  if (!confirm('Set ES' + recRecord.labNum + '/26 (' + recRecord.name + ') payment status to "' + newStatus + '"?')) return;
+  const btn = document.getElementById('recUpdateBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Updating…';
+  showRecStatus('Sending update…', 'loading');
+  try {
+    const payload = { token: REG_TOKEN, action: 'update', labNum: recRecord.labNum, payStatus: newStatus };
+    const r = await postWithRetry(payload, 4, function(msg){ showRecStatus(msg, 'loading'); });
+    if (r.ok) {
+      showRecStatus('✅ ES' + recRecord.labNum + '/26 updated: ' + escHtml(recRecord.payStatus || '—') + ' → ' + escHtml(newStatus), 'success');
+      recRecord.payStatus = newStatus;
+      document.getElementById('recNote').textContent = 'The update landed on the endpoint’s target sheet. This card still shows the live tracker, so refresh expectations accordingly while testing on the sandbox.';
+    } else {
+      showRecStatus('❌ ' + escHtml(r.error || 'Update failed'), 'error');
+    }
+  } catch(err) { console.error(err); showRecStatus('Update failed: ' + err.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = 'Update payment status';
+}
+
+/* ================= INIT ================= */
+buildNav();
+buildWelcomeCards();
 loadToday();
+document.getElementById('code').focus();
+document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
+document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
+document.getElementById('nameInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchByName(); });
+document.getElementById('recLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadRecord(); });
 </script>
 </body>
 </html>
