@@ -461,7 +461,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
           <div>
             <div class="sec-h">03 &middot; Referral &amp; payment</div>
             <div class="fgrid c11">
-              <label class="fld">Referral type<select id="refType"><option value="none">Walk-in (no rebate)</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
+              <label class="fld">Referral type<select id="refType"><option value="na">N/A &mdash; not available</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
               <label class="fld">Referrer<select id="refName"><option value="">&mdash;</option></select></label>
             </div>
             <div class="fgrid c11">
@@ -1051,14 +1051,14 @@ function populateReferrers(){
   if(type==='doctor') list=DOCTORS;
   else if(type==='hospital') list=HOSPITALS;
   sel.innerHTML='<option value="">—</option>'+list.map(function(x,i){return '<option value="'+i+'">'+escHtml(x.name)+' ('+x.rebate+'%)</option>';}).join('');
-  sel.disabled = (type==='none');
+  sel.disabled = (type==='na'||type==='self');
   recalc();
 }
 
 function currentReferrer(){
   const type=document.getElementById('refType').value;
   const idx=document.getElementById('refName').value;
-  if(type==='none'||idx==='') return null;
+  if(type==='na'||type==='self'||idx==='') return null;
   const list=type==='doctor'?DOCTORS:HOSPITALS;
   return list[parseInt(idx)]||null;
 }
@@ -1145,7 +1145,8 @@ function recalc(){
   const note=document.getElementById('rebateNote');
   const type=document.getElementById('refType').value;
   let msg='';
-  if(type==='none'){ msg='Walk-in patient — no rebate applies.'; }
+  if(type==='na'){ msg='No referrer recorded — no rebate applies.'; }
+  else if(type==='self'){ msg='Self-referred patient — no rebate applies.'; }
   else if(!currentReferrer()){ msg='Select a referrer to track their monthly rebate.'; }
   else {
     msg='The patient pays in full. '+b.pct+'% of this bill goes on '+ (currentReferrer()?currentReferrer().name:'the referrer') +'’s monthly statement — nothing is deducted here.';
@@ -1192,7 +1193,7 @@ window.doRegister=async function(){
   const b=computeBill();
   const finalAmt=num(document.getElementById('finalAmount').value);
   const refObj=currentReferrer();
-  const refName=refObj?refObj.name:'Walk-in';
+  const refName=refObj?refObj.name:(document.getElementById('refType').value==='self'?'Self':'N/A');
 
   const btn=document.getElementById('registerBtn');
   btn.disabled=true; btn.textContent='Registering…';
@@ -2060,7 +2061,8 @@ async function buildRebates() {
       if (!my || my.y !== selY || my.m !== selM) return;
       rowsInMonth++;
       const req = (row[6] || '').trim();
-      if (!req || /^walk[\s-]?in$/i.test(req)) { walkIns++; return; }
+      // Non-referred rows: legacy 'Walk-in' plus the current 'N/A' / 'Self'
+      if (!req || /^(walk[\s-]?in|n\/?a|not\s*available|self)$/i.test(req)) { walkIns++; return; }
 
       // Match the requestor to the referrer lists — exact first, then a
       // cautious contains-match; never guess beyond that.
@@ -2133,7 +2135,7 @@ async function buildRebates() {
     if (warns.length) { warnBox.className = 'reb-warn'; warnBox.innerHTML = warns.join('<br><br>'); }
     else warnBox.classList.add('hidden');
 
-    showRebStatus(rowsInMonth + ' registrations in ' + REB_MONTH_LABEL + ' — ' + walkIns + ' walk-in, ' + REB_RESULT.length + ' referrer(s) with activity.', 'success');
+    showRebStatus(rowsInMonth + ' registrations in ' + REB_MONTH_LABEL + ' — ' + walkIns + ' non-referred (walk-in / N⁄A / self), ' + REB_RESULT.length + ' referrer(s) with activity.', 'success');
     applyPrivacy();
   } catch(err) {
     console.error(err);
