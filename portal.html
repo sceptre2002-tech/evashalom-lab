@@ -320,6 +320,56 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 .rec-actions{display:flex;gap:12px;align-items:flex-end;padding-top:1rem;border-top:1px solid var(--line);flex-wrap:wrap}
 .rec-actions .fld{max-width:260px;flex:1}
 
+/* ---------- ANALYTICS ---------- */
+.ana-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.ana-controls select{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13.5px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink)}
+.ana-controls .btn{height:38px;font-size:12.5px;padding:0 16px}
+.ana-tabs{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white)}
+.ana-tabs button{height:36px;padding:0 16px;border:none;background:transparent;font-weight:700;font-size:12.5px;cursor:pointer;color:rgba(21,48,58,.5);font-family:'Hanken Grotesk',sans-serif}
+.ana-tabs button.on{background:var(--teal);color:#fff}
+.ana-sec{margin-top:30px}
+.ana-sec .sh{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.ana-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+.ana-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.ana-card.wide{grid-column:1 / -1}
+.ana-card .ct{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.ana-card .cs{font-size:11.5px;color:rgba(21,48,58,.5);margin-top:3px;line-height:1.5}
+.ana-card .chart{margin-top:14px}
+.ana-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:11.5px;color:rgba(21,48,58,.65);font-weight:500}
+.ana-legend .sw{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:-1px}
+.hb-row{display:flex;align-items:center;gap:10px;margin-top:6px;min-width:0}
+.hb-row .lb{width:34%;min-width:0;font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:rgba(21,48,58,.75)}
+.hb-row .track{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.hb-row .bar{height:16px;border-radius:0 4px 4px 0;min-width:2px;flex-shrink:0}
+.hb-row .v{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink);white-space:nowrap}
+.stackbar{display:flex;height:26px;border-radius:5px;overflow:hidden;gap:2px;background:transparent;margin-top:14px}
+.stackbar .seg{min-width:3px}
+.colchart{display:flex;gap:10px;height:170px;margin-top:14px;padding-bottom:20px;position:relative}
+.colchart .bucket{display:flex;flex-direction:column-reverse;align-items:stretch;gap:2px;height:100%;justify-content:flex-start;position:relative;width:100%;max-width:56px;margin:0 auto}
+.colchart .bwrap{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;min-width:0}
+.colchart .bl{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--mist);font-weight:700;white-space:nowrap}
+.colchart .seg{width:100%;border-radius:0}
+.colchart .seg.top{border-radius:4px 4px 0 0}
+.ana-tip{position:fixed;z-index:130;background:var(--ink);color:#fff;padding:7px 11px;border-radius:6px;font-size:12px;pointer-events:none;display:none;max-width:280px;line-height:1.55;box-shadow:0 8px 24px rgba(21,48,58,.35)}
+.ana-tip b{font-family:'DM Mono',ui-monospace,monospace;font-weight:500}
+[data-tt]{cursor:default}
+[data-tt]:hover{opacity:.82}
+.fig .delta{font-size:11px;font-weight:700;margin-top:5px}
+.delta.up{color:var(--green)}.delta.down{color:var(--red)}.delta.flat{color:var(--mist)}
+.ana-note{margin-top:12px;font-size:11.5px;color:rgba(21,48,58,.55);line-height:1.6}
+.ana-note b{color:#6b5715}
+.least-list{columns:2;column-gap:26px;margin-top:12px;font-size:12.5px;line-height:2}
+.least-list div{break-inside:avoid}
+.least-list span{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--mist)}
+.dd-filters{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:flex-end}
+.dd-filters .fld{flex:0 1 160px;font-size:11px}
+.dd-filters input,.dd-filters select{height:36px;font-size:13px;padding:0 8px}
+.dd-filters .btn{height:36px;font-size:12.5px;padding:0 14px}
+.dd-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px}
+.dd-table th{text-align:left;padding:7px 9px;background:var(--bone);font-size:9.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--line);white-space:nowrap}
+.dd-table td{padding:7px 9px;border-bottom:1px solid rgba(21,48,58,.06);vertical-align:top}
+.dd-table .mono-c{font-family:'DM Mono',monospace;font-size:11.5px;white-space:nowrap}
+.dd-table .r{text-align:right;white-space:nowrap}
 @media(max-width:960px){
   .reg-grid{grid-template-columns:1fr}
   .bill-wrap{position:static}
@@ -333,6 +383,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
   .nav a{flex-direction:column;gap:3px;padding:10px 12px;font-size:9.5px;margin:0;border-radius:0;min-width:70px;text-align:center;justify-content:center}
   .nav a.on{box-shadow:inset 0 2px 0 var(--gold)}
   .nav a .dot-r{display:none}
+  .ana-grid{grid-template-columns:1fr}
   .main{margin-left:0;padding:24px 20px 100px}
   h2.vt{font-size:27px}
   .figs{gap:28px}
@@ -587,6 +638,29 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       <p class="foot-note">Payouts are the referrer's rate &times; what each patient actually paid: price-list gross plus any per-test surcharge, less any MD discount recorded as a <span class="mono">DISC:n%</span> tag in the comments &mdash; never read from the AMOUNT column, which records the payment net of the rebate.</p>
     </section>
 
+    <!-- ======== ANALYTICS ======== -->
+    <section class="view" id="v-analytics">
+      <div class="eyebrow rest">Management &middot; Restricted</div>
+      <h2 class="vt">Analytics</h2>
+      <p class="vsub">Money, test volumes and referrer value for a month or quarter, rebuilt straight from the tracker. Read-only &mdash; nothing here writes to any sheet.</p>
+      <div class="ana-controls">
+        <select id="anaMode" onchange="anaModeChanged()"><option value="month">Month</option><option value="quarter">Quarter</option></select>
+        <select id="anaKey"><option value="">Loading&hellip;</option></select>
+        <button class="btn" id="anaBuildBtn" onclick="buildAnalytics()">Build</button>
+        <span style="flex:1"></span>
+        <div class="ana-tabs" id="anaTabs" style="display:none">
+          <button class="on" id="anaTabDash" onclick="anaShowTab('dash')">Dashboard</button>
+          <button id="anaTabDeep" onclick="anaShowTab('deep')">Deep-dive</button>
+        </div>
+        <button class="btn ghost" id="anaCsvBtn" style="display:none;height:36px;font-size:12px" onclick="anaExportCsv(false)">CSV</button>
+        <button class="btn ghost" id="anaPdfBtn" style="display:none;height:36px;font-size:12px" onclick="anaPrintSummary()">Print summary</button>
+      </div>
+      <div id="anaStatus" class="hidden"></div>
+      <div id="anaDash" style="display:none"></div>
+      <div id="anaDeep" style="display:none"></div>
+      <p class="foot-note">Gross figures are rebuilt from the live price list; the AMOUNT column supplies recorded income. Tests that don't match the price list are counted under &ldquo;unmatched&rdquo; and shown, never dropped. Yearly totals are deliberately not offered &mdash; early hand-entered months would blend into clean data and mislead.</p>
+    </section>
+
     <!-- ======== EDIT RECORDS ======== -->
     <section class="view" id="v-records">
       <div class="eyebrow rest">Management &middot; Restricted</div>
@@ -739,6 +813,7 @@ var NAV=[
     ['report','Generate report',false,'Review and download the signed report']]},
   {label:'Management',items:[
     ['rebates','Rebates',true,'Monthly statements for doctors and hospitals'],
+    ['analytics','Analytics',true,'Money, test volumes and referrer value'],
     ['records','Edit records',true,'Correct a registration, mark bills paid']]}
 ];
 
@@ -768,7 +843,7 @@ function buildWelcomeCards(){
   document.querySelectorAll('#wlGrid .wl-tile').forEach(function(t){ t.onclick=function(){enterShell(t.dataset.v);}; });
 }
 // Restricted views prompt for the management passcode once per session (until reload).
-const RESTRICTED_VIEWS = { rebates:true, records:true };
+const RESTRICTED_VIEWS = { rebates:true, records:true, analytics:true };
 var sectionUnlocked = {};
 var sgatePending = null;
 function show(v){
@@ -782,10 +857,11 @@ function showNow(v){
   applyPrivacy();
   if(v==='register') ensureRefData();
   if(v==='rebates') initRebates();
+  if(v==='analytics') initAnalytics();
 }
 function openSectionGate(v){
   sgatePending = v;
-  document.getElementById('sgateTitle').textContent = v==='rebates' ? 'Rebates' : 'Edit records';
+  document.getElementById('sgateTitle').textContent = ({rebates:'Rebates', records:'Edit records', analytics:'Analytics'})[v] || 'Restricted';
   document.getElementById('sgateErr').textContent = '';
   document.getElementById('sgateCode').value = '';
   document.getElementById('sgate').classList.remove('hidden');
@@ -2301,6 +2377,536 @@ async function updateRecord() {
     }
   } catch(err) { console.error(err); showRecStatus('Update failed: ' + err.message, 'error'); }
   btn.disabled = false; btn.innerHTML = 'Update payment status';
+}
+
+/* ================= ANALYTICS (restricted, READ-ONLY) =================
+   Money definitions (owner-verifiable):
+   - Recorded income  = Σ AMOUNT column (what the counter recorded).
+   - Outstanding      = Σ AMOUNT where payment status contains 'not paid'.
+   - Full bill (base) = price-list gross + surcharge×tests, less any DISC:n%
+                        tag — identical to the Rebates view, so figures agree.
+   - Rebate cost      = base × referrer rate%, matched referrers only.
+   - MD discount cost = (gross+surcharge) × DISC%.
+   - Unmatched tests are counted and SHOWN, never silently dropped.
+   Palette: validated with the dataviz six-checks (worst adjacent CVD ΔE 26.3
+   on bone #F1EFE8); gold slot ships with bar-tip labels + table as relief. */
+const ANA_CAT = ['#0B7FA3','#B08A1E','#B02F2F','#4468D0','#188A50']; // fixed order, never cycled
+const ANA_ONE = '#0F4C5C';   // single-series hue
+const ANA_DIM = '#98A5A1';   // de-emphasis / non-referred
+let anaInited=false, anaAll=null, anaPeriod=null, anaPrevAgg=null, anaAgg=null;
+let anaLabel='', anaPrevLabel='', anaModeCur='month', anaKeyCur='', anaFiltered=null;
+
+function showAnaStatus(m,t){ paintStatus('anaStatus', m, t); }
+function hideAnaStatus(){ document.getElementById('anaStatus').classList.add('hidden'); }
+function fmtM(v){ return privacy ? '₦•••' : naira(v); }
+function pctS(v){ return (Math.round(v*10)/10) + '%'; }
+
+// Full date {y,m,d} from a tracker cell — dd/mm/yyyy text or gviz Date(y,m,d).
+function parseFullDate(raw){
+  if(!raw) return null;
+  const g = String(raw).match(/Date\((\d+),(\d+),(\d+)\)/);
+  if(g) return { y:parseInt(g[1]), m:parseInt(g[2])+1, d:parseInt(g[3]) };
+  const m = String(raw).match(/^\s*(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(!m) return null;
+  let y=parseInt(m[3]); if(y<100) y+=2000;
+  return { y:y, m:parseInt(m[2]), d:parseInt(m[1]) };
+}
+const ANA_NONREF = /^(walk[\s-]?in|n\/?a|not\s*available|self)$/i;
+const ANA_MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ANA_MNF = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Fetch the tracker fresh and normalise every row into one enriched record.
+async function loadAnaRecords(){
+  await ensureRefData();
+  const pd = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
+  const dir = {};
+  DOCTORS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Doctor'}, x); });
+  HOSPITALS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Hospital'}, x); });
+  const dirKeys = Object.keys(dir);
+  const priceMap = {}, secMap = {};
+  PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x.price; secMap[x.name.toLowerCase().trim()] = x.section; });
+
+  const out = [];
+  let carry = '';
+  pd.rows.forEach(function(row, i){
+    const dt = (row[0]||'').trim(); if(dt) carry = dt;
+    const name = (row[1]||'').trim(); if(!name) return;
+    const fd = parseFullDate(carry);
+    const tests = (row[5]||'').replace(/"/g,'').split(/[,\n]/).map(function(t){return t.trim();}).filter(Boolean);
+    let gross=0; const matched=[], unmatched=[];
+    tests.forEach(function(t){
+      const k=t.toLowerCase();
+      if(priceMap[k]){ gross+=priceMap[k]; matched.push({name:t, section:(secMap[k]||'Other').toUpperCase(), price:priceMap[k]}); }
+      else unmatched.push(t);
+    });
+    let discPct=0;
+    for(let c=0;c<row.length;c++){
+      const dm=String(row[c]||'').match(/DISC:\s*(\d+(?:\.\d+)?)\s*%/i);
+      if(dm){ discPct=Math.min(100,parseFloat(dm[1])); break; }
+    }
+    const req=(row[6]||'').trim();
+    let refKind='none', ref=null;
+    if(req && !ANA_NONREF.test(req)){
+      const rk=req.toLowerCase().trim();
+      ref = dir[rk] || null;
+      if(!ref){
+        const hits=dirKeys.filter(function(k){ return k.length>=4 && (rk.indexOf(k)!==-1 || k.indexOf(rk)!==-1); });
+        if(hits.length===1) ref=dir[hits[0]];
+      }
+      refKind = ref ? 'matched' : 'unlisted';
+    }
+    const sur = ref ? (ref.surcharge||0)*tests.length : 0;
+    const full = gross + sur;
+    const base = full * (1 - discPct/100);
+    out.push({
+      lab:i+2, fd:fd,
+      dkey: fd ? fd.y*10000+fd.m*100+fd.d : 0,
+      mkey: fd ? (fd.y+'-'+('0'+fd.m).slice(-2)) : '',
+      qkey: fd ? (fd.y+'-Q'+Math.ceil(fd.m/3)) : '',
+      dateStr: fd ? (('0'+fd.d).slice(-2)+'/'+('0'+fd.m).slice(-2)+'/'+fd.y) : '',
+      name:name, tests:tests, matched:matched, unmatched:unmatched,
+      requestor:req, ref:ref, refKind:refKind,
+      gross:gross, sur:sur, discPct:discPct,
+      discountCost: full*discPct/100,
+      base:base,
+      rebateCost: ref ? base*ref.rebate/100 : 0,
+      amount:num(row[8]), payMode:(row[10]||'').trim()||'—',
+      payStatus:(row[11]||'').trim(), unpaid:/not\s*paid/i.test((row[11]||'')),
+      location:(row[15]||'').trim()
+    });
+  });
+  return out;
+}
+
+async function initAnalytics(){
+  if(anaInited) return;
+  anaInited = true;
+  try{
+    showAnaStatus('Reading the tracker…','loading');
+    anaAll = await loadAnaRecords();
+    anaModeChanged();
+    hideAnaStatus();
+  }catch(err){ console.error(err); anaInited=false; showAnaStatus('Could not load: '+err.message,'error'); }
+}
+function anaModeChanged(){
+  if(!anaAll) return;
+  const mode = document.getElementById('anaMode').value;
+  const counts = {};
+  anaAll.forEach(function(r){ const k = mode==='month'?r.mkey:r.qkey; if(k) counts[k]=(counts[k]||0)+1; });
+  const keys = Object.keys(counts).sort().reverse();
+  const idxOf = function(k){ const p=k.split(/-Q?/); return mode==='month' ? parseInt(p[0])*12+parseInt(p[1]) : parseInt(p[0])*4+parseInt(p[1]); };
+  const newest = keys.length ? idxOf(keys[0]) : 0;
+  const span = mode==='month' ? 11 : 3;
+  document.getElementById('anaKey').innerHTML = keys.map(function(k){
+    const label = anaKeyLabel(mode,k);
+    const suspect = counts[k]<=3 || (newest-idxOf(k))>span;
+    return '<option value="'+k+'">'+label+(suspect?' — '+counts[k]+' row'+(counts[k]!==1?'s':'')+', date typo?':'')+'</option>';
+  }).join('') || '<option value="">No dated rows</option>';
+}
+function anaKeyLabel(mode,k){
+  const p=k.split(mode==='month'?'-':'-Q');
+  return mode==='month' ? ANA_MNF[parseInt(p[1])-1]+' '+p[0] : 'Q'+p[1]+' '+p[0];
+}
+function anaPrevKey(mode,k){
+  const p=k.split(mode==='month'?'-':'-Q');
+  let y=parseInt(p[0]), n=parseInt(p[1]);
+  n--; if(n<1){ n=(mode==='month')?12:4; y--; }
+  return mode==='month' ? y+'-'+('0'+n).slice(-2) : y+'-Q'+n;
+}
+
+function anaAggregate(recs){
+  const a={n:recs.length, income:0, nAmt:0, outstanding:0, rebateCost:0, discountCost:0, baseSum:0,
+    payModes:{}, tests:{}, unmatchedCount:0, unmatchedNames:{}, sections:{},
+    referred:0, nonRef:0, unlisted:0, refs:{}, days:{}, mixBuckets:{}};
+  recs.forEach(function(r){
+    if(r.amount>0){ a.income+=r.amount; a.nAmt++; }
+    if(r.unpaid) a.outstanding+=r.amount;
+    a.rebateCost+=r.rebateCost; a.discountCost+=r.discountCost; a.baseSum+=r.base;
+    const pm=r.payMode.toUpperCase().replace(/\s/g,'');
+    if(r.amount>0){ if(!a.payModes[pm]) a.payModes[pm]={n:0,amt:0}; a.payModes[pm].n++; a.payModes[pm].amt+=r.amount; }
+    r.matched.forEach(function(t){
+      a.tests[t.name]=(a.tests[t.name]||0)+1;
+      a.sections[t.section]=(a.sections[t.section]||0)+1;
+    });
+    r.unmatched.forEach(function(t){ a.unmatchedCount++; a.unmatchedNames[t]=(a.unmatchedNames[t]||0)+1; });
+    if(r.refKind==='matched'){
+      a.referred++;
+      const k=r.ref.kind+'|'+r.ref.name.toLowerCase();
+      if(!a.refs[k]) a.refs[k]={name:r.ref.name, kind:r.ref.kind, rate:r.ref.rebate, patients:0, revenue:0, rebateCost:0};
+      a.refs[k].patients++; a.refs[k].revenue+=r.base; a.refs[k].rebateCost+=r.rebateCost;
+    }
+    else if(r.refKind==='unlisted'){ a.unlisted++; }
+    else a.nonRef++;
+    if(r.fd){ a.days[r.fd.d]=(a.days[r.fd.d]||0)+r.amount; }
+  });
+  a.avg = a.nAmt ? a.income/a.nAmt : 0;
+  return a;
+}
+
+async function buildAnalytics(){
+  const mode=document.getElementById('anaMode').value, key=document.getElementById('anaKey').value;
+  if(!key){ showAnaStatus('Pick a period first.','error'); return; }
+  const btn=document.getElementById('anaBuildBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Building…';
+  try{
+    showAnaStatus('Reading the tracker…','loading');
+    anaAll = await loadAnaRecords();           // fresh every build
+    anaModeCur=mode; anaKeyCur=key;
+    const kOf=function(r){ return mode==='month'?r.mkey:r.qkey; };
+    anaPeriod = anaAll.filter(function(r){ return kOf(r)===key; });
+    const pk = anaPrevKey(mode,key);
+    const prevRecs = anaAll.filter(function(r){ return kOf(r)===pk; });
+    anaLabel = anaKeyLabel(mode,key); anaPrevLabel = anaKeyLabel(mode,pk);
+    anaAgg = anaAggregate(anaPeriod);
+    anaPrevAgg = prevRecs.length ? anaAggregate(prevRecs) : null;
+    renderAnaDash();
+    renderDeepFilters();
+    anaApplyFilters();
+    document.getElementById('anaTabs').style.display='inline-flex';
+    document.getElementById('anaCsvBtn').style.display='inline-flex';
+    document.getElementById('anaPdfBtn').style.display='inline-flex';
+    anaShowTab('dash');
+    showAnaStatus(anaPeriod.length+' registrations in '+anaLabel+(anaPrevAgg?' — compared with '+anaPrevLabel:' — no prior period to compare'),'success');
+    applyPrivacy();
+  }catch(err){ console.error(err); showAnaStatus('Build failed: '+err.message,'error'); }
+  btn.disabled=false; btn.innerHTML='Build';
+}
+function anaShowTab(t){
+  document.getElementById('anaDash').style.display = t==='dash'?'block':'none';
+  document.getElementById('anaDeep').style.display = t==='deep'?'block':'none';
+  document.getElementById('anaTabDash').classList.toggle('on',t==='dash');
+  document.getElementById('anaTabDeep').classList.toggle('on',t==='deep');
+}
+
+function anaDelta(cur, prev, upIsGood){
+  if(prev===null||prev===undefined) return '';
+  if(!prev) return '<div class="delta flat">— vs '+escHtml(anaPrevLabel)+'</div>';
+  const ch=(cur-prev)/prev*100;
+  const cls = Math.abs(ch)<0.05 ? 'flat' : ((ch>0)===upIsGood ? 'up' : 'down');
+  const arrow = ch>0?'▲':(ch<0?'▼':'•');
+  return '<div class="delta '+cls+'">'+arrow+' '+pctS(Math.abs(ch))+' vs '+escHtml(anaPrevLabel)+'</div>';
+}
+function hbarsHTML(items, maxOverride, money){
+  const mx = maxOverride || Math.max.apply(null, items.map(function(x){return x.value;})) || 1;
+  return items.map(function(x){
+    const w = Math.max(2, x.value/mx*100);
+    const tt = x.label+' — '+(money?(privacy?'₦•••':naira(x.value)):x.value.toLocaleString('en-GB'));
+    return '<div class="hb-row" data-tt="'+escHtml(tt)+'"><span class="lb" title="'+escHtml(x.label)+'">'+escHtml(x.label)+'</span>'
+      +'<span class="track"><span class="bar" style="width:'+w+'%;background:'+(x.color||ANA_ONE)+'"></span>'
+      +'<span class="v'+(money?' money':'')+'">'+(money?naira(x.value):x.value.toLocaleString('en-GB'))+'</span></span></div>';
+  }).join('');
+}
+function legendHTML(items){
+  return '<div class="ana-legend">'+items.map(function(x){
+    return '<span><span class="sw" style="background:'+x.color+'"></span>'+escHtml(x.label)+'</span>';
+  }).join('')+'</div>';
+}
+// Revenue line (month mode): one series, daily recorded income.
+function lineSVG(days, daysInMonth){
+  const W=560,H=170,L=46,R=14,T=16,B=26, pw=W-L-R, ph=H-T-B;
+  let mx=0; for(let d=1;d<=daysInMonth;d++) mx=Math.max(mx,days[d]||0);
+  if(!mx) mx=1;
+  const step=niceStep(mx);
+  const yMax=Math.ceil(mx/step)*step;
+  const x=function(d){ return L+(d-1)/(Math.max(1,daysInMonth-1))*pw; };
+  const y=function(v){ return T+ph-(v/yMax)*ph; };
+  let grid='',ticks='';
+  for(let g=0;g<=2;g++){
+    const v=yMax*g/2, yy=y(v);
+    grid+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="rgba(21,48,58,.10)" stroke-width="1"/>';
+    ticks+='<text x="'+(L-6)+'" y="'+(yy+3.5)+'" text-anchor="end" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">'+compactN(v)+'</text>';
+  }
+  let path='', hits='', maxD=1;
+  for(let d=1;d<=daysInMonth;d++){ if((days[d]||0)>(days[maxD]||0)) maxD=d; }
+  let lastD=daysInMonth; while(lastD>1 && !(days[lastD]>0)) lastD--;
+  for(let d=1;d<=daysInMonth;d++){
+    const v=days[d]||0;
+    path+=(d===1?'M':'L')+x(d).toFixed(1)+' '+y(v).toFixed(1);
+    const tt=('0'+d).slice(-2)+' '+anaLabel+' — '+(privacy?'₦•••':naira(v));
+    hits+='<rect x="'+(x(d)-pw/daysInMonth/2)+'" y="'+T+'" width="'+(pw/daysInMonth)+'" height="'+ph+'" fill="transparent" data-tt="'+escHtml(tt)+'"/>';
+  }
+  const dots='<circle cx="'+x(lastD)+'" cy="'+y(days[lastD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="#F1EFE8" stroke-width="2"/>'
+    +(maxD!==lastD?'<circle cx="'+x(maxD)+'" cy="'+y(days[maxD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="#F1EFE8" stroke-width="2"/>':'');
+  const lbl='<text class="money" x="'+Math.min(x(maxD),W-R-40)+'" y="'+Math.max(10,y(days[maxD]||0)-9)+'" text-anchor="middle" font-size="10" font-family="DM Mono,monospace" fill="#15303A">'+naira(days[maxD]||0)+'</text>';
+  const xt='<text x="'+L+'" y="'+(H-8)+'" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">01</text>'
+    +'<text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">'+('0'+daysInMonth).slice(-2)+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">'+grid+ticks+xt
+    +'<path d="'+path+'" fill="none" stroke="'+ANA_ONE+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+lbl+hits+'</svg>';
+}
+function niceStep(mx){ const p=Math.pow(10,Math.floor(Math.log10(mx))); const f=mx/p; return (f<=2?0.5:f<=5?1:2)*p; }
+function compactN(v){ if(v>=1e6) return (v/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(v>=1e3) return Math.round(v/1e3)+'K'; return String(Math.round(v)); }
+
+function renderAnaDash(){
+  const a=anaAgg, p=anaPrevAgg;
+  let html='';
+  /* ---- 1 · Money ---- */
+  html+='<div class="ana-sec"><div class="sh">01 · Revenue &amp; money</div>';
+  html+='<div class="figs" style="border-bottom:none;padding-bottom:6px">'
+    +'<div class="fig"><div class="k">Recorded income</div><div class="v money">'+naira(a.income)+'</div>'+anaDelta(a.income,p?p.income:null,true)+'</div>'
+    +'<div class="fig"><div class="k">Outstanding</div><div class="v warn money">'+naira(a.outstanding)+'</div>'+anaDelta(a.outstanding,p?p.outstanding:null,false)+'</div>'
+    +'<div class="fig"><div class="k">Rebate cost</div><div class="v money">'+naira(a.rebateCost)+'</div>'+anaDelta(a.rebateCost,p?p.rebateCost:null,false)+'</div>'
+    +'<div class="fig"><div class="k">MD discounts</div><div class="v money">'+naira(a.discountCost)+'</div>'+anaDelta(a.discountCost,p?p.discountCost:null,false)+'</div>'
+    +'<div class="fig"><div class="k">Average bill</div><div class="v money">'+naira(a.avg)+'</div>'+anaDelta(a.avg,p?p.avg:null,true)+'</div>'
+    +'<div class="fig"><div class="k">Patients</div><div class="v">'+a.n.toLocaleString('en-GB')+'</div>'+anaDelta(a.n,p?p.n:null,true)+'</div>'
+    +'</div>';
+  html+='<div class="ana-grid">';
+  // revenue over time
+  html+='<div class="ana-card wide"><div class="ct">Recorded income across '+escHtml(anaLabel)+'</div><div class="cs">Daily totals from the AMOUNT column'+(anaModeCur==='quarter'?', by month':'')+'.</div><div class="chart">';
+  if(anaModeCur==='month'){
+    const parts=anaKeyCur.split('-');
+    const dim=new Date(parseInt(parts[0]),parseInt(parts[1]),0).getDate();
+    html+=lineSVG(a.days,dim);
+  }else{
+    const byM={};
+    anaPeriod.forEach(function(r){ if(r.fd) byM[r.fd.m]=(byM[r.fd.m]||0)+r.amount; });
+    const items=Object.keys(byM).sort(function(x,y){return x-y;}).map(function(m){ return {label:ANA_MNF[m-1], value:byM[m]}; });
+    html+=hbarsHTML(items,0,true);
+  }
+  html+='</div></div>';
+  // payment split — top 4 modes, the long tail of misspellings folded into Other
+  const pmRaw=Object.keys(a.payModes).sort(function(x,y){ return a.payModes[y].amt-a.payModes[x].amt; });
+  const pmTop=pmRaw.slice(0,4);
+  const pmOther=pmRaw.slice(4).reduce(function(s,k){ s.n+=a.payModes[k].n; s.amt+=a.payModes[k].amt; return s; },{n:0,amt:0});
+  const pmItems=pmTop.map(function(k,i){ return {label:k, n:a.payModes[k].n, amt:a.payModes[k].amt, color:ANA_CAT[i]}; });
+  if(pmOther.n) pmItems.push({label:'OTHER ('+(pmRaw.length-4)+' spellings)', n:pmOther.n, amt:pmOther.amt, color:ANA_DIM});
+  const pmTotal=pmItems.reduce(function(s,x){ return s+x.amt; },0)||1;
+  html+='<div class="ana-card"><div class="ct">Payment mode split</div><div class="cs">Share of recorded income by mode.</div><div class="stackbar">';
+  pmItems.forEach(function(m){
+    const w=Math.max(1,m.amt/pmTotal*100);
+    html+='<span class="seg" style="width:'+w+'%;background:'+m.color+'" data-tt="'+escHtml(m.label+' — '+(privacy?'₦•••':naira(m.amt))+' · '+m.n+' patients · '+pctS(m.amt/pmTotal*100))+'"></span>';
+  });
+  html+='</div>'+legendHTML(pmItems.map(function(m){ return {label:m.label+' · '+pctS(m.amt/pmTotal*100), color:m.color}; }))+'</div>';
+  // walk-in vs referred
+  const totPat=a.referred+a.nonRef+a.unlisted||1;
+  html+='<div class="ana-card"><div class="ct">Referred vs non-referred</div><div class="cs">Patient counts for '+escHtml(anaLabel)+'.</div><div class="stackbar">'
+    +'<span class="seg" style="width:'+(a.referred/totPat*100)+'%;background:'+ANA_ONE+'" data-tt="'+escHtml('Referred (listed) — '+a.referred+' · '+pctS(a.referred/totPat*100))+'"></span>'
+    +(a.unlisted?'<span class="seg" style="width:'+Math.max(1,a.unlisted/totPat*100)+'%;background:'+ANA_CAT[1]+'" data-tt="'+escHtml('Referrer not on lists — '+a.unlisted+' · '+pctS(a.unlisted/totPat*100))+'"></span>':'')
+    +'<span class="seg" style="width:'+Math.max(1,a.nonRef/totPat*100)+'%;background:'+ANA_DIM+'" data-tt="'+escHtml('Walk-in / N⁄A / self — '+a.nonRef+' · '+pctS(a.nonRef/totPat*100))+'"></span>'
+    +'</div>'+legendHTML([{label:'Referred · '+a.referred,color:ANA_ONE}].concat(a.unlisted?[{label:'Unlisted referrer · '+a.unlisted,color:ANA_CAT[1]}]:[]).concat([{label:'Walk-in / N⁄A / self · '+a.nonRef,color:ANA_DIM}]))+'</div>';
+  html+='</div></div>';
+
+  /* ---- 2 · Test volumes ---- */
+  const testKeys=Object.keys(a.tests).sort(function(x,y){ return a.tests[y]-a.tests[x]; });
+  html+='<div class="ana-sec"><div class="sh">02 · Test volumes</div><div class="ana-grid">';
+  html+='<div class="ana-card"><div class="ct">Most performed</div><div class="cs">Top 10 matched tests by count.</div><div class="chart">'
+    +hbarsHTML(testKeys.slice(0,10).map(function(k){ return {label:k, value:a.tests[k]}; }),0,false)+'</div>'
+    +(a.unmatchedCount?'<div class="ana-note"><b>'+a.unmatchedCount+' test entries didn’t match the price list</b> and are excluded from these counts (top: '
+      +Object.keys(a.unmatchedNames).sort(function(x,y){return a.unmatchedNames[y]-a.unmatchedNames[x];}).slice(0,6).map(function(k){return escHtml(k)+' ×'+a.unmatchedNames[k];}).join(' · ')+').</div>':'')
+    +'</div>';
+  const least=testKeys.slice(-10).reverse();
+  html+='<div class="ana-card"><div class="ct">Least performed</div><div class="cs">Matched tests with the fewest requests — candidates for pricing or delisting review.</div>'
+    +'<div class="least-list">'+least.map(function(k){ return '<div>'+escHtml(k)+' <span>×'+a.tests[k]+'</span></div>'; }).join('')+'</div></div>';
+  // section workload — magnitude, one hue
+  const secKeys=Object.keys(a.sections).sort(function(x,y){ return a.sections[y]-a.sections[x]; });
+  html+='<div class="ana-card"><div class="ct">Section workload</div><div class="cs">Matched tests routed to each bench.</div><div class="chart">'
+    +hbarsHTML(secKeys.map(function(k){ return {label:k, value:a.sections[k]}; }),0,false)+'</div></div>';
+  // mix shift — categorical stacked columns
+  const topSecs=secKeys.slice(0,4);
+  const buckets={}; const border=(anaModeCur==='month');
+  anaPeriod.forEach(function(r){
+    if(!r.fd) return;
+    const bk = border ? 'W'+Math.min(5,Math.ceil(r.fd.d/7)) : ANA_MN[r.fd.m-1];
+    if(!buckets[bk]) buckets[bk]={};
+    r.matched.forEach(function(t){
+      const s=topSecs.indexOf(t.section)!==-1?t.section:'OTHER';
+      buckets[bk][s]=(buckets[bk][s]||0)+1;
+    });
+  });
+  const bKeys=Object.keys(buckets).sort(border?undefined:function(x,y){ return ANA_MN.indexOf(x)-ANA_MN.indexOf(y); });
+  const series=topSecs.concat(secKeys.length>4?['OTHER']:[]);
+  let bMax=1; bKeys.forEach(function(b){ let s=0; series.forEach(function(k){ s+=buckets[b][k]||0; }); bMax=Math.max(bMax,s); });
+  html+='<div class="ana-card"><div class="ct">Test mix across the period</div><div class="cs">Section share per '+(border?'week':'month')+'.</div><div class="colchart">';
+  bKeys.forEach(function(b){
+    let col='';
+    series.forEach(function(k,i){
+      const v=buckets[b][k]||0; if(!v) return;
+      col+='<span class="seg" style="height:'+(v/bMax*100)+'%;background:'+ANA_CAT[i]+'" data-tt="'+escHtml(b+' · '+k+' — '+v+' tests')+'"></span>';
+    });
+    html+='<div class="bwrap"><div class="bucket">'+col+'<span class="bl">'+escHtml(b)+'</span></div></div>';
+  });
+  html+='</div>'+legendHTML(series.map(function(k,i){ return {label:k, color:ANA_CAT[i]}; }))+'</div>';
+  html+='</div></div>';
+
+  /* ---- 3 · Referrers ---- */
+  const refList=Object.keys(a.refs).map(function(k){ return a.refs[k]; });
+  refList.sort(function(x,y){ return y.revenue-x.revenue; });
+  html+='<div class="ana-sec"><div class="sh">03 · Referrers</div>';
+  html+='<div class="ana-grid"><div class="ana-card wide"><div class="ct">Top referrers — is each rebate deal worth it?</div>'
+    +'<div class="cs">Revenue brought = what their patients were billed (rebuilt, discounted). Cost = rebate owed at their rate. Ranked by revenue; top 12 shown, all in the CSV.</div>';
+  html+='<table class="dd-table"><thead><tr><th>Referrer</th><th class="r">Patients</th><th class="r">Revenue brought</th><th class="r">Rebate cost</th><th class="r">Cost %</th><th class="r">Net value</th></tr></thead><tbody>';
+  refList.slice(0,12).forEach(function(rf){
+    const cp=rf.revenue?rf.rebateCost/rf.revenue*100:0;
+    html+='<tr><td>'+escHtml(rf.name)+' <span style="color:var(--mist);font-size:10.5px">'+rf.kind+' · '+rf.rate+'%</span></td>'
+      +'<td class="r mono-c">'+rf.patients+'</td>'
+      +'<td class="r mono-c money">'+naira(rf.revenue)+'</td>'
+      +'<td class="r mono-c money">'+naira(rf.rebateCost)+'</td>'
+      +'<td class="r mono-c">'+pctS(cp)+'</td>'
+      +'<td class="r mono-c money">'+naira(rf.revenue-rf.rebateCost)+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  const byVol=refList.slice().sort(function(x,y){ return y.patients-x.patients; }).slice(0,5);
+  html+='<div class="ana-note">Top by patient volume: '+byVol.map(function(r){ return escHtml(r.name)+' ('+r.patients+')'; }).join(' · ')+'.'
+    +(a.unlisted?' <b>'+a.unlisted+' registrations name a referrer not on the doctor/hospital lists</b> — their revenue and rebate are not attributed.':'')+'</div>';
+  html+='</div>';
+  // top referrers by revenue — bars
+  html+='<div class="ana-card wide"><div class="ct">Top referrers by revenue brought</div><div class="chart">'
+    +hbarsHTML(refList.slice(0,8).map(function(r){ return {label:r.name, value:Math.round(r.revenue)}; }),0,true)+'</div></div>';
+  html+='</div></div>';
+
+  document.getElementById('anaDash').innerHTML=html;
+  anaBindTips();
+}
+
+/* ---- tooltips (shared, textContent only) ---- */
+function anaBindTips(){
+  let tip=document.getElementById('anaTip');
+  if(!tip){ tip=document.createElement('div'); tip.id='anaTip'; tip.className='ana-tip'; document.body.appendChild(tip); }
+  const host=document.getElementById('v-analytics');
+  if(host._tipsBound) return; host._tipsBound=true;
+  host.addEventListener('pointermove',function(e){
+    const t=e.target.closest ? e.target.closest('[data-tt]') : null;
+    if(!t){ tip.style.display='none'; return; }
+    tip.textContent=t.getAttribute('data-tt');
+    tip.style.display='block';
+    const vw=window.innerWidth;
+    tip.style.left=Math.min(e.clientX+14,vw-290)+'px';
+    tip.style.top=(e.clientY+16)+'px';
+  });
+  host.addEventListener('pointerleave',function(){ tip.style.display='none'; });
+}
+
+/* ---- deep-dive ---- */
+function renderDeepFilters(){
+  const refs={}; const stats={};
+  anaPeriod.forEach(function(r){ if(r.ref) refs[r.ref.name]=1; if(r.payStatus) stats[r.payStatus.toUpperCase()]=1; });
+  const secs={}; anaPeriod.forEach(function(r){ r.matched.forEach(function(t){ secs[t.section]=1; }); });
+  const dmin=anaPeriod.reduce(function(s,r){ return r.dkey&&(!s||r.dkey<s)?r.dkey:s; },0);
+  const dmax=anaPeriod.reduce(function(s,r){ return r.dkey>s?r.dkey:s; },0);
+  const iso=function(k){ if(!k) return ''; const s=String(k); return s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8); };
+  let html='<div class="dd-filters">'
+    +'<label class="fld">From<input type="date" id="ddFrom" value="'+iso(dmin)+'"></label>'
+    +'<label class="fld">To<input type="date" id="ddTo" value="'+iso(dmax)+'"></label>'
+    +'<label class="fld">Referrer<select id="ddRef"><option value="">All</option><option value="__nonref">Walk-in / N⁄A / self</option><option value="__unlisted">Unlisted referrer</option>'
+      +Object.keys(refs).sort().map(function(n){ return '<option>'+escHtml(n)+'</option>'; }).join('')+'</select></label>'
+    +'<label class="fld">Section<select id="ddSec"><option value="">All</option>'+Object.keys(secs).sort().map(function(s){ return '<option>'+escHtml(s)+'</option>'; }).join('')+'</select></label>'
+    +'<label class="fld">Test contains<input type="text" id="ddTest" placeholder="e.g. PSA"></label>'
+    +'<label class="fld">Payment<select id="ddStat"><option value="">All</option>'+Object.keys(stats).sort().map(function(s){ return '<option>'+escHtml(s)+'</option>'; }).join('')+'</select></label>'
+    +'<button class="btn" onclick="anaApplyFilters()">Apply</button>'
+    +'<button class="btn ghost" onclick="renderDeepFilters();anaApplyFilters()">Reset</button>'
+    +'<button class="btn ghost" onclick="anaExportCsv(true)">Export filtered CSV</button>'
+    +'</div><div id="ddOut"></div>';
+  document.getElementById('anaDeep').innerHTML=html;
+}
+function anaApplyFilters(){
+  const g=function(id){ const e=document.getElementById(id); return e?e.value:''; };
+  const from=g('ddFrom').replace(/-/g,''), to=g('ddTo').replace(/-/g,'');
+  const rf=g('ddRef'), sec=g('ddSec'), tq=g('ddTest').trim().toLowerCase(), st=g('ddStat');
+  anaFiltered=anaPeriod.filter(function(r){
+    if(from && r.dkey<parseInt(from)) return false;
+    if(to && r.dkey>parseInt(to)) return false;
+    if(rf==='__nonref' && r.refKind!=='none') return false;
+    else if(rf==='__unlisted' && r.refKind!=='unlisted') return false;
+    else if(rf && rf.charAt(0)!=='_' && (!r.ref || r.ref.name!==rf)) return false;
+    if(sec && !r.matched.some(function(t){ return t.section===sec; })) return false;
+    if(tq && r.tests.join(', ').toLowerCase().indexOf(tq)===-1) return false;
+    if(st && r.payStatus.toUpperCase()!==st) return false;
+    return true;
+  });
+  const a=anaAggregate(anaFiltered);
+  let html='<div class="figs" style="border-bottom:1px solid var(--line)">'
+    +'<div class="fig"><div class="k">Matches</div><div class="v">'+a.n.toLocaleString('en-GB')+'</div></div>'
+    +'<div class="fig"><div class="k">Recorded income</div><div class="v money">'+naira(a.income)+'</div></div>'
+    +'<div class="fig"><div class="k">Outstanding</div><div class="v warn money">'+naira(a.outstanding)+'</div></div>'
+    +'<div class="fig"><div class="k">Rebate cost</div><div class="v money">'+naira(a.rebateCost)+'</div></div>'
+    +'<div class="fig"><div class="k">Avg bill</div><div class="v money">'+naira(a.avg)+'</div></div>'
+    +'</div>';
+  const cap=300;
+  html+='<table class="dd-table"><thead><tr><th>Lab No.</th><th>Date</th><th>Patient</th><th>Tests</th><th>Referrer</th><th class="r">Amount</th><th>Status</th></tr></thead><tbody>';
+  anaFiltered.slice(0,cap).forEach(function(r){
+    html+='<tr><td class="mono-c">ES'+r.lab+'/26</td><td class="mono-c">'+escHtml(r.dateStr||'—')+'</td><td>'+escHtml(r.name)+'</td>'
+      +'<td>'+escHtml(r.tests.join(', '))+(r.unmatched.length?' <span style="color:#6b5715;font-size:10.5px">('+r.unmatched.length+' unmatched)</span>':'')+'</td>'
+      +'<td>'+escHtml(r.ref?r.ref.name:(r.refKind==='unlisted'?r.requestor+' ?':'—'))+'</td>'
+      +'<td class="r mono-c money">'+(r.amount?naira(r.amount):'—')+'</td>'
+      +'<td>'+escHtml(r.payStatus||'—')+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  if(anaFiltered.length>cap) html+='<div class="ana-note">Showing the first '+cap+' of '+anaFiltered.length+' rows — the CSV export carries all of them.</div>';
+  document.getElementById('ddOut').innerHTML=html;
+  anaBindTips();
+  applyPrivacy();
+}
+
+/* ---- exports ---- */
+function anaExportCsv(filtered){
+  const rows = filtered ? (anaFiltered||[]) : (anaPeriod||[]);
+  if(!rows.length){ showAnaStatus('Nothing to export yet — build a period first.','error'); return; }
+  const q=function(v){ v=String(v==null?'':v); return '"'+v.replace(/"/g,'""')+'"'; };
+  let csv='﻿Lab No,Date,Patient,Tests,Requestor,Matched referrer,Kind,Rate %,Amount recorded,Pay mode,Pay status,Location,DISC %,Gross (price list),Surcharge,Full bill (base),Rebate cost,Unmatched tests\r\n';
+  rows.forEach(function(r){
+    csv+=[q('ES'+r.lab+'/26'),q(r.dateStr),q(r.name),q(r.tests.join(', ')),q(r.requestor),
+      q(r.ref?r.ref.name:''),q(r.ref?r.ref.kind:''),q(r.ref?r.ref.rebate:''),
+      r.amount||0,q(r.payMode),q(r.payStatus),q(r.location),r.discPct||0,
+      Math.round(r.gross),Math.round(r.sur),Math.round(r.base),Math.round(r.rebateCost),
+      q(r.unmatched.join(', '))].join(',')+'\r\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='evashalom-analytics-'+anaKeyCur+(filtered?'-filtered':'')+'.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function anaPrintSummary(){
+  if(!anaAgg){ return; }
+  const a=anaAgg, p=anaPrevAgg;
+  const dRow=function(label,cur,prev,money){
+    const f=money?naira:function(v){return Math.round(v).toLocaleString('en-GB');};
+    let d='—';
+    if(prev) d=((cur>=prev?'+':'−')+Math.abs((cur-prev)/prev*100).toFixed(1)+'%');
+    return '<tr><td>'+label+'</td><td class="r">'+f(cur)+'</td><td class="r">'+(p?f(prev):'—')+'</td><td class="r">'+d+'</td></tr>';
+  };
+  const testKeys=Object.keys(a.tests).sort(function(x,y){ return a.tests[y]-a.tests[x]; }).slice(0,10);
+  const refList=Object.keys(a.refs).map(function(k){ return a.refs[k]; }).sort(function(x,y){ return y.revenue-x.revenue; }).slice(0,15);
+  const pmKeys=Object.keys(a.payModes).sort(function(x,y){ return a.payModes[y].amt-a.payModes[x].amt; });
+  const win=window.open('','_blank','width=880,height=960');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Analytics — '+escHtml(anaLabel)+'</title><style>'
+  +'@page{size:A4;margin:14mm}body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0;padding:20px}'
+  +'.hd{display:flex;gap:14px;align-items:center;border-bottom:3px solid #0F4C5C;padding-bottom:12px}'
+  +'.hd img{width:58px;height:58px;border-radius:50%;object-fit:cover}'
+  +'.hd h1{font-size:15px;margin:0;color:#0F4C5C}.hd p{margin:2px 0 0;font-size:10px;color:#555;line-height:1.45}'
+  +'.tag{text-align:center;background:#0F4C5C;color:#fff;font-weight:700;letter-spacing:.14em;font-size:12px;padding:7px;margin:14px 0}'
+  +'h2{font-size:12px;color:#0F4C5C;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px}'
+  +'table{width:100%;border-collapse:collapse;font-size:11.5px}'
+  +'th{background:#EAF0F2;color:#0F4C5C;text-align:left;padding:6px 7px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}'
+  +'td{padding:5px 7px;border-bottom:1px solid #eee}td.r,th.r{text-align:right;white-space:nowrap}'
+  +'.note{margin-top:12px;font-size:10.5px;color:#777;line-height:1.6}'
+  +'.ft{margin-top:16px;font-size:10px;color:#777;text-align:center;border-top:1px solid #ddd;padding-top:10px}'
+  +'@media print{.noprint{display:none}}.noprint{margin-top:16px;text-align:center}'
+  +'.noprint button{background:#0F4C5C;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:14px;cursor:pointer}'
+  +'</style></head><body>'
+  +'<div class="hd"><img src="data:image/jpeg;base64,'+LOGO_B64+'"/>'
+  +'<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'
+  +'<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'
+  +'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State</p></div></div>'
+  +'<div class="tag">ANALYTICS SUMMARY — '+escHtml(anaLabel.toUpperCase())+'</div>'
+  +'<h2>Money</h2><table><thead><tr><th></th><th class="r">'+escHtml(anaLabel)+'</th><th class="r">'+escHtml(p?anaPrevLabel:'—')+'</th><th class="r">Change</th></tr></thead><tbody>'
+  +dRow('Recorded income',a.income,p?p.income:0,true)
+  +dRow('Outstanding (not paid)',a.outstanding,p?p.outstanding:0,true)
+  +dRow('Rebate cost',a.rebateCost,p?p.rebateCost:0,true)
+  +dRow('MD discounts',a.discountCost,p?p.discountCost:0,true)
+  +dRow('Average bill',a.avg,p?p.avg:0,true)
+  +dRow('Patients',a.n,p?p.n:0,false)
+  +'</tbody></table>'
+  +'<h2>Payment modes</h2><table><tbody>'+pmKeys.map(function(k){ const m=a.payModes[k]; return '<tr><td>'+escHtml(k)+'</td><td class="r">'+m.n+' patients</td><td class="r">'+naira(m.amt)+'</td></tr>'; }).join('')+'</tbody></table>'
+  +'<h2>Top tests</h2><table><tbody>'+testKeys.map(function(k){ return '<tr><td>'+escHtml(k)+'</td><td class="r">'+a.tests[k]+'</td></tr>'; }).join('')+'</tbody></table>'
+  +(a.unmatchedCount?'<div class="note"><b>'+a.unmatchedCount+' test entries did not match the price list</b> and are excluded from test counts and gross rebuilds.</div>':'')
+  +'<h2>Referrers (top 15 by revenue brought)</h2><table><thead><tr><th>Referrer</th><th class="r">Patients</th><th class="r">Revenue</th><th class="r">Rebate cost</th><th class="r">Net</th></tr></thead><tbody>'
+  +refList.map(function(r){ return '<tr><td>'+escHtml(r.name)+' ('+r.kind+' '+r.rate+'%)</td><td class="r">'+r.patients+'</td><td class="r">'+naira(r.revenue)+'</td><td class="r">'+naira(r.rebateCost)+'</td><td class="r">'+naira(r.revenue-r.rebateCost)+'</td></tr>'; }).join('')
+  +'</tbody></table>'
+  +'<div class="note">Revenue brought is rebuilt from the price list (gross + surcharge, less DISC tags); recorded income is the tracker AMOUNT column. Part-paid and C/O rows count as collected; only “Not Paid” counts as outstanding.</div>'
+  +'<div class="ft">Generated '+new Date().toLocaleDateString('en-GB')+' — Evashalom Operations · Internal</div>'
+  +'<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'
+  +'</body></html>');
+  win.document.close();
 }
 
 /* ================= INIT ================= */
