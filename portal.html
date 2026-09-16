@@ -51,6 +51,18 @@ button,input,select{font:inherit;color:inherit}
 .sgate-in .d{font-size:12.5px;color:var(--mist);margin-bottom:18px}
 .sgate-in .cancel{margin-top:14px;background:none;border:none;font-size:12.5px;color:var(--mist);cursor:pointer;text-decoration:underline}
 .sgate-in .cancel:hover{color:var(--ink)}
+.sgate-in.confirm-in{max-width:420px;text-align:left}
+.sgate-in.confirm-in h3{text-align:left;margin-bottom:12px}
+.rc-sum{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin-bottom:12px}
+.rc-sum div{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13.5px}
+.rc-sum div span:first-child{color:rgba(21,48,58,.55);flex-shrink:0}
+.rc-sum div span:last-child{text-align:right;word-break:break-word}
+.rc-sum .tot{font-weight:800;color:var(--teal);font-size:16px}
+.rc-sum .tot span:first-child{color:var(--teal)}
+.rc-dup{margin-bottom:12px;padding:10px 12px;border-radius:8px;font-size:12.5px;line-height:1.5;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.4);color:#6b5715}
+.rc-dup b{font-family:'DM Mono',monospace;font-weight:500}
+.rc-actions{display:flex;gap:10px;justify-content:flex-end}
+.rc-actions .btn{height:42px}
 
 /* ---------- WELCOME ---------- */
 .welcome{min-height:100vh;background:var(--bone);display:flex;flex-direction:column;position:relative;overflow:hidden}
@@ -96,6 +108,15 @@ button,input,select{font:inherit;color:inherit}
 .nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
 .nav a.on{color:#fff;font-weight:700;background:rgba(155,184,192,.14);box-shadow:inset 2px 0 0 var(--gold)}
 .nav a .lbl{flex:1}
+.nav a .short{display:none}
+/* Mobile sticky total: keeps the amount and the Register button in reach while
+   the receptionist is still adding tests far above the bill panel. */
+.mob-total{display:none;position:fixed;left:0;right:0;bottom:58px;z-index:38;background:var(--ink);color:#fff;padding:10px 16px;align-items:center;gap:12px;box-shadow:0 -6px 20px rgba(21,48,58,.25)}
+.mob-total .mt-l{flex:1;min-width:0}
+.mob-total .mt-k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
+.mob-total .mt-v{font-family:'DM Mono',monospace;font-size:20px;line-height:1.1;margin-top:2px}
+.mob-total .mt-n{font-size:11px;color:var(--mist);margin-top:1px}
+.mob-total .btn{height:40px;padding:0 16px;font-size:13px;flex-shrink:0}
 .nav a .dot-r{width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;flex-shrink:0}
 .rail-foot{padding:16px 22px 0;border-top:1px solid rgba(155,184,192,.15);font-size:11px;color:rgba(155,184,192,.75);line-height:1.6}
 .rail-foot .priv{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11.5px}
@@ -103,6 +124,12 @@ button,input,select{font:inherit;color:inherit}
 .rail-foot .priv .dot::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .15s}
 .rail-foot .priv.on .dot{background:var(--gold)}
 .rail-foot .priv.on .dot::after{transform:translateX(13px)}
+.rail-foot .fresh{margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rail-foot .fresh .mono{color:rgba(255,255,255,.75)}
+.rail-foot .fresh button{background:rgba(255,255,255,.08);border:1px solid rgba(155,184,192,.25);color:rgba(255,255,255,.8);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;transition:background .15s}
+.rail-foot .fresh button:hover{background:rgba(255,255,255,.16)}
+.rail-foot .fresh button:disabled{opacity:.5;cursor:wait}
+.rail-foot .build{margin-top:6px;font-size:9.5px;color:rgba(155,184,192,.45);letter-spacing:.04em}
 
 .main{margin-left:var(--rail);padding:36px 44px 64px;max-width:1080px}
 .eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
@@ -235,6 +262,12 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 .chosen-row button{background:none;border:none;color:var(--red);font-size:16px;line-height:1;cursor:pointer;padding:0 4px}
 .empty-hint{margin-top:12px;font-size:13px;color:var(--mist);font-style:italic}
 .reb-note{margin-top:10px;font-size:12px;color:var(--mist);line-height:1.5}
+.sublet-tag{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:rgba(15,76,92,.09);vertical-align:1px}
+.sub-note{display:flex;align-items:center;gap:10px;margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.5;background:rgba(155,184,192,.14);color:rgba(21,48,58,.7)}
+.sub-note.warn{background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.4);color:#6b5715}
+.sub-note span{flex:1}
+.sub-note button{background:none;border:none;font-size:16px;line-height:1;cursor:pointer;color:inherit;opacity:.6;padding:0 2px}
+.sub-note button:hover{opacity:1}
 .bill-wrap{position:sticky;top:24px}
 .bill-hd{background:var(--ink);border-radius:12px 12px 0 0;padding:18px 20px}
 .bill-hd .cap{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
@@ -250,9 +283,18 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 .editable-net{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
 .editable-net label{font-size:10px;color:var(--mist);font-weight:700;text-transform:uppercase;letter-spacing:.14em}
 .editable-net input{height:44px;border:2px solid var(--teal);border-radius:8px;padding:0 12px;font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--teal);outline:none}
+.adj-wrap{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.adj-wrap label{color:#6b5715}
+.adj-wrap input{height:38px;border:1px solid rgba(201,162,39,.5);background:rgba(201,162,39,.06);border-radius:7px;padding:0 10px;font-size:13.5px;font-weight:400;font-family:'Hanken Grotesk',sans-serif;color:var(--ink)}
 .bill-bd .btn{width:100%;margin-top:16px}
 .bill-note{margin-top:12px;font-size:12px;color:var(--mist);line-height:1.5}
 .reg-done{margin-top:12px;font-size:12.5px;color:var(--teal);background:rgba(15,76,92,.07);border-radius:8px;padding:10px 12px;line-height:1.5}
+/* Locked after a successful registration: still readable for the receipt,
+   but nothing can be edited or re-submitted until the form is reset. */
+.reg-grid.locked{opacity:.55;pointer-events:none;user-select:none}
+.mob-total.locked .btn{opacity:.4;pointer-events:none}
+.after-actions{display:flex;gap:10px;margin-top:.6rem;flex-wrap:wrap}
+.after-actions .btn{flex:1;min-width:200px}
 
 /* find patient */
 .person-group{border:1px solid var(--line);border-radius:10px;margin-top:12px;overflow:hidden;background:var(--white)}
@@ -294,11 +336,19 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 .reb-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .reb-controls select{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13.5px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink)}
 .reb-controls .btn{height:38px;font-size:12.5px;padding:0 16px}
+.exp-wrap{position:relative;display:inline-block}
+.exp-menu{display:none;position:absolute;right:0;top:44px;z-index:60;min-width:270px;max-height:60vh;overflow-y:auto;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 14px 36px rgba(21,48,58,.2);padding:6px}
+.exp-menu.on{display:block}
+.exp-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 11px;border-radius:7px;font-size:13px;font-family:'Hanken Grotesk',sans-serif;color:var(--ink);cursor:pointer}
+.exp-menu button:hover{background:var(--bone)}
+.exp-sep{height:1px;background:var(--line);margin:6px 4px}
+.exp-lbl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700;padding:6px 11px 4px}
+.exp-menu .none{font-size:12.5px;color:var(--mist);padding:6px 11px 9px;font-style:italic}
 .rtbl{margin-top:28px}
 .rtbl .hd{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:9px;border-bottom:2px solid var(--ink)}
 .rtbl .hd .t{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
 .rtbl .hd .n{font-size:12px;color:var(--mist)}
-.rtbl .cols,.rtbl .row{display:grid;grid-template-columns:1fr 74px 70px 110px 70px 120px 96px;gap:8px;align-items:baseline}
+.rtbl .cols,.rtbl .row{display:grid;grid-template-columns:minmax(110px,1fr) 78px 100px 104px 46px 104px 84px;gap:8px;align-items:baseline}
 .rtbl .cols{padding:9px 4px 7px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);font-weight:700;border-bottom:1px solid var(--line)}
 .rtbl .cols span,.rtbl .row span{text-align:right}
 .rtbl .cols span:first-child,.rtbl .row span:first-child{text-align:left}
@@ -317,8 +367,11 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 
 /* edit records */
 .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:1.2rem}
-.rec-actions{display:flex;gap:12px;align-items:flex-end;padding-top:1rem;border-top:1px solid var(--line);flex-wrap:wrap}
-.rec-actions .fld{max-width:260px;flex:1}
+.rec-suggest{margin-top:8px;font-size:12px;color:rgba(21,48,58,.65);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec-suggest b{color:var(--teal);font-weight:500}
+.rec-suggest button{height:26px;padding:0 10px;border:1px solid var(--teal);border-radius:6px;background:var(--white);font-size:11.5px;font-weight:700;color:var(--teal);cursor:pointer}
+.rec-suggest button:hover{background:rgba(15,76,92,.08)}
+.chosen-row .unpriced{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b5715;background:rgba(201,162,39,.14);vertical-align:1px}
 
 /* ---------- ANALYTICS ---------- */
 .ana-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
@@ -373,7 +426,15 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 @media(max-width:960px){
   .reg-grid{grid-template-columns:1fr}
   .bill-wrap{position:static}
-  .rtbl .cols,.rtbl .row{grid-template-columns:1fr 70px 100px 60px 110px 80px;font-size:13px}
+}
+/* The rebate table needs its own breakpoint: it carries two money columns, so
+   it runs out of room for referrer names well before the page does. */
+@media(max-width:1200px){
+  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(120px,1fr) 92px 96px 44px 96px 74px;font-size:13px}
+  .rtbl .cols span:nth-child(2),.rtbl .row span:nth-child(2){display:none}
+}
+@media(max-width:820px){
+  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(96px,1fr) 88px 40px 88px 68px;font-size:12.5px}
   .rtbl .cols span:nth-child(3),.rtbl .row span:nth-child(3){display:none}
 }
 @media(max-width:860px){
@@ -383,6 +444,11 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
   .nav a{flex-direction:column;gap:3px;padding:10px 12px;font-size:9.5px;margin:0;border-radius:0;min-width:70px;text-align:center;justify-content:center}
   .nav a.on{box-shadow:inset 0 2px 0 var(--gold)}
   .nav a .dot-r{display:none}
+  .nav a .full{display:none}
+  .nav a .short{display:inline}
+  .nav a{min-width:0;flex:1;padding:10px 6px}
+  #v-register.on ~ .mob-total,.mob-total.on{display:flex}
+  #v-register.on{padding-bottom:70px}
   .ana-grid{grid-template-columns:1fr}
   .main{margin-left:0;padding:24px 20px 100px}
   h2.vt{font-size:27px}
@@ -448,6 +514,8 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
     <div class="rail-foot">
       Fred Ejiofor Crescent<br>Governor Street &middot; Asaba
       <div class="priv" id="privToggle" onclick="togglePrivacy()"><span class="dot"></span> Privacy mode</div>
+      <div class="fresh">Data as of <span class="mono" id="freshAt">&mdash;</span> <button type="button" id="refreshBtn" onclick="refreshAllData()">Refresh</button></div>
+      <div class="build">Build <span class="mono" id="buildTag"></span></div>
     </div>
   </nav>
   <main class="main">
@@ -523,6 +591,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
               <label class="fld">Registered by<input type="text" id="regBy" placeholder="Your name"></label>
             </div>
             <div class="reb-note" id="rebateNote"></div>
+            <div id="subletNotice"></div>
           </div>
         </div>
         <div class="bill-wrap">
@@ -543,6 +612,10 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
             <div class="editable-net">
               <label>Final amount (editable)</label>
               <input type="text" id="finalAmount" inputmode="numeric">
+              <div class="adj-wrap" id="adjWrap" style="display:none">
+                <label>Reason for the different amount</label>
+                <input type="text" id="adjReason" placeholder="e.g. negotiated, staff, partial test" maxlength="80">
+              </div>
             </div>
             <button class="btn" id="registerBtn" onclick="doRegister()">Register &amp; issue lab no.</button>
             <div class="bill-note" id="targetNote"></div>
@@ -551,6 +624,10 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       </div>
       <div id="afterRegister"></div>
     </section>
+    <div class="mob-total" id="mobTotal" aria-hidden="true">
+      <div class="mt-l"><div class="mt-k">Total payable</div><div class="mt-v money" id="mtVal">&#8358;0</div><div class="mt-n" id="mtN">No tests yet</div></div>
+      <button class="btn" type="button" onclick="doRegister()">Register</button>
+    </div>
 
     <!-- ======== FIND PATIENT ======== -->
     <section class="view" id="v-find">
@@ -625,17 +702,27 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
         <div>
           <div class="eyebrow rest">Management &middot; Restricted</div>
           <h2 class="vt">Rebates</h2>
-          <p class="vsub">What you owe each referrer for the month: their percentage of every referred patient's full bill, rebuilt registration by registration from the tracker.</p>
+          <p class="vsub">What you owe each referrer for the month, rebuilt registration by registration from the tracker. Each test earns rebate on its own base &mdash; full price normally, Evashalom's lab cut only for sublet tests.</p>
         </div>
         <div class="reb-controls">
           <select id="rebMonth"><option value="">Loading months&hellip;</option></select>
           <button class="btn" id="rebBuildBtn" onclick="buildRebates()">Build statements</button>
+          <div class="exp-wrap" id="expWrap" style="display:none">
+            <button class="btn ghost" type="button" onclick="toggleExportMenu(event)" id="expBtn">Export &#9662;</button>
+            <div class="exp-menu" id="expMenu">
+              <button type="button" onclick="exportDoctorRebates()">Doctors &mdash; rebate totals</button>
+              <button type="button" onclick="exportHospitalRebates()">Hospitals &mdash; rebate totals</button>
+              <div class="exp-sep"></div>
+              <div class="exp-lbl">Per-hospital itemized bills</div>
+              <div id="expHospitals"></div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="rebStatus" class="hidden"></div>
       <div id="rebWarn" class="hidden"></div>
       <div id="rebTable"></div>
-      <p class="foot-note">Payouts are the referrer's rate &times; what each patient actually paid: price-list gross plus any per-test surcharge, less any MD discount recorded as a <span class="mono">DISC:n%</span> tag in the comments &mdash; never read from the AMOUNT column, which records the payment net of the rebate.</p>
+      <p class="foot-note">Rebate base is per test: full price for a normal test, the <span class="mono">LAB CUT</span> (price list column H) for a sublet test &mdash; a sublet test with no lab cut earns nothing. The per-test surcharge is not rebateable, and MD discounts are absorbed by Evashalom without reducing what a referrer earns. Figures are never read from the AMOUNT column.</p>
     </section>
 
     <!-- ======== ANALYTICS ======== -->
@@ -665,7 +752,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
     <section class="view" id="v-records">
       <div class="eyebrow rest">Management &middot; Restricted</div>
       <h2 class="vt">Edit records</h2>
-      <p class="vsub">Open a lab number and correct it &mdash; most often, marking an unpaid bill as paid once the patient settles.</p>
+      <p class="vsub">Open a lab number and correct it &mdash; mark a bill paid, add a test the patient came back for, or record the doctor they forgot to mention. Every change leaves a note on the record.</p>
       <div class="searchbar">
         <input type="number" id="recLabInput" placeholder="Lab number &mdash; e.g. 6206" min="2">
         <button class="btn" onclick="loadRecord()" id="recLoadBtn">Open</button>
@@ -674,16 +761,73 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       <div id="recCard" class="card hidden">
         <div class="card-title">Record</div>
         <div class="rec-grid" id="recGrid"></div>
-        <div class="rec-actions">
-          <label class="fld">Payment status<select id="recPayStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
-          <button class="btn" onclick="updateRecord()" id="recUpdateBtn">Update payment status</button>
+        <hr class="divider">
+        <div class="reg-grid" style="margin-top:0">
+          <div class="reg-left">
+            <div>
+              <div class="sec-h">Tests</div>
+              <div class="test-search">
+                <input type="text" id="recTestSearch" placeholder="Type to add a test&hellip;" autocomplete="off">
+                <div class="test-results" id="recTestResults"></div>
+              </div>
+              <div id="recChosenTests"></div>
+            </div>
+            <div>
+              <div class="sec-h">Referral &amp; payment</div>
+              <div class="fgrid c11">
+                <label class="fld">Referral type<select id="recRefType"><option value="na">N/A &mdash; not available</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
+                <label class="fld">Referrer<select id="recRefName"><option value="">&mdash;</option></select></label>
+              </div>
+              <div class="fgrid c11">
+                <label class="fld">Payment mode<select id="recPayMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
+                <label class="fld">Payment status<select id="recPayStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
+              </div>
+              <div class="fgrid c11">
+                <label class="fld">Phone<input type="text" id="recPhone" class="mono-in"></label>
+              </div>
+              <div class="reb-note" id="recRefNote"></div>
+            </div>
+          </div>
+          <div class="bill-wrap">
+            <div class="bill-hd">
+              <div class="cap">Suggested bill</div>
+              <div class="num" id="recSuggested">&#8358;0</div>
+              <div class="bars"></div>
+            </div>
+            <div class="bill-bd">
+              <div class="bill-line"><span class="lbl">Tests</span><span class="val" id="recBillCount">0</span></div>
+              <div class="bill-line"><span class="lbl">Gross</span><span class="val money" id="recBillGross">&#8358;0</span></div>
+              <div class="bill-line" id="recSurLine" style="display:none"><span class="lbl">Surcharge (<span id="recSurRate">0</span>/test)</span><span class="val money" id="recBillSur">+&#8358;0</span></div>
+              <div class="bill-line"><span class="lbl">Referrer rebate (<span id="recRebPct">0</span>%) &middot; monthly</span><span class="val money" style="color:var(--mist)" id="recBillRebate">&#8358;0</span></div>
+              <div class="editable-net">
+                <label>Amount recorded (editable)</label>
+                <input type="text" id="recAmount" inputmode="numeric">
+                <div class="rec-suggest" id="recSuggestRow" style="display:none">Suggested from tests: <b class="mono money" id="recSuggestVal"></b> <button type="button" onclick="recUseSuggested()">Use it</button></div>
+              </div>
+              <button class="btn" id="recUpdateBtn" onclick="updateRecord()" disabled>No changes yet</button>
+              <div class="bill-note" id="recNote"></div>
+            </div>
+          </div>
         </div>
-        <div class="bill-note" id="recNote"></div>
       </div>
-      <p class="foot-note">Updates go through the registration endpoint's update action and land on its target sheet (currently the TEST SANDBOX tab while you test). This view reads the live tracker, so a sandbox update won't change what you see here until cutover.</p>
+      <p class="foot-note">Adding a test or changing the referrer never changes the recorded amount by itself &mdash; the suggested figure is shown and you choose whether to apply it. A referrer change also updates the rebate % so they appear on the next statement. Each save appends an <span class="mono">EDIT</span> note to the record's comments.</p>
     </section>
 
   </main>
+</div>
+
+<!-- REGISTRATION CONFIRM -->
+<div class="sgate hidden" id="regConfirm">
+  <div class="sgate-in confirm-in">
+    <div class="cg" style="color:var(--teal)">Confirm registration</div>
+    <h3 id="rcName">&mdash;</h3>
+    <div class="rc-sum" id="rcSummary"></div>
+    <div class="rc-dup hidden" id="rcDup"></div>
+    <div class="rc-actions">
+      <button class="btn ghost" type="button" onclick="cancelRegister()">Go back</button>
+      <button class="btn" type="button" id="rcGo" onclick="confirmRegister()">Register &amp; issue lab no.</button>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION GATE (Rebates / Edit records) -->
@@ -706,8 +850,18 @@ const LOGO='/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
 const LOGO_B64 = LOGO;
 
 /* ================= CONFIG (unchanged from the proven apps) ================= */
+const BUILD = '2026-09-16';   // bump on every deploy — shown in the rail so the live version is never in doubt
+
+/* ---- YEAR-SCOPED CONFIG — the annual rollover checklist ----
+   At the start of a new year: set LAB_YEAR, point PATIENT_GID at the new
+   tracker tab, point GIDS at the new result tabs, and redeploy the Apps
+   Script with TARGET_SHEET_NAME set to the new tab. Nothing else in this
+   file carries the year. */
+const LAB_YEAR = 2026;
+const LAB_YY = String(LAB_YEAR).slice(-2);
+function labNo(n){ return 'ES' + n + '/' + LAB_YY; }
 const PATIENT_ID = '1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ';
-const PATIENT_GID = '16221607';
+const PATIENT_GID = '16221607';          // the LAB_YEAR tab on the patient tracker
 const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
 const REFERENCE_GID = '1214031418';
 const GIDS = { CHEMISTRY:'0', HAEMATOLOGY:'2121568916', HORMONES:'60958540', MICROBIOLOGY:'1870622744' };
@@ -733,11 +887,62 @@ function parseCSV(text){
   return rows;
 }
 // index.html style: header split off, every data row preserved so sheet row N = rows[N-2]
-async function fetchTabCsv(sheetId, gid) {
+/* ---- Sheet cache ----
+   The tracker alone is ~900 KB and one report open pulls ~2.8 MB across five
+   sheets. Without a cache every view re-downloaded all of it. Each sheet is
+   now held for a short window and reused; any write (registration, results,
+   record update) drops the affected sheets so the next read is fresh, and
+   the "Refresh" control in the rail forces a full reload. Callers only read
+   the returned objects, so sharing them is safe. */
+const SHEET_TTL_MS = 3 * 60 * 1000;
+const sheetCache = {};      // key → {at, text, promise}
+let lastSheetLoadAt = null;
+function sheetKey(sheetId, gid){ return sheetId + '|' + gid; }
+async function fetchSheetText(sheetId, gid, force){
+  const key = sheetKey(sheetId, gid);
+  const hit = sheetCache[key];
+  const now = Date.now();
+  if(!force && hit && hit.text !== undefined && (now - hit.at) < SHEET_TTL_MS) return hit.text;
+  if(!force && hit && hit.promise) return hit.promise;   // de-duplicate concurrent loads
   const url = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Sheet fetch failed (gid ' + gid + ')');
-  const text = await res.text();
+  const p = fetch(url).then(async function(res){
+    if (!res.ok) throw new Error('Sheet fetch failed (gid ' + gid + ')');
+    const text = await res.text();
+    sheetCache[key] = { at: Date.now(), text: text };
+    lastSheetLoadAt = new Date();
+    paintFreshness();
+    return text;
+  }).catch(function(err){ delete sheetCache[key]; throw err; });
+  sheetCache[key] = { at: now, promise: p };
+  return p;
+}
+function dropSheet(sheetId, gid){ delete sheetCache[sheetKey(sheetId, gid)]; }
+function dropTracker(){ dropSheet(PATIENT_ID, PATIENT_GID); }
+function dropResults(){ Object.keys(GIDS).forEach(function(k){ dropSheet(RESULT_ID, GIDS[k]); }); }
+function dropAllSheets(){ Object.keys(sheetCache).forEach(function(k){ delete sheetCache[k]; }); }
+function paintFreshness(){
+  const el = document.getElementById('freshAt');
+  if(!el) return;
+  el.textContent = lastSheetLoadAt ? lastSheetLoadAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+}
+async function refreshAllData(){
+  const btn = document.getElementById('refreshBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Refreshing…'; }
+  dropAllSheets();
+  REF = null; refDataPromise = null;
+  try{
+    await Promise.all([loadToday(), ensureRefData().catch(function(){})]);
+    rebInited = false; anaInited = false;
+    const cur = document.querySelector('.view.on');
+    if(cur && cur.id === 'v-rebates') initRebates();
+    if(cur && cur.id === 'v-analytics') initAnalytics();
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = 'Refresh'; }
+  }
+}
+
+async function fetchTabCsv(sheetId, gid) {
+  const text = await fetchSheetText(sheetId, gid);
   const all = parseCSV(text);
   const cols = (all[0] || []).map(c => (c || '').trim());
   const rows = all.slice(1).map(r => r.map(v => (v || '').trim()));
@@ -745,10 +950,7 @@ async function fetchTabCsv(sheetId, gid) {
 }
 // register.html style: raw rows including any header/title rows
 async function fetchTab(gid){
-  const url='https://docs.google.com/spreadsheets/d/'+RESULT_ID+'/export?format=csv&gid='+gid;
-  const res=await fetch(url);
-  if(!res.ok) throw new Error('Fetch failed for gid '+gid);
-  return parseCSV(await res.text());
+  return parseCSV(await fetchSheetText(RESULT_ID, gid));
 }
 function num(v){const n=parseFloat(String(v==null?'':v).replace(/[,\s₦]/g,''));return isNaN(n)?0:n;}
 function naira(n){return '₦'+Math.round(n).toLocaleString('en-NG');}
@@ -788,6 +990,7 @@ function parseMonthYear(raw){
 var privacy=false;
 function setPrivacy(v){
   privacy=!!v;
+  memSet('sessionStorage','ev.privacy', privacy?'1':'0');
   document.getElementById('privToggle').classList.toggle('on',privacy);
   var chk=document.getElementById('privChk'); if(chk) chk.checked=privacy;
   applyPrivacy();
@@ -805,16 +1008,16 @@ document.getElementById('todayDate').textContent=dateStr;
 
 var NAV=[
   {label:'Front desk',items:[
-    ['home','Today',false,"Everything moving through the lab right now"],
-    ['register','Register patient',false,'Take details, price the bill, issue the number'],
-    ['find','Find patient',false,'Search every visit by name']]},
+    ['home','Today',false,"Everything moving through the lab right now",'Today'],
+    ['register','Register patient',false,'Take details, price the bill, issue the number','Register'],
+    ['find','Find patient',false,'Search every visit by name','Find']]},
   {label:'Laboratory',items:[
-    ['results','Enter results',false,'Type values against a lab number'],
-    ['report','Generate report',false,'Review and download the signed report']]},
+    ['results','Enter results',false,'Type values against a lab number','Results'],
+    ['report','Generate report',false,'Review and download the signed report','Report']]},
   {label:'Management',items:[
-    ['rebates','Rebates',true,'Monthly statements for doctors and hospitals'],
-    ['analytics','Analytics',true,'Money, test volumes and referrer value'],
-    ['records','Edit records',true,'Correct a registration, mark bills paid']]}
+    ['rebates','Rebates',true,'Monthly statements for doctors and hospitals','Rebates'],
+    ['analytics','Analytics',true,'Money, test volumes and referrer value','Analytics'],
+    ['records','Edit records',true,'Correct a registration, mark bills paid','Records']]}
 ];
 
 function buildNav(){
@@ -823,7 +1026,7 @@ function buildNav(){
     html+='<div class="nav-label">'+g.label+'</div>';
     g.items.forEach(function(it){
       var dot=it[2]?'<span class="dot-r"></span>':'';
-      html+='<a data-v="'+it[0]+'"><span class="lbl">'+it[1]+'</span>'+dot+'</a>';
+      html+='<a data-v="'+it[0]+'"><span class="lbl"><span class="full">'+it[1]+'</span><span class="short">'+(it[4]||it[1])+'</span></span>'+dot+'</a>';
     });
   });
   document.getElementById('nav').innerHTML=html;
@@ -858,6 +1061,9 @@ function showNow(v){
   if(v==='register') ensureRefData();
   if(v==='rebates') initRebates();
   if(v==='analytics') initAnalytics();
+  const mt=document.getElementById('mobTotal'); if(mt) mt.classList.toggle('on', v==='register');
+  if(v==='records' && recPendingLab){ const n=recPendingLab; recPendingLab=null; document.getElementById('recLabInput').value=n; loadRecord(); }
+  focusFor(v);
 }
 function openSectionGate(v){
   sgatePending = v;
@@ -871,6 +1077,7 @@ async function sgateSubmit(){
   var v = document.getElementById('sgateCode').value.trim();
   if(await checkCode(v, SECTION_HASH)){
     sectionUnlocked[sgatePending] = true;
+    memSet('sessionStorage','ev.unlocked', JSON.stringify(sectionUnlocked));
     document.getElementById('sgate').classList.add('hidden');
     showNow(sgatePending);
     sgatePending = null;
@@ -971,8 +1178,7 @@ async function unlock(){
 /* ================= TODAY (live tracker) ================= */
 async function loadToday(){
   try{
-    var url='https://docs.google.com/spreadsheets/d/'+PATIENT_ID+'/export?format=csv&gid='+PATIENT_GID;
-    var res=await fetch(url); var rows=parseCSV(await res.text());
+    var rows=parseCSV(await fetchSheetText(PATIENT_ID, PATIENT_GID));
     var lastName='',lastRow=1,todayCount=0,total=0,money=0,unpaid=0;
     var todayStr=ddmmyyyy(new Date());
     var carryDate='';
@@ -993,9 +1199,9 @@ async function loadToday(){
     }
     var nextLab=lastRow+1;
     ['wlNextLab','todayNextLab','regNextLab'].forEach(function(id){
-      var e=document.getElementById(id); if(e) e.textContent='ES'+nextLab+'/26';
+      var e=document.getElementById(id); if(e) e.textContent=labNo(nextLab);
     });
-    document.getElementById('todayPrev').innerHTML='Continues from <b>ES'+lastRow+'/26</b> · '+escHtml(lastName);
+    document.getElementById('todayPrev').innerHTML='Continues from <b>'+labNo(lastRow)+'</b> · '+escHtml(lastName);
     document.getElementById('figToday').textContent=todayCount;
     document.getElementById('figTotal').textContent=total.toLocaleString('en-GB');
     document.getElementById('figUnpaid').textContent=naira(unpaid);
@@ -1014,7 +1220,7 @@ function renderTodayRows(list){
     var due=/not\s*paid/i.test(r.payStatus);
     var pay=due?naira(r.amount)+' due':(r.payStatus||'—');
     return '<div class="regrow" onclick="openLab('+r.lab+')">'
-      +'<span class="lab">ES'+r.lab+'/26</span>'
+      +'<span class="lab">'+labNo(r.lab)+'</span>'
       +'<span class="mid"><span class="nm">'+escHtml(r.name)+'</span><span class="ts">'+escHtml(r.tests||'—')+'</span></span>'
       +'<span class="pay'+(due?' due':'')+(due?' money':'')+'">'+pay+'</span>'
       +'</div>';
@@ -1045,6 +1251,9 @@ async function loadAll(){
   try{
     const [pr,dr,ho]=await Promise.all([fetchTab(PRICE_GID),fetchTab(DOCTORS_GID),fetchTab(HOSPITALS_GID)]);
     // PRICE LIST: data rows have numeric price in col D(index3). Skip section dividers.
+    // Cols F/G/H (index 5/6/7): SUBLET flag ('O'), SUBLET FEE (derived D−H), LAB CUT.
+    // For a sublet test the referrer's rebate is earned only on LAB CUT — the
+    // sublet fee passes straight through to the external lab.
     PRICES=[];
     pr.forEach(function(r){
       if(!r||r.length<4) return;
@@ -1056,7 +1265,12 @@ async function loadAll(){
       if(name.toUpperCase()==='TEST NAME') return;
       if(price<=0) return;
       if(active==='N') return;
-      PRICES.push({name:name,section:section,price:price});
+      const sublet=(r[5]||'').trim().toUpperCase()==='O';
+      const labCut=num(r[7]);
+      // Blank LAB CUT on a sublet test → rebate base 0. Deliberately under-pay
+      // pending data entry rather than over-pay on money we don't keep.
+      PRICES.push({name:name,section:section,price:price,
+                   sublet:sublet, labCut:labCut, rebateBase: sublet ? labCut : price});
     });
     DOCTORS=parseRebateList(dr,false);
     HOSPITALS=parseRebateList(ho,true);
@@ -1113,7 +1327,7 @@ function initRegisterUI(){
   document.getElementById('refType').addEventListener('change',populateReferrers);
   document.getElementById('refName').addEventListener('change',recalc);
   document.getElementById('mdDisc').addEventListener('input',recalc);
-  document.getElementById('finalAmount').addEventListener('input',function(){netEditedByUser=true;});
+  document.getElementById('finalAmount').addEventListener('input',function(){netEditedByUser=true; checkAdjust(); paintMobTotal();});
   populateReferrers();
   renderChosen();
   const tn=document.getElementById('targetNote');
@@ -1141,31 +1355,50 @@ function currentReferrer(){
 function currentRebatePct(){ const r=currentReferrer(); return r?r.rebate:0; }
 function currentSurchargePerTest(){ const r=currentReferrer(); return (r&&r.surcharge)?r.surcharge:0; }
 
+// A test earns rebate on its full price, unless it is sublet — then only on
+// Evashalom's LAB CUT. A sublet test with no LAB CUT entered earns nothing.
+function testRebateBase(t){
+  if(!t) return 0;
+  if(t.sublet) return (t.labCut>0) ? t.labCut : 0;
+  return t.price||0;
+}
+
 // Billing order (owner-specified, exact):
 //   1. subtotal = tests gross + (surcharge × number of tests)
 //   2. MD discount % off the subtotal → discounted subtotal (what the patient pays)
-//   3. referrer rebate % computed ON the discounted subtotal — monthly payout
-//      bookkeeping only, never deducted from the bill
+//   3. referrer rebate % computed on the PER-TEST REBATE BASE — full price for a
+//      normal test, LAB CUT only for a sublet test (the sublet fee passes through
+//      to the external lab, so no rebate is earned on it). Bookkeeping only:
+//      never deducted from the bill. The surcharge is not part of the base, and
+//      an MD discount does not reduce it — Evashalom absorbs the whole discount.
 //   4. the editable final-amount field can override the figure directly
-function computeBill(){
-  const gross=chosen.reduce(function(s,c){return s+c.price;},0);
-  const surRate=currentSurchargePerTest();
-  const surcharge=surRate*chosen.length;
+// One source of truth for the bill math. Registration and Edit records both
+// call this, so a later correction can never be priced differently from the
+// original registration.
+function billFor(tests, surRate, pct, discPct){
+  const gross=tests.reduce(function(s,c){return s+(c.price||0);},0);
+  const surcharge=surRate*tests.length;
   const subtotal=gross+surcharge;
-  const discPct=Math.min(100,Math.max(0,num(document.getElementById('mdDisc').value)));
   const discount=subtotal*discPct/100;
   const discounted=subtotal-discount;
-  const pct=currentRebatePct();
-  const rebate=discounted*pct/100;
+  const rebateBase=tests.reduce(function(s,c){ return s + testRebateBase(c); },0);
+  const rebate=rebateBase*pct/100;
+  const subletCount=tests.filter(function(c){ return c.sublet; }).length;
+  const subletNoCut=tests.filter(function(c){ return c.sublet && !(c.labCut>0); }).length;
   const net=discounted;
-  return {gross:gross,surRate:surRate,surcharge:surcharge,subtotal:subtotal,discPct:discPct,discount:discount,discounted:discounted,pct:pct,rebate:rebate,net:net};
+  return {gross:gross,surRate:surRate,surcharge:surcharge,subtotal:subtotal,discPct:discPct,discount:discount,discounted:discounted,pct:pct,rebateBase:rebateBase,rebate:rebate,subletCount:subletCount,subletNoCut:subletNoCut,net:net};
+}
+function computeBill(){
+  const discPct=Math.min(100,Math.max(0,num(document.getElementById('mdDisc').value)));
+  return billFor(chosen, currentSurchargePerTest(), currentRebatePct(), discPct);
 }
 
 window.addTest=function(name){
+  if(regLocked){ setStatus('This registration is complete. Use “Forgot a test?” to add to it, or “Register another patient”.','err'); return; }
   const p=PRICES.find(function(x){return x.name===name;});
   if(!p) return;
   if(chosen.find(function(c){return c.name===name;})) return; // no dupes
-  chosen.push({name:p.name,price:p.price});
+  chosen.push({name:p.name,price:p.price,sublet:!!p.sublet,labCut:p.labCut||0});
   document.getElementById('testSearch').value='';
   document.getElementById('testResults').classList.remove('show');
   netEditedByUser=false;
@@ -1182,7 +1415,8 @@ function renderChosen(){
   const sect={};
   PRICES.forEach(function(p){sect[p.name]=p.section;});
   box.innerHTML='<div class="chosen-list">'+chosen.map(function(c){
-    return '<div class="chosen-row"><span class="nm">'+escHtml(c.name)+'</span><span class="sec">'+escHtml(sect[c.name]||'')+'</span><span class="amt">'+naira(c.price)+'</span><button onclick="removeTest(\''+c.name.replace(/'/g,"\\'")+'\')" aria-label="Remove test">×</button></div>';
+    const tag = c.sublet ? '<span class="sublet-tag"'+(c.labCut>0?'':' title="No LAB CUT set — earns no rebate"')+'>sublet'+(c.labCut>0?'':' · no cut')+'</span>' : '';
+    return '<div class="chosen-row"><span class="nm">'+escHtml(c.name)+tag+'</span><span class="sec">'+escHtml(sect[c.name]||'')+'</span><span class="amt">'+naira(c.price)+'</span><button onclick="removeTest(\''+c.name.replace(/'/g,"\\'")+'\')" aria-label="Remove test">×</button></div>';
   }).join('')+'</div>';
   recalc();
 }
@@ -1225,11 +1459,50 @@ function recalc(){
   else if(type==='self'){ msg='Self-referred patient — no rebate applies.'; }
   else if(!currentReferrer()){ msg='Select a referrer to track their monthly rebate.'; }
   else {
-    msg='The patient pays in full. '+b.pct+'% of this bill goes on '+ (currentReferrer()?currentReferrer().name:'the referrer') +'’s monthly statement — nothing is deducted here.';
-    if(b.surRate>0) msg+=' A '+naira(b.surRate)+' per-test surcharge applies.';
+    msg='The patient pays in full. '+b.pct+'% of '+naira(b.rebateBase)+' goes on '+ (currentReferrer()?currentReferrer().name:'the referrer') +'’s monthly statement — nothing is deducted here.';
+    if(b.subletCount) msg+=' Sublet tests earn rebate on Evashalom’s lab cut only, not the full fee.';
+    if(b.surRate>0) msg+=' A '+naira(b.surRate)+' per-test surcharge applies (not rebateable).';
     msg+=' You can still adjust the final amount.';
   }
   note.textContent=msg;
+  renderSubletNotices(b);
+  checkAdjust();
+  paintMobTotal(b);
+}
+function paintMobTotal(b){
+  const mv=document.getElementById('mtVal'), mn=document.getElementById('mtN');
+  if(!mv) return;
+  b = b || computeBill();
+  mv.textContent=naira(chosen.length ? (num(document.getElementById('finalAmount').value)||b.net) : 0);
+  mn.textContent=chosen.length?(chosen.length+' test'+(chosen.length>1?'s':'')+(b.pct?' · '+b.pct+'% rebate':'')):'No tests yet';
+}
+// The final amount can be typed over freely; when it differs from the computed
+// figure, ask for a one-line reason so the override leaves a trail.
+function checkAdjust(){
+  const b=computeBill();
+  const typed=num(document.getElementById('finalAmount').value);
+  const differs = chosen.length>0 && Math.round(typed)!==Math.round(b.net);
+  document.getElementById('adjWrap').style.display = differs ? 'flex' : 'none';
+}
+
+// Change 2: discounts never reduce what we owe the external lab, so a discount
+// on a sublet test comes straight out of Evashalom's margin. Heads-up only —
+// dismissible, never a block, never a forced confirmation.
+var subletNoticeDismissed=false;
+window.dismissSubletNotice=function(){ subletNoticeDismissed=true; renderSubletNotices(computeBill()); };
+function renderSubletNotices(b){
+  const box=document.getElementById('subletNotice');
+  if(!box) return;
+  let html='';
+  if(b.discount>0 && b.subletCount>0 && !subletNoticeDismissed){
+    html+='<div class="sub-note warn"><span>This discount reduces Evashalom’s margin on a sublet test.</span>'
+      +'<button type="button" onclick="dismissSubletNotice()" aria-label="Dismiss">×</button></div>';
+  }
+  if(b.subletNoCut>0 && currentReferrer()){
+    html+='<div class="sub-note">'+b.subletNoCut+' sublet test'+(b.subletNoCut>1?'s have':' has')+' no LAB CUT in the price list, so '
+      +(b.subletNoCut>1?'they earn':'it earns')+' no rebate. Fill column H to correct this.</div>';
+  }
+  box.innerHTML=html;
 }
 
 async function postWithRetry(payload, maxTries, statusFn){
@@ -1262,7 +1535,46 @@ function setStatus(msg,kind){
   el.innerHTML=(kind==='load'?'<span class="spinner"></span>':'')+msg;
 }
 
+// Same-day duplicate check: the tracker is cached, so this is instant. It
+// scans back from the newest row while the carried-down date is still today.
+// Returns the most recent same-name registration today, or null.
+async function findTodayDuplicate(name){
+  const key0=name.toLowerCase().replace(/\s+/g,' ').trim();
+  // This tab's own registrations first — instant, and immune to the sheet
+  // export lagging a few seconds behind a write.
+  for(let i=sessionRegistered.length-1;i>=0;i--){
+    const s=sessionRegistered[i];
+    if(s.name.toLowerCase().replace(/\s+/g,' ').trim()===key0){
+      return {lab:s.lab, name:s.name, tests:s.tests, time:('0'+s.time.getHours()).slice(-2)+':'+('0'+s.time.getMinutes()).slice(-2), justNow:true};
+    }
+  }
+  try{
+    const rows=parseCSV(await fetchSheetText(PATIENT_ID, PATIENT_GID));
+    const todayStr=ddmmyyyy(new Date());
+    const key=name.toLowerCase().replace(/\s+/g,' ').trim();
+    // find today's block: walk up from the bottom until a dated row that isn't today
+    let i=rows.length-1;
+    while(i>=1 && !(rows[i]&&(rows[i][1]||'').trim())) i--;   // skip trailing blanks
+    for(; i>=1; i--){
+      const r=rows[i]; if(!r) continue;
+      const dt=(r[0]||'').trim();
+      if(dt && dt!==todayStr) break;                         // left today's block
+      const nm=(r[1]||'').trim();
+      if(nm && nm.toLowerCase().replace(/\s+/g,' ')===key){
+        return {lab:i+1, name:nm, tests:(r[5]||'').replace(/"/g,'').trim(), time:(r[13]||'').trim()};
+      }
+    }
+  }catch(e){}
+  return null;
+}
+let pendingRegistration=null;
+let sessionRegistered=[];   // registrations made in THIS tab: {name, lab, time, tests}
+let regLocked=false;        // true after a success until "Register another patient"
+let recPendingLab=null;     // lab number Edit records should open on arrival
+
+// Step 1 — validate, build the summary, show the confirmation. Nothing is sent yet.
 window.doRegister=async function(){
+  if(regLocked){ setStatus('This patient is already registered. Use “Register another patient” to start a new one, or “Forgot a test?” to add to this one.','err'); return; }
   const name=document.getElementById('pName').value.trim();
   if(!name){alert('Please enter the patient name.');return;}
   if(!chosen.length){alert('Please add at least one test.');return;}
@@ -1270,13 +1582,15 @@ window.doRegister=async function(){
   const finalAmt=num(document.getElementById('finalAmount').value);
   const refObj=currentReferrer();
   const refName=refObj?refObj.name:(document.getElementById('refType').value==='self'?'Self':'N/A');
-
-  const btn=document.getElementById('registerBtn');
-  btn.disabled=true; btn.textContent='Registering…';
-  setStatus('Registering patient…','load');
+  const adjReason=(document.getElementById('adjReason').value||'').trim();
+  const overridden = Math.round(finalAmt)!==Math.round(b.net);
 
   const payload={
     token:REG_TOKEN, action:'register',
+    // One id per registration, reused on every retry of it. The endpoint
+    // remembers ids it has already written and returns the original lab
+    // number instead of writing a second row.
+    requestId: Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10),
     name:name, gender:document.getElementById('pGender').value,
     age:document.getElementById('pAge').value, phone:document.getElementById('pPhone').value,
     investigation:chosen.map(function(c){return c.name;}).join(', '),
@@ -1284,48 +1598,154 @@ window.doRegister=async function(){
     payMode:document.getElementById('payMode').value, payStatus:document.getElementById('payStatus').value,
     registeredBy:document.getElementById('regBy').value||'APP', location:document.getElementById('labLoc').value
   };
-  // Machine-readable tag so the rebate generator can rebuild the discounted
-  // figure later. The endpoint should APPEND this to the comments column.
-  if(b.discPct>0) payload.comments='DISC:'+b.discPct+'%';
+  // Machine-readable tags for the rebate generator and the audit trail. The
+  // endpoint APPENDS to the comments column.
+  const tags=[];
+  if(b.discPct>0) tags.push('DISC:'+b.discPct+'%');
+  if(overridden) tags.push('ADJ: '+naira(b.net)+'→'+naira(finalAmt)+(adjReason?' ('+adjReason+')':''));
+  if(tags.length) payload.comments=tags.join(' | ');
 
-  const r=await postWithRetry(payload);
+  pendingRegistration={payload:payload, b:b, finalAmt:finalAmt, refName:refName, name:name};
+
+  document.getElementById('rcName').textContent=name;
+  const sum=[
+    ['Tests', chosen.length+' — '+chosen.map(function(c){return c.name;}).join(', ')],
+    ['Referred by', refName+(refObj?' ('+refObj.rebate+'%)':'')],
+    ['Payment', payload.payMode+' · '+payload.payStatus],
+    ['Location', payload.location]
+  ];
+  if(b.discPct>0) sum.push(['MD discount', b.discPct+'% (−'+naira(b.discount)+')']);
+  if(overridden) sum.push(['Amount adjusted', naira(b.net)+' → '+naira(finalAmt)+(adjReason?' — '+adjReason:' — no reason given')]);
+  document.getElementById('rcSummary').innerHTML = sum.map(function(p){ return '<div><span>'+escHtml(p[0])+'</span><span>'+escHtml(p[1])+'</span></div>'; }).join('')
+    + '<div class="tot"><span>Amount</span><span class="money">'+naira(finalAmt)+'</span></div>';
+
+  const dupBox=document.getElementById('rcDup');
+  const goBtn=document.getElementById('rcGo');
+  dupBox.classList.add('hidden'); dupBox.innerHTML='';
+  goBtn.textContent='Register & issue lab no.';
+  const dup=await findTodayDuplicate(name);
+  if(dup){
+    // A heads-up, never a block: a second registration in a day is legitimate
+    // (two doctors, a return visit). The button just makes the choice explicit.
+    dupBox.innerHTML='<b>'+escHtml(dup.name)+'</b> was already registered today at <b>'+labNo(dup.lab)+'</b>'+(dup.time?' ('+escHtml(dup.time)+(dup.justNow?', this session':'')+')':'')+(dup.tests?' for '+escHtml(dup.tests):'')+'.<br>'
+      +'If this is a <b>separate visit</b> (another doctor, a second sample), register anyway. If you just <b>forgot a test</b>, go back and use “Forgot a test?” to add it to that number instead.';
+    dupBox.classList.remove('hidden');
+    goBtn.textContent='Register anyway';
+  }
+  document.getElementById('regConfirm').classList.remove('hidden');
+  setTimeout(function(){ document.getElementById('rcGo').focus(); }, 40);
+  applyPrivacy();
+};
+window.cancelRegister=function(){
+  pendingRegistration=null;
+  document.getElementById('regConfirm').classList.add('hidden');
+};
+
+// Step 2 — the user has confirmed; send exactly what was reviewed.
+window.confirmRegister=async function(){
+  if(!pendingRegistration) return;
+  const P=pendingRegistration; pendingRegistration=null;
+  document.getElementById('regConfirm').classList.add('hidden');
+  const payload=P.payload, b=P.b, finalAmt=P.finalAmt, refName=P.refName, name=P.name;
+
+  const btn=document.getElementById('registerBtn');
+  btn.disabled=true; btn.textContent='Registering…';
+  setStatus('Registering patient…','load');
+
+  let r=await postWithRetry(payload);
+
+  // If every attempt failed for a NETWORK reason, the row may still have been
+  // written (a reply lost on a bad connection). Check the sheet before saying
+  // "failed" — a false failure is how a person ends up registering twice.
+  if(!r.ok && /busy|tries|fetch|network|timed? ?out/i.test(r.error||'')){
+    setStatus('Connection was unreliable — checking whether the registration landed…','load');
+    const landed=await findLandedRegistration(payload);
+    if(landed){ r={ok:true, labNum:landed.lab, row:landed.lab, recovered:true}; }
+  }
   btn.disabled=false; btn.textContent='Register & issue lab no.';
 
   if(r.ok){
-    setStatus('✅ Registered! Lab number issued: ES'+r.labNum+'/26 (row '+r.row+')','ok');
+    const regTests=chosen.slice();
     lastRegistration={
       labNum:r.labNum, name:name, gender:document.getElementById('pGender').value,
       age:document.getElementById('pAge').value, phone:document.getElementById('pPhone').value,
-      tests:chosen.slice(), bill:b, finalAmount:finalAmt, referredBy:refName,
+      tests:regTests, bill:b, finalAmount:finalAmt, referredBy:refName,
       payMode:document.getElementById('payMode').value, payStatus:document.getElementById('payStatus').value,
       registeredBy:document.getElementById('regBy').value||'APP',
       location:document.getElementById('labLoc').value, when:new Date()
     };
+    // Remember it for this session so the duplicate check never depends on the
+    // sheet export catching up.
+    sessionRegistered.push({name:name, lab:r.labNum, time:new Date(), tests:regTests.map(function(c){return c.name;}).join(', ')});
+
+    let note='';
+    if(r.replayed) note=' — this registration had already gone through; showing the original lab number.';
+    else if(r.recovered) note=' — the reply was lost but the registration had landed.';
+    setStatus('✅ Registered! Lab number issued: '+labNo(r.labNum)+note,'ok');
+
     const paid=/paid/i.test(lastRegistration.payStatus) && !/not/i.test(lastRegistration.payStatus);
     document.getElementById('afterRegister').innerHTML=
       '<div class="card"><div class="card-title">Registration complete</div>'+
-      '<div class="bill-line"><span class="lbl">Lab number</span><span class="val">ES'+r.labNum+'/26</span></div>'+
+      '<div class="bill-line"><span class="lbl">Lab number</span><span class="val">'+labNo(r.labNum)+'</span></div>'+
       '<div class="bill-line"><span class="lbl">Patient</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(name)+'</span></div>'+
-      '<div class="bill-line"><span class="lbl">Tests</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(chosen.map(function(c){return c.name;}).join(', '))+'</span></div>'+
+      '<div class="bill-line"><span class="lbl">Tests</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(regTests.map(function(c){return c.name;}).join(', '))+'</span></div>'+
       '<div class="bill-line"><span class="lbl">Referred by</span><span class="val" style="font-family:\'Hanken Grotesk\',sans-serif">'+escHtml(refName)+'</span></div>'+
       '<div class="bill-line total"><span>Amount</span><span class="val">'+naira(finalAmt)+'</span></div>'+
       (paid?'<button class="btn" onclick="printReceipt()" style="margin-top:1rem;width:100%">Print / save receipt</button>':
             '<div class="bill-note" style="margin-top:1rem">Receipt available once payment status is Paid.</div>')+
-      '<button class="btn ghost" onclick="resetForm()" style="margin-top:.5rem;width:100%">Register another patient</button>'+
+      '<div class="after-actions">'+
+        '<button class="btn ghost" onclick="resetForm()">Register another patient</button>'+
+        '<button class="btn ghost" onclick="openRecordsFor('+r.labNum+')">Forgot a test? Add it to '+labNo(r.labNum)+'</button>'+
+      '</div>'+
+      '<div class="bill-note">The form is locked so this patient can’t be registered a second time by accident.</div>'+
       '</div>';
-    chosen=[]; netEditedByUser=false;
+    // Lock the form: the details stay visible for the receipt, but nothing can
+    // be re-submitted until "Register another patient" resets it.
+    lockRegisterForm(true);
+    dropTracker();   // a new row exists — the next read must see it
     loadToday();
   }else{
-    setStatus('❌ '+(r.error||'Registration failed'),'err');
+    setStatus('❌ '+(r.error||'Registration failed')+' — nothing was registered. Check the connection and try again; the same registration will not be duplicated.','err');
   }
 };
 
+// After a network failure, look for the row we may have written: same name and
+// tests, in today's block of the tracker. Fresh read, cache bypassed.
+async function findLandedRegistration(payload){
+  try{
+    dropTracker();
+    const rows=parseCSV(await fetchSheetText(PATIENT_ID, PATIENT_GID, true));
+    const key=payload.name.toLowerCase().replace(/\s+/g,' ').trim();
+    const inv=(payload.investigation||'').trim();
+    for(let i=rows.length-1, n=0; i>=1 && n<60; i--, n++){
+      const r=rows[i]; if(!r) continue;
+      const nm=(r[1]||'').trim(); if(!nm) continue;
+      if(nm.toLowerCase().replace(/\s+/g,' ')===key && (r[5]||'').replace(/"/g,'').trim()===inv) return {lab:i+1};
+    }
+  }catch(e){}
+  return null;
+}
+function lockRegisterForm(on){
+  regLocked=!!on;
+  const g=document.getElementById('regMain');
+  if(g) g.classList.toggle('locked', regLocked);
+  const mt=document.getElementById('mobTotal'); if(mt) mt.classList.toggle('locked', regLocked);
+}
+// "Forgot a test?" → Edit records with that lab number ready to open. It goes
+// through the management gate like any other Edit records visit.
+window.openRecordsFor=function(labNum){
+  recPendingLab=labNum;
+  show('records');
+};
+
 window.resetForm=function(){
+  lockRegisterForm(false);
   document.getElementById('pName').value='';
   document.getElementById('pGender').value='';
   document.getElementById('pAge').value='';
   document.getElementById('pPhone').value='';
   document.getElementById('mdDisc').value='';
+  document.getElementById('adjReason').value='';
   chosen=[]; netEditedByUser=false; renderChosen();
   document.getElementById('afterRegister').innerHTML='';
   const st=document.getElementById('regStatus'); if(st) st.remove();
@@ -1358,48 +1778,54 @@ window.printReceipt=function(){
   // The referrer rebate is an internal monthly payout — it never appears on the
   // patient's receipt and is never deducted from what they pay.
 
-  const win=window.open('','_blank','width=780,height=900');
-  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt ES'+R.labNum+'/26</title><style>'+
-  '@page{size:A5;margin:12mm;}'+
-  'body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0;padding:16px;}'+
-  '.hd{display:flex;gap:14px;align-items:center;border-bottom:3px solid #1B3A6B;padding-bottom:12px;}'+
-  '.hd img{width:64px;height:64px;border-radius:50%;object-fit:cover;}'+
-  '.hd h1{font-size:16px;margin:0;color:#1B3A6B;letter-spacing:.01em;}'+
-  '.hd p{margin:2px 0 0;font-size:10px;color:#555;line-height:1.45;}'+
-  '.tag{text-align:center;background:#1B3A6B;color:#fff;font-weight:700;letter-spacing:.14em;font-size:12px;padding:7px;margin:14px 0;}'+
-  '.meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;font-size:12px;margin-bottom:14px;}'+
-  '.meta div span{color:#777;}'+
-  '.meta div b{color:#1B3A6B;}'+
-  'table{width:100%;border-collapse:collapse;font-size:12px;}'+
-  'th{background:#E8EEF6;color:#1B3A6B;text-align:left;padding:7px 8px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;}'+
-  'td{padding:6px 8px;border-bottom:1px solid #eee;}'+
-  'td.n{width:26px;color:#999;} td.r{text-align:right;white-space:nowrap;}'+
+  // 80mm thermal roll: 72.1mm printable inside 80mm paper, up to 297mm long.
+  // Single column, no side-by-side blocks — nothing fits two-up at 72mm.
+  const win=window.open('','_blank','width=420,height=900');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt '+labNo(R.labNum)+'</title>'+
+  '<meta name="viewport" content="width=302">'+
+  '<style>'+
+  '@page{size:80mm 297mm;margin:0;}'+
+  '*{box-sizing:border-box;}'+
+  'body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0 auto;width:72.1mm;padding:3mm 0 4mm;font-size:9.5pt;line-height:1.35;}'+
+  '.hd{text-align:center;border-bottom:2px solid #1B3A6B;padding-bottom:2mm;}'+
+  '.hd img{width:14mm;height:14mm;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.5mm;}'+
+  '.hd h1{font-size:10pt;margin:0;color:#1B3A6B;line-height:1.2;letter-spacing:.01em;}'+
+  '.hd p{margin:1mm 0 0;font-size:6.6pt;color:#444;line-height:1.35;}'+
+  '.tag{text-align:center;background:#1B3A6B;color:#fff;font-weight:700;letter-spacing:.12em;font-size:8pt;padding:1.4mm;margin:2.5mm 0;}'+
+  '.meta{font-size:7.8pt;margin-bottom:2.5mm;}'+
+  '.meta div{display:flex;justify-content:space-between;gap:2mm;padding:.5mm 0;}'+
+  '.meta div span{color:#777;flex:0 0 auto;}'+
+  '.meta div b{color:#1B3A6B;text-align:right;word-break:break-word;}'+
+  'table{width:100%;border-collapse:collapse;font-size:7.8pt;table-layout:fixed;}'+
+  'th{background:#E8EEF6;color:#1B3A6B;text-align:left;padding:1.2mm 1mm;font-size:6.6pt;letter-spacing:.04em;text-transform:uppercase;}'+
+  'td{padding:1.2mm 1mm;border-bottom:1px solid #eee;vertical-align:top;word-break:break-word;}'+
+  'td.n{width:5mm;color:#999;} td.r,th.r{text-align:right;white-space:nowrap;width:19mm;}'+
   'tr.sub td{font-weight:600;background:#fafafa;}'+
   'td.neg{color:#A32D2D;}'+
-  '.total{margin-top:10px;display:flex;justify-content:space-between;align-items:center;border-top:3px solid #1B3A6B;padding-top:10px;font-size:17px;font-weight:800;color:#1B3A6B;}'+
-  '.paid{margin-top:12px;text-align:center;border:2px solid #0F6E56;color:#0F6E56;font-weight:800;letter-spacing:.18em;padding:7px;font-size:13px;}'+
-  '.ft{margin-top:18px;font-size:10px;color:#777;text-align:center;line-height:1.6;border-top:1px solid #ddd;padding-top:10px;}'+
-  '@media print{.noprint{display:none;}}'+
-  '.noprint{margin-top:16px;text-align:center;}'+
-  '.noprint button{background:#0F6E56;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:14px;cursor:pointer;}'+
+  '.total{margin-top:2mm;display:flex;justify-content:space-between;align-items:baseline;gap:2mm;border-top:2px solid #1B3A6B;padding-top:1.8mm;font-size:11pt;font-weight:800;color:#1B3A6B;}'+
+  '.paid{margin-top:2mm;text-align:center;border:1.5px solid #0F6E56;color:#0F6E56;font-weight:800;letter-spacing:.16em;padding:1.2mm;font-size:9pt;}'+
+  '.ft{margin-top:3mm;font-size:6.4pt;color:#666;text-align:center;line-height:1.5;border-top:1px solid #ddd;padding-top:1.8mm;}'+
+  '@media print{.noprint{display:none;}body{width:72.1mm;}}'+
+  '.noprint{margin-top:4mm;text-align:center;}'+
+  '.noprint button{background:#0F6E56;color:#fff;border:none;padding:2.5mm 5mm;border-radius:1.5mm;font-size:9pt;cursor:pointer;}'+
   '</style></head><body>'+
   '<div class="hd"><img src="data:image/jpeg;base64,'+LOGO_B64+'"/>'+
-  '<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'+
-  '<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'+
-  'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'+
-  'Tel: 07060904931, 08037068465 &nbsp;|&nbsp; shalomnwagodfmc@gmail.com</p></div></div>'+
+  '<h1>EVASHALOM MEDICAL<br>DIAGNOSTIC SERVICES</h1>'+
+  '<p>No. 6 Engr. Fred Ejiofor Crescent,<br>Behind Mr. Biggs, Asaba, Delta State<br>'+
+  'No. 1 Governor Street, Beside Wetland<br>Microfinance Bank, Asaba, Delta State<br>'+
+  'Tel: 07060904931, 08037068465<br>shalomnwagodfmc@gmail.com</p></div>'+
   '<div class="tag">PAYMENT RECEIPT</div>'+
   '<div class="meta">'+
-  '<div><span>Receipt No:</span> <b>ES'+R.labNum+'/26</b></div>'+
-  '<div><span>Date:</span> <b>'+dateStr+' '+timeStr+'</b></div>'+
-  '<div><span>Patient:</span> <b>'+escHtml(R.name)+'</b></div>'+
-  '<div><span>Age / Sex:</span> <b>'+(escHtml(R.age)||'—')+' / '+(escHtml(R.gender)||'—')+'</b></div>'+
-  '<div><span>Referred By:</span> <b>'+escHtml(R.referredBy)+'</b></div>'+
-  '<div><span>Payment Mode:</span> <b>'+escHtml(R.payMode)+'</b></div>'+
-  '<div><span>Location:</span> <b>'+escHtml(R.location)+'</b></div>'+
-  '<div><span>Received By:</span> <b>'+escHtml(R.registeredBy)+'</b></div>'+
+  '<div><span>Receipt No</span> <b>'+labNo(R.labNum)+'</b></div>'+
+  '<div><span>Date</span> <b>'+dateStr+' '+timeStr+'</b></div>'+
+  '<div><span>Patient</span> <b>'+escHtml(R.name)+'</b></div>'+
+  '<div><span>Age / Sex</span> <b>'+(escHtml(R.age)||'—')+' / '+(escHtml(R.gender)||'—')+'</b></div>'+
+  '<div><span>Referred By</span> <b>'+escHtml(R.referredBy)+'</b></div>'+
+  '<div><span>Payment Mode</span> <b>'+escHtml(R.payMode)+'</b></div>'+
+  '<div><span>Location</span> <b>'+escHtml(R.location)+'</b></div>'+
+  '<div><span>Received By</span> <b>'+escHtml(R.registeredBy)+'</b></div>'+
   '</div>'+
-  '<table><thead><tr><th></th><th>Test / Investigation</th><th style="text-align:right;">Amount</th></tr></thead>'+
+  '<table><thead><tr><th class="n"></th><th>Test / Investigation</th><th class="r">Amount</th></tr></thead>'+
   '<tbody>'+rows+adj+'</tbody></table>'+
   '<div class="total"><span>TOTAL PAID</span><span>'+naira(R.finalAmount)+'</span></div>'+
   '<div class="paid">PAID</div>'+
@@ -1537,7 +1963,7 @@ async function loadPatientByLab(labNum) {
   const rawAge = pRow[3] ? pRow[3].trim() : '';
   const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
   currentPatient = {
-    labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+    labNo: labNo(labNum), name: pRow[1] || '', gender: pRow[2] || '',
     age: age, phone: pRow[4] || '', investigations: pRow[5] || '',
     referredBy: pRow[6] || '', amount: pRow[8] || '',
     paymentStatus: pRow[11] || '', date: formatDate(patientDate), rowIndex: rowIndex
@@ -1797,7 +2223,7 @@ async function loadEntryPatient() {
     const rawAge = pRow[3] ? pRow[3].trim() : '';
     const age = rawAge ? (/^\d+$/.test(rawAge) ? rawAge + ' YEARS' : rawAge) : '';
     entryPatient = {
-      labNo: 'ES' + labNum + '/26', name: pRow[1] || '', gender: pRow[2] || '',
+      labNo: labNo(labNum), name: pRow[1] || '', gender: pRow[2] || '',
       age: age, investigations: pRow[5] || '', referredBy: pRow[6] || '',
       date: formatDate(patientDate), rowIndex: rowIndex, labNum: labNum
     };
@@ -1887,6 +2313,7 @@ async function saveResults() {
       let msg = 'Saved ' + out.written + ' result(s) for ' + escHtml(entryPatient.name) + ' (analyst: ' + escHtml(analyst) + ').';
       if (out.skipped && out.skipped.length) msg += ' Skipped: ' + escHtml(out.skipped.join(', ')) + '.';
       showEntryStatus(msg, 'success');
+      dropResults();   // results changed — re-read on the next report/entry
     } else {
       showEntryStatus('Save failed: ' + escHtml(out.error || 'unknown error'), 'error');
     }
@@ -1966,7 +2393,7 @@ function renderSearchResults(groups, order) {
     g.visits.forEach(function(v) {
       visitsHtml += '<div class="visit-row" id="visit_' + v.labNum + '">'
         + '<div class="visit-meta">'
-        + '<span class="vm"><b>ES' + v.labNum + '/26</b></span>'
+        + '<span class="vm"><b>'+labNo(v.labNum)+'</b></span>'
         + '<span class="vm">' + escHtml(v.date || '—') + '</span>'
         + (v.age ? '<span class="vm">Age: ' + escHtml(v.age) + '</span>' : '')
         + (v.referredBy ? '<span class="vm">Ref: ' + escHtml(v.referredBy) + '</span>' : '')
@@ -2121,8 +2548,9 @@ async function buildRebates() {
     HOSPITALS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Hospital'}, x); });
     const dirKeys = Object.keys(dir);
     // price map: exact test name (lowercased) → price
+    // Maps to the whole price record so the sublet flag and LAB CUT travel with it.
     const priceMap = {};
-    PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x.price; });
+    PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x; });
 
     const perRef = {};        // refKey → accumulator
     const unmatchedRefs = {}; // requestor string → row count
@@ -2152,12 +2580,17 @@ async function buildRebates() {
       }
       if (!ref) { unmatchedRefs[req] = (unmatchedRefs[req] || 0) + 1; return; }
 
-      // Rebuild the gross from the price list × this patient's tests.
+      // Rebuild the gross from the price list × this patient's tests, and the
+      // rebate base per test: full price normally, LAB CUT only when sublet.
       const tests = (row[5] || '').replace(/"/g, '').split(/[,\n]/).map(function(t){ return t.trim(); }).filter(Boolean);
-      let gross = 0, unpricedHere = 0;
+      let gross = 0, unpricedHere = 0, rowRebBase = 0, rowSubletNoCut = 0, rowSublet = 0;
       tests.forEach(function(t) {
-        const price = priceMap[t.toLowerCase()];
-        if (price) gross += price;
+        const p = priceMap[t.toLowerCase()];
+        if (p) {
+          gross += p.price;
+          rowRebBase += testRebateBase(p);
+          if (p.sublet) { rowSublet++; if (!(p.labCut > 0)) rowSubletNoCut++; }
+        }
         else { unpricedHere++; unpricedTests[t] = (unpricedTests[t] || 0) + 1; }
       });
 
@@ -2169,37 +2602,43 @@ async function buildRebates() {
         if (dm) { discPct = Math.min(100, parseFloat(dm[1])); break; }
       }
 
-      // Same order as the register bill: (gross + surcharge) × (1 − disc%)
-      // = what the patient actually paid; the rebate is rated on that.
+      // What the patient was billed: (gross + surcharge) less any MD discount.
       const rowSur = (ref.surcharge || 0) * tests.length;
       const rowFull = gross + rowSur;
       const rowDiscount = rowFull * discPct / 100;
       const rowBase = rowFull - rowDiscount;
+      // What the referrer earns on: the per-test rebate base. The surcharge is
+      // excluded, and the MD discount does not reduce it — Evashalom absorbs
+      // the whole discount, so the referrer's entitlement is unaffected.
 
       const rKey = ref.kind + '|' + ref.name.toLowerCase().trim();
       if (!perRef[rKey]) perRef[rKey] = {
         name: ref.name, kind: ref.kind, rate: ref.rebate,
         surchargeRate: ref.surcharge || 0,
         patients: 0, tests: 0, gross: 0, unpriced: 0,
-        surchargeTotal: 0, discountTotal: 0, base: 0, rows: []
+        surchargeTotal: 0, discountTotal: 0, base: 0, rebBase: 0,
+        subletTests: 0, subletNoCut: 0, rows: []
       };
       const acc = perRef[rKey];
       acc.patients++; acc.tests += tests.length; acc.gross += gross; acc.unpriced += unpricedHere;
       acc.surchargeTotal += rowSur; acc.discountTotal += rowDiscount; acc.base += rowBase;
-      acc.rows.push({ lab: i + 2, date: formatDate(carry), patient: name, tests: tests.join(', '), nTests: tests.length, gross: gross, disc: discPct, base: rowBase, unpriced: unpricedHere });
+      acc.rebBase += rowRebBase; acc.subletTests += rowSublet; acc.subletNoCut += rowSubletNoCut;
+      acc.rows.push({ lab: i + 2, date: formatDate(carry), patient: name, tests: tests.join(', '), nTests: tests.length, gross: gross, disc: discPct, base: rowBase, rebBase: rowRebBase, sublet: rowSublet, unpriced: unpricedHere });
     });
 
-    // Payout = Σ per-patient [(gross + surcharge) × (1 − DISC%)] × rate%.
+    // Payout = Σ per-test rebate base × rate%. Normal test → full price;
+    // sublet test → LAB CUT only (0 if LAB CUT is blank).
     REB_RESULT = Object.keys(perRef).map(function(k, idx) {
       const a = perRef[k];
       a.id = idx;
-      a.due = a.base * a.rate / 100;
+      a.due = a.rebBase * a.rate / 100;
       return a;
     });
     REB_RESULT.sort(function(x, y){ return y.due - x.due; });
     REB_RESULT.forEach(function(a, idx){ a.id = idx; });
 
     renderRebTable('rebTable', 'Amount payable to referrers', REB_RESULT);
+    renderExportMenu();
 
     // Warnings — anything the build refused to guess about.
     const warns = [];
@@ -2207,6 +2646,11 @@ async function buildRebates() {
     if (urKeys.length) warns.push('<b>' + urKeys.length + ' requestor name(s) not on the doctor/hospital lists</b> (their rows were skipped): ' + urKeys.map(function(n){ return escHtml(n) + ' ×' + unmatchedRefs[n]; }).join(' · '));
     const upKeys = Object.keys(unpricedTests);
     if (upKeys.length) warns.push('<b>' + upKeys.length + ' test name(s) not found on the price list</b> (counted at ₦0 in the gross): ' + upKeys.slice(0, 20).map(function(n){ return escHtml(n) + ' ×' + unpricedTests[n]; }).join(' · ') + (upKeys.length > 20 ? ' …' : ''));
+    // Sublet tests with no LAB CUT earn nothing — say so loudly rather than
+    // letting a referrer be quietly under-paid.
+    const noCut = REB_RESULT.reduce(function(s, a){ return s + a.subletNoCut; }, 0);
+    const subTot = REB_RESULT.reduce(function(s, a){ return s + a.subletTests; }, 0);
+    if (noCut) warns.push('<b>' + noCut + ' of ' + subTot + ' sublet test(s) this period have no LAB CUT (price list column H)</b>, so they earned <b>no rebate at all</b>. Fill column H and rebuild to pay these correctly.');
     const warnBox = document.getElementById('rebWarn');
     if (warns.length) { warnBox.className = 'reb-warn'; warnBox.innerHTML = warns.join('<br><br>'); }
     else warnBox.classList.add('hidden');
@@ -2227,15 +2671,15 @@ function renderRebTable(boxId, title, list) {
     html += '<div class="rtbl-empty">No referrers with activity this month.</div></div>';
     box.innerHTML = html; return;
   }
-  html += '<div class="cols"><span>Referrer</span><span>Patients</span><span>Tests</span><span>Full bill</span><span>Rate</span><span>Payable</span><span></span></div>';
+  html += '<div class="cols"><span>Referrer</span><span>Patients</span><span>Full bill</span><span>Rebate base</span><span>Rate</span><span>Payable</span><span></span></div>';
   let totDue = 0;
   list.forEach(function(a) {
     totDue += a.due;
     html += '<div class="row">'
-      + '<span class="who">' + escHtml(a.name) + ' <span style="color:var(--mist);font-size:11px">' + a.kind + (a.unpriced ? ' · ' + a.unpriced + ' unpriced' : '') + '</span></span>'
-      + '<span class="m">' + a.patients + '</span>'
-      + '<span class="m">' + a.tests + '</span>'
-      + '<span class="m money">' + naira(a.base) + ((a.surchargeTotal || a.discountTotal) ? '<span style="color:var(--mist)">' + (a.surchargeTotal ? ' incl. ' + naira(a.surchargeTotal) + ' sur.' : '') + (a.discountTotal ? ' less ' + naira(a.discountTotal) + ' disc.' : '') + '</span>' : '') + '</span>'
+      + '<span class="who">' + escHtml(a.name) + ' <span style="color:var(--mist);font-size:11px">' + a.kind + (a.unpriced ? ' · ' + a.unpriced + ' unpriced' : '') + (a.subletNoCut ? ' · ' + a.subletNoCut + ' sublet no-cut' : '') + '</span></span>'
+      + '<span class="m">' + a.patients + '<span style="color:var(--mist);font-size:11px"> · ' + a.tests + 't</span></span>'
+      + '<span class="m money">' + naira(a.base) + '</span>'
+      + '<span class="m money">' + naira(a.rebBase) + (a.subletTests ? '<span style="color:var(--mist)"> · ' + a.subletTests + ' sublet</span>' : '') + '</span>'
       + '<span class="m">' + a.rate + '%</span>'
       + '<span class="m due money">' + naira(a.due) + '</span>'
       + '<span class="stmt"><button onclick="printStatement(' + a.id + ')">Statement</button></span>'
@@ -2245,21 +2689,109 @@ function renderRebTable(boxId, title, list) {
   box.innerHTML = html;
 }
 
+/* ---- Rebate exports (restricted; read-only) ----
+   Every rebate figure here comes from the same per-test rebate base used on
+   screen, so an export can never disagree with the statement it came from. */
+function toggleExportMenu(e){
+  if(e) e.stopPropagation();
+  document.getElementById('expMenu').classList.toggle('on');
+}
+document.addEventListener('click', function(e){
+  const w = document.getElementById('expWrap');
+  if(w && !w.contains(e.target)) document.getElementById('expMenu').classList.remove('on');
+});
+function csvCell(v){ return '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"'; }
+function downloadCsv(filename, csv){
+  const blob = new Blob(['﻿' + csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+}
+function safeName(s){ return String(s).replace(/[^A-Za-z0-9 _-]/g,'').replace(/\s+/g,'-').slice(0,60); }
+function rebPeriodSlug(){ return (REB_MONTH_LABEL||'period').replace(/\s+/g,'-'); }
+
+function exportRebateTotals(kind, label){
+  const list = REB_RESULT.filter(function(a){ return a.kind === kind; })
+                         .sort(function(x,y){ return y.due - x.due; });
+  if(!list.length){ showRebStatus('No ' + label.toLowerCase() + ' with rebate activity in ' + REB_MONTH_LABEL + '.', 'error'); return; }
+  let csv = label + ',Rate %,Patients,Tests,Rebate base,Rebate due\r\n';
+  let tot = 0, totBase = 0;
+  list.forEach(function(a){
+    tot += a.due; totBase += a.rebBase;
+    csv += [csvCell(a.name), a.rate, a.patients, a.tests, Math.round(a.rebBase), Math.round(a.due)].join(',') + '\r\n';
+  });
+  csv += [csvCell('TOTAL'), '', '', '', Math.round(totBase), Math.round(tot)].join(',') + '\r\n';
+  downloadCsv('evashalom-' + kind.toLowerCase() + '-rebates-' + rebPeriodSlug() + '.csv', csv);
+  document.getElementById('expMenu').classList.remove('on');
+  showRebStatus(label + ' rebate totals exported — ' + list.length + ' ' + label.toLowerCase() + ', ' + naira(tot) + ' due for ' + REB_MONTH_LABEL + '.', 'success');
+}
+function exportDoctorRebates(){ exportRebateTotals('Doctor', 'Doctor'); }
+function exportHospitalRebates(){ exportRebateTotals('Hospital', 'Hospital'); }
+
+// Itemized bill for one hospital: date, patient, tests, and ONE total —
+// the complete amount charged including surcharge, with no breakdown.
+function exportHospitalBill(id){
+  const a = REB_RESULT[id];
+  if(!a) return;
+  let csv = 'EVASHALOM MEDICAL DIAGNOSTIC SERVICES\r\n';
+  csv += csvCell('Itemized bill — ' + a.name) + '\r\n';
+  csv += csvCell('Period: ' + REB_MONTH_LABEL) + '\r\n\r\n';
+  csv += 'Date,Patient,Test(s),Total bill\r\n';
+  let tot = 0;
+  a.rows.slice().sort(function(x,y){ return x.lab - y.lab; }).forEach(function(r){
+    tot += r.base;
+    csv += [csvCell(r.date), csvCell(r.patient), csvCell(r.tests), Math.round(r.base)].join(',') + '\r\n';
+  });
+  csv += [csvCell('TOTAL'), '', '', Math.round(tot)].join(',') + '\r\n';
+  downloadCsv('evashalom-bill-' + safeName(a.name) + '-' + rebPeriodSlug() + '.csv', csv);
+  showRebStatus('Itemized bill exported for ' + a.name + ' — ' + a.patients + ' patients, ' + naira(tot) + '.', 'success');
+}
+// Browsers throttle simultaneous downloads, so stagger them.
+async function exportAllHospitalBills(){
+  const hospitals = REB_RESULT.filter(function(a){ return a.kind === 'Hospital'; });
+  if(!hospitals.length) return;
+  document.getElementById('expMenu').classList.remove('on');
+  for(let i = 0; i < hospitals.length; i++){
+    exportHospitalBill(hospitals[i].id);
+    await new Promise(function(r){ setTimeout(r, 450); });
+  }
+  showRebStatus('Exported itemized bills for all ' + hospitals.length + ' hospitals — ' + REB_MONTH_LABEL + '.', 'success');
+}
+function renderExportMenu(){
+  const hospitals = REB_RESULT.filter(function(a){ return a.kind === 'Hospital'; })
+                              .sort(function(x,y){ return y.base - x.base; });
+  const box = document.getElementById('expHospitals');
+  if(!hospitals.length){ box.innerHTML = '<div class="none">No hospital activity this period.</div>'; }
+  else {
+    box.innerHTML = hospitals.map(function(h){
+      return '<button type="button" onclick="exportHospitalBill(' + h.id + ')">' + escHtml(h.name)
+        + ' <span style="color:var(--mist);font-size:11px">· ' + h.patients + ' patients</span></button>';
+    }).join('') + '<button type="button" onclick="exportAllHospitalBills()" style="font-weight:700;color:var(--teal)">Download all ' + hospitals.length + ' bills</button>';
+  }
+  document.getElementById('expWrap').style.display = 'inline-block';
+}
+
 function printStatement(id) {
   const a = REB_RESULT[id];
   if (!a) return;
   let rows = '';
   a.rows.forEach(function(r, i) {
-    rows += '<tr><td class="n">' + (i + 1) + '</td><td class="mono">ES' + r.lab + '/26</td><td>' + escHtml(r.date) + '</td><td>' + escHtml(r.patient) + '</td><td class="ts">' + escHtml(r.tests) + (r.unpriced ? ' <em>(' + r.unpriced + ' unpriced)</em>' : '') + '</td><td class="r">' + naira(r.gross) + '</td><td class="r">' + (r.disc ? r.disc + '%' : '—') + '</td><td class="r">' + naira(r.base) + '</td></tr>';
+    rows += '<tr><td class="n">' + (i + 1) + '</td><td class="mono">'+labNo(r.lab)+'</td><td>' + escHtml(r.date) + '</td><td>' + escHtml(r.patient) + '</td><td class="ts">' + escHtml(r.tests) + (r.unpriced ? ' <em>(' + r.unpriced + ' unpriced)</em>' : '') + '</td><td class="r">' + naira(r.gross) + '</td><td class="r">' + (r.disc ? r.disc + '%' : '—') + '</td><td class="r">' + naira(r.base) + '</td></tr>';
   });
-  let totals = '<tr class="sub"><td colspan="7">Gross (from price list)</td><td class="r">' + naira(a.gross) + '</td></tr>';
+  let totals = '<tr class="sub"><td colspan="7">Gross billed (from price list)</td><td class="r">' + naira(a.gross) + '</td></tr>';
   if (a.surchargeTotal) {
-    totals += '<tr><td colspan="7">Logistics surcharge (' + naira(a.surchargeRate) + ' × ' + a.tests + ' tests)</td><td class="r">+' + naira(a.surchargeTotal) + '</td></tr>';
+    totals += '<tr><td colspan="7">Logistics surcharge (' + naira(a.surchargeRate) + ' × ' + a.tests + ' tests) — not rebateable</td><td class="r">+' + naira(a.surchargeTotal) + '</td></tr>';
   }
   if (a.discountTotal) {
-    totals += '<tr><td colspan="7">MD discounts (DISC tags)</td><td class="r">−' + naira(a.discountTotal) + '</td></tr>';
+    totals += '<tr><td colspan="7">MD discounts (DISC tags) — absorbed by Evashalom</td><td class="r">−' + naira(a.discountTotal) + '</td></tr>';
   }
-  totals += '<tr class="sub"><td colspan="7">Rebate base (what patients paid)</td><td class="r">' + naira(a.base) + '</td></tr>';
+  totals += '<tr class="sub"><td colspan="7">Total billed to patients</td><td class="r">' + naira(a.base) + '</td></tr>';
+  if (a.subletTests) {
+    totals += '<tr><td colspan="7">Of which sublet tests (' + a.subletTests + ') — rebate earned on Evashalom’s lab cut only</td><td class="r">—</td></tr>';
+  }
+  totals += '<tr class="sub"><td colspan="7">Rebate base</td><td class="r">' + naira(a.rebBase) + '</td></tr>';
   totals += '<tr class="grand"><td colspan="7">REBATE PAYABLE @ ' + a.rate + '%</td><td class="r">' + naira(a.due) + '</td></tr>';
 
   const win = window.open('', '_blank', 'width=860,height=940');
@@ -2300,19 +2832,179 @@ function printStatement(id) {
   + '</div>'
   + '<table><thead><tr><th></th><th>Lab No.</th><th>Date</th><th>Patient</th><th>Tests</th><th style="text-align:right;">Gross</th><th style="text-align:right;">Disc</th><th style="text-align:right;">Net</th></tr></thead>'
   + '<tbody>' + rows + totals + '</tbody></table>'
-  + '<div class="note">Gross figures are rebuilt from the current price list applied to each patient’s registered tests; any per-test logistics surcharge is included in the rebate base, and any MD discount recorded as a DISC:<i>n</i>% tag is deducted before the rate is applied.'
-  + (a.unpriced ? ' <b>' + a.unpriced + ' test(s) could not be priced and are counted at ₦0 — verify before paying.</b>' : '') + '</div>'
+  + '<div class="note">Figures are rebuilt from the current price list applied to each patient’s registered tests. The rebate base is each test’s full price, except sublet tests, which earn rebate on Evashalom’s lab cut only — the external lab’s fee passes straight through and carries no rebate. The logistics surcharge is not rebateable, and MD discounts are absorbed by Evashalom without reducing this rebate.'
+  + (a.unpriced ? ' <b>' + a.unpriced + ' test(s) could not be priced and are counted at ₦0 — verify before paying.</b>' : '')
+  + (a.subletNoCut ? ' <b>' + a.subletNoCut + ' sublet test(s) have no lab cut recorded and earned no rebate — verify before paying.</b>' : '') + '</div>'
   + '<div class="ft">Generated ' + new Date().toLocaleDateString('en-GB') + ' — Evashalom Operations</div>'
   + '<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'
   + '</body></html>');
   win.document.close();
 }
 
-/* ================= EDIT RECORDS (new — restricted) ================= */
-let recRecord = null; // {labNum, name, payStatus, ...}
+/* ================= EDIT RECORDS (restricted) =================
+   Corrects an existing tracker row in place — the row number never changes.
+   Rules:
+   - Tests and referrer use the SAME price list, referrer lists and bill math
+     as registration (billFor), so a correction is priced like the original.
+   - Changing tests or referrer NEVER silently rewrites the recorded amount.
+     The suggested figure is shown; the user applies it deliberately.
+   - Changing the referrer also rewrites the rebate % column, so the new
+     referrer appears on the next monthly statement at their rate.
+   - Test names that don't match the price list are kept verbatim on save —
+     never dropped — and shown as "unpriced".
+   - Every save appends an EDIT note to the comments so the change is
+     traceable later (who, when, what). */
+let recRecord = null;   // the row as loaded
+let recChosen = [];     // editable test list [{name, price, sublet, labCut, unpriced}]
+let recUIBound = false;
 
 function showRecStatus(msg, type) { paintStatus('recStatusBar', msg, type); }
 function hideRecStatus() { document.getElementById('recStatusBar').classList.add('hidden'); }
+
+function recReferrer(){
+  const type=document.getElementById('recRefType').value;
+  const idx=document.getElementById('recRefName').value;
+  if(type==='na'||type==='self'||idx==='') return null;
+  const list=type==='doctor'?DOCTORS:HOSPITALS;
+  return list[parseInt(idx)]||null;
+}
+function recRequestorString(){
+  const type=document.getElementById('recRefType').value;
+  const r=recReferrer();
+  if(r) return r.name;
+  return type==='self' ? 'Self' : 'N/A';
+}
+function recPopulateReferrers(keepIdx){
+  const type=document.getElementById('recRefType').value;
+  const sel=document.getElementById('recRefName');
+  let list=[];
+  if(type==='doctor') list=DOCTORS; else if(type==='hospital') list=HOSPITALS;
+  sel.innerHTML='<option value="">—</option>'+list.map(function(x,i){ return '<option value="'+i+'">'+escHtml(x.name)+' ('+x.rebate+'%)</option>'; }).join('');
+  sel.disabled=(type==='na'||type==='self');
+  if(keepIdx!==undefined && keepIdx!==null) sel.value=String(keepIdx);
+  recRecalc();
+}
+function recBindUI(){
+  if(recUIBound) return; recUIBound=true;
+  const search=document.getElementById('recTestSearch');
+  const box=document.getElementById('recTestResults');
+  search.addEventListener('input',function(){
+    const t=this.value.trim().toLowerCase();
+    if(t.length<1){box.classList.remove('show');return;}
+    const hits=PRICES.filter(function(p){return p.name.toLowerCase().indexOf(t)!==-1;}).slice(0,12);
+    if(!hits.length){box.innerHTML='<div class="test-opt"><span class="sec">No match</span></div>';box.classList.add('show');return;}
+    box.innerHTML=hits.map(function(p){
+      return '<div class="test-opt" onclick="recAddTest(\''+p.name.replace(/'/g,"\\'")+'\')"><span>'+escHtml(p.name)+' <span class="sec">'+escHtml(p.section)+'</span></span><span class="p">'+naira(p.price)+'</span></div>';
+    }).join('');
+    box.classList.add('show');
+  });
+  document.addEventListener('click',function(e){ if(!e.target.closest('#v-records .test-search')) box.classList.remove('show'); });
+  document.getElementById('recRefType').addEventListener('change',function(){ recPopulateReferrers(); });
+  document.getElementById('recRefName').addEventListener('change',recRecalc);
+  ['recPayMode','recPayStatus','recPhone','recAmount'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',recMarkDirty);
+    document.getElementById(id).addEventListener('change',recMarkDirty);
+  });
+}
+window.recAddTest=function(name){
+  const p=PRICES.find(function(x){return x.name===name;}); if(!p) return;
+  if(recChosen.find(function(c){return c.name.toLowerCase()===name.toLowerCase();})) return;
+  recChosen.push({name:p.name,price:p.price,sublet:!!p.sublet,labCut:p.labCut||0});
+  document.getElementById('recTestSearch').value='';
+  document.getElementById('recTestResults').classList.remove('show');
+  recRenderChosen();
+};
+window.recRemoveTest=function(name){
+  recChosen=recChosen.filter(function(c){return c.name!==name;});
+  recRenderChosen();
+};
+function recRenderChosen(){
+  const box=document.getElementById('recChosenTests');
+  if(!recChosen.length){ box.innerHTML='<div class="empty-hint">No tests on this record.</div>'; recRecalc(); return; }
+  const sect={}; PRICES.forEach(function(p){sect[p.name]=p.section;});
+  box.innerHTML='<div class="chosen-list">'+recChosen.map(function(c){
+    const tag = c.unpriced ? '<span class="unpriced" title="Not on the price list — kept as written">unpriced</span>'
+              : (c.sublet ? '<span class="sublet-tag">sublet'+(c.labCut>0?'':' · no cut')+'</span>' : '');
+    return '<div class="chosen-row"><span class="nm">'+escHtml(c.name)+tag+'</span><span class="sec">'+escHtml(sect[c.name]||'')+'</span><span class="amt money">'+(c.unpriced?'—':naira(c.price))+'</span><button onclick="recRemoveTest(\''+c.name.replace(/'/g,"\\'")+'\')" aria-label="Remove test">×</button></div>';
+  }).join('')+'</div>';
+  recRecalc();
+}
+function recBill(){
+  const r=recReferrer();
+  return billFor(recChosen, (r&&r.surcharge)?r.surcharge:0, r?r.rebate:0, 0);
+}
+function recRecalc(){
+  if(!recRecord) return;
+  const b=recBill();
+  document.getElementById('recBillCount').textContent=recChosen.length;
+  document.getElementById('recBillGross').textContent=naira(b.gross);
+  const sl=document.getElementById('recSurLine');
+  if(b.surRate>0 && recChosen.length){ sl.style.display='flex'; document.getElementById('recSurRate').textContent=naira(b.surRate); document.getElementById('recBillSur').textContent='+'+naira(b.surcharge); }
+  else sl.style.display='none';
+  document.getElementById('recRebPct').textContent=b.pct;
+  document.getElementById('recBillRebate').textContent=naira(b.rebate);
+  document.getElementById('recSuggested').textContent=naira(b.subtotal);
+  // Offer the price-list figure only once the user has actually changed the
+  // tests or referrer, and only if it differs from the amount box. A freshly
+  // opened record never nags — a negotiated amount is not a mistake to fix.
+  const cur=num(document.getElementById('recAmount').value);
+  const row=document.getElementById('recSuggestRow');
+  const billChanged = recChosen.map(function(c){return c.name;}).join(', ')!==recRecord.tests || recRequestorString()!==recRecord.referredBy;
+  if(billChanged && recChosen.length && Math.round(b.subtotal)!==Math.round(cur)){ row.style.display='flex'; document.getElementById('recSuggestVal').textContent=naira(b.subtotal); }
+  else row.style.display='none';
+  const note=document.getElementById('recRefNote');
+  const type=document.getElementById('recRefType').value;
+  const r=recReferrer();
+  if(recRecord.unlistedRequestor && !r) note.textContent='Recorded referrer “'+recRecord.referredBy+'” is not on the doctor/hospital lists. Pick the right one above to replace it, or leave as N/A.';
+  else if(r) note.textContent=r.name+' earns '+b.pct+'% on this record’s rebate base ('+naira(b.rebateBase)+').'+(b.subletNoCut?' '+b.subletNoCut+' sublet test'+(b.subletNoCut>1?'s have':' has')+' no LAB CUT.':'');
+  else note.textContent= type==='self' ? 'Self-referred — no rebate.' : 'No referrer — no rebate.';
+  recMarkDirty();
+  applyPrivacy();
+}
+window.recUseSuggested=function(){
+  document.getElementById('recAmount').value=Math.round(recBill().subtotal).toLocaleString('en-NG');
+  recRecalc();
+};
+function recChanges(){
+  if(!recRecord) return [];
+  const ch=[];
+  const newTests=recChosen.map(function(c){return c.name;}).join(', ');
+  if(newTests!==recRecord.tests){
+    const before=recRecord.tests.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    const after=recChosen.map(function(c){return c.name;});
+    const added=after.filter(function(t){return before.indexOf(t)===-1;});
+    const removed=before.filter(function(t){return after.indexOf(t)===-1;});
+    ch.push({field:'investigation', value:newTests, label:'tests'+(added.length?' +'+added.join(', +'):'')+(removed.length?' −'+removed.join(', −'):'')});
+  }
+  const req=recRequestorString();
+  if(req!==recRecord.referredBy){
+    ch.push({field:'requestor', value:req, label:'referrer '+(recRecord.referredBy||'—')+'→'+req});
+    const r=recReferrer();
+    ch.push({field:'rebate', value:r?r.rebate:0, label:'rebate '+(r?r.rebate:0)+'%', silent:true});
+  }
+  const ph=document.getElementById('recPhone').value.trim();
+  if(ph!==recRecord.phone) ch.push({field:'phone', value:ph, label:'phone'});
+  const pm=document.getElementById('recPayMode').value;
+  if(pm!==recRecord.payMode) ch.push({field:'payMode', value:pm, label:'mode '+(recRecord.payMode||'—')+'→'+pm});
+  const ps=document.getElementById('recPayStatus').value;
+  if(ps!==recRecord.payStatus) ch.push({field:'payStatus', value:ps, label:'status '+(recRecord.payStatus||'—')+'→'+ps});
+  const amt=num(document.getElementById('recAmount').value);
+  if(Math.round(amt)!==Math.round(recRecord.amountNum)) ch.push({field:'amount', value:Math.round(amt), label:'amount '+naira(recRecord.amountNum)+'→'+naira(amt)});
+  return ch;
+}
+function recMarkDirty(){
+  const btn=document.getElementById('recUpdateBtn');
+  const n=recChanges().filter(function(c){return !c.silent;}).length;
+  btn.disabled=!n;
+  btn.textContent=n?('Save '+n+' change'+(n>1?'s':'')):'No changes yet';
+}
+function recSetSelect(id, value, addIfMissing){
+  const sel=document.getElementById(id);
+  if(value && addIfMissing && ![].slice.call(sel.options).some(function(o){return o.value===value;})){
+    const o=document.createElement('option'); o.textContent=value; sel.appendChild(o);
+  }
+  if(value) sel.value=value;
+}
 
 async function loadRecord() {
   const labNum = parseInt(document.getElementById('recLabInput').value);
@@ -2322,6 +3014,8 @@ async function loadRecord() {
   document.getElementById('recCard').classList.add('hidden');
   showRecStatus('Loading record…', 'loading');
   try {
+    await ensureRefData();
+    recBindUI();
     const patientData = await fetchTabCsv(PATIENT_ID, PATIENT_GID);
     const rowIndex = labNum - 2;
     const pRow = patientData.rows[rowIndex] || [];
@@ -2330,26 +3024,42 @@ async function loadRecord() {
     for (let i = rowIndex; i >= 0; i--) { if (patientData.rows[i] && patientData.rows[i][0]) { patientDate = patientData.rows[i][0]; break; } }
     recRecord = {
       labNum: labNum, name: pRow[1] || '', gender: pRow[2] || '', age: pRow[3] || '',
-      phone: pRow[4] || '', tests: (pRow[5] || '').replace(/"/g, ''), referredBy: pRow[6] || '',
-      amount: pRow[8] || '', payStatus: (pRow[11] || '').trim(), date: formatDate(patientDate)
+      phone: (pRow[4] || '').trim(), tests: (pRow[5] || '').replace(/"/g, '').trim(), referredBy: (pRow[6] || '').trim(),
+      amount: pRow[8] || '', amountNum: num(pRow[8]), payMode: (pRow[10] || '').trim(),
+      payStatus: (pRow[11] || '').trim(), date: formatDate(patientDate), unlistedRequestor: false
     };
+    // Read-only header
     const fields = [
-      {lbl:'Lab No.', val:'ES' + labNum + '/26', mono:true}, {lbl:'Date', val:recRecord.date},
+      {lbl:'Lab No.', val:labNo(labNum), mono:true}, {lbl:'Date', val:recRecord.date},
       {lbl:'Patient', val:recRecord.name}, {lbl:'Sex / Age', val:(recRecord.gender || '—') + ' / ' + (recRecord.age || '—')},
-      {lbl:'Phone', val:recRecord.phone || '—', mono:true}, {lbl:'Referred By', val:recRecord.referredBy || '—'},
-      {lbl:'Tests', val:recRecord.tests || '—'}, {lbl:'Amount', val:recRecord.amount || '—', money:true},
-      {lbl:'Payment Status', val:recRecord.payStatus || '—'}
+      {lbl:'Recorded amount', val:recRecord.amount || '—', money:true}, {lbl:'Recorded referrer', val:recRecord.referredBy || '—'}
     ];
     document.getElementById('recGrid').innerHTML = fields.map(f =>
       '<div class="pf"><span class="lbl">' + f.lbl + '</span><span class="val' + (f.val==='—'?' empty':'') + (f.mono?' mono-v':'') + (f.money?' money':'') + '">' + escHtml(f.val) + '</span></div>'
     ).join('');
-    // Pre-select the current status; keep unusual sheet values selectable as-is.
-    const sel = document.getElementById('recPayStatus');
-    if (recRecord.payStatus && ![].slice.call(sel.options).some(function(o){ return o.value === recRecord.payStatus; })) {
-      const o = document.createElement('option'); o.textContent = recRecord.payStatus; sel.appendChild(o);
+    // Tests → editable list. Unmatched names are kept verbatim as "unpriced".
+    const byName = {}; PRICES.forEach(function(p){ byName[p.name.toLowerCase()] = p; });
+    recChosen = recRecord.tests.split(',').map(function(s){return s.trim();}).filter(Boolean).map(function(t){
+      const p = byName[t.toLowerCase()];
+      return p ? {name:p.name, price:p.price, sublet:!!p.sublet, labCut:p.labCut||0} : {name:t, price:0, unpriced:true};
+    });
+    // Referrer → dropdowns. Exact name match only; anything else is surfaced, not guessed.
+    const rq = recRecord.referredBy;
+    let type='na', idx=null;
+    if(/^self$/i.test(rq)) type='self';
+    else if(rq && !/^(walk[\s-]?in|n\/?a|not\s*available)$/i.test(rq)){
+      const di = DOCTORS.findIndex(function(d){ return d.name.toLowerCase()===rq.toLowerCase(); });
+      const hi = HOSPITALS.findIndex(function(h){ return h.name.toLowerCase()===rq.toLowerCase(); });
+      if(di>=0){ type='doctor'; idx=di; } else if(hi>=0){ type='hospital'; idx=hi; } else recRecord.unlistedRequestor=true;
     }
-    if (recRecord.payStatus) sel.value = recRecord.payStatus;
+    document.getElementById('recRefType').value=type;
+    recPopulateReferrers(idx);
+    recSetSelect('recPayMode', recRecord.payMode, true);
+    recSetSelect('recPayStatus', recRecord.payStatus, true);
+    document.getElementById('recPhone').value = recRecord.phone;
+    document.getElementById('recAmount').value = recRecord.amountNum ? Math.round(recRecord.amountNum).toLocaleString('en-NG') : '';
     document.getElementById('recNote').textContent = '';
+    recRenderChosen();
     document.getElementById('recCard').classList.remove('hidden');
     hideRecStatus();
     applyPrivacy();
@@ -2359,24 +3069,42 @@ async function loadRecord() {
 
 async function updateRecord() {
   if (!recRecord) return;
-  const newStatus = document.getElementById('recPayStatus').value;
-  if (newStatus === recRecord.payStatus) { showRecStatus('Payment status is already "' + escHtml(newStatus) + '" — nothing to change.', 'error'); return; }
-  if (!confirm('Set ES' + recRecord.labNum + '/26 (' + recRecord.name + ') payment status to "' + newStatus + '"?')) return;
+  const changes = recChanges();
+  const visible = changes.filter(function(c){ return !c.silent; });
+  if (!visible.length) { showRecStatus('Nothing has changed.', 'error'); return; }
+  const summary = visible.map(function(c){ return '• ' + c.label; }).join('\n');
+  if (!confirm('Save these changes to '+labNo(recRecord.labNum)+' (' + recRecord.name + ')?\n\n' + summary)) return;
   const btn = document.getElementById('recUpdateBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Updating…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
   showRecStatus('Sending update…', 'loading');
   try {
-    const payload = { token: REG_TOKEN, action: 'update', labNum: recRecord.labNum, payStatus: newStatus };
+    const payload = { token: REG_TOKEN, action: 'update', labNum: recRecord.labNum };
+    changes.forEach(function(c){ payload[c.field] = c.value; });
+    // Audit trail — appended server-side, never overwrites existing comments.
+    const who = (memGet('localStorage','ev.regBy') || 'APP').trim();
+    const d = new Date();
+    payload.comments = 'EDIT ' + ('0'+d.getDate()).slice(-2) + '/' + ('0'+(d.getMonth()+1)).slice(-2) + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2) + ' by ' + who + ': ' + visible.map(function(c){ return c.label; }).join('; ');
     const r = await postWithRetry(payload, 4, function(msg){ showRecStatus(msg, 'loading'); });
     if (r.ok) {
-      showRecStatus('✅ ES' + recRecord.labNum + '/26 updated: ' + escHtml(recRecord.payStatus || '—') + ' → ' + escHtml(newStatus), 'success');
-      recRecord.payStatus = newStatus;
-      document.getElementById('recNote').textContent = 'The update landed on the endpoint’s target sheet. This card still shows the live tracker, so refresh expectations accordingly while testing on the sandbox.';
+      showRecStatus('✅ '+labNo(recRecord.labNum)+' saved — ' + escHtml(visible.map(function(c){ return c.label; }).join('; ')), 'success');
+      dropTracker();
+      // Re-baseline so the button goes quiet and a second save only sends new changes.
+      changes.forEach(function(c){
+        if(c.field==='investigation') recRecord.tests=c.value;
+        if(c.field==='requestor') recRecord.referredBy=c.value;
+        if(c.field==='phone') recRecord.phone=c.value;
+        if(c.field==='payMode') recRecord.payMode=c.value;
+        if(c.field==='payStatus') recRecord.payStatus=c.value;
+        if(c.field==='amount') recRecord.amountNum=c.value;
+      });
+      recRecord.unlistedRequestor=false;
+      document.getElementById('recNote').textContent = 'Saved to the tracker with an EDIT note in the comments' + (r.updated ? ' (' + r.updated.join(', ') + ')' : '') + '.';
+      recMarkDirty();
     } else {
       showRecStatus('❌ ' + escHtml(r.error || 'Update failed'), 'error');
+      recMarkDirty();
     }
-  } catch(err) { console.error(err); showRecStatus('Update failed: ' + err.message, 'error'); }
-  btn.disabled = false; btn.innerHTML = 'Update payment status';
+  } catch(err) { console.error(err); showRecStatus('Update failed: ' + err.message, 'error'); recMarkDirty(); }
 }
 
 /* ================= ANALYTICS (restricted, READ-ONLY) =================
@@ -2385,7 +3113,9 @@ async function updateRecord() {
    - Outstanding      = Σ AMOUNT where payment status contains 'not paid'.
    - Full bill (base) = price-list gross + surcharge×tests, less any DISC:n%
                         tag — identical to the Rebates view, so figures agree.
-   - Rebate cost      = base × referrer rate%, matched referrers only.
+   - Rebate cost      = per-test rebate base × referrer rate%, matched referrers
+                        only. Same rule as the Rebates view (full price normally,
+                        LAB CUT for sublet tests) so the two screens agree.
    - MD discount cost = (gross+surcharge) × DISC%.
    - Unmatched tests are counted and SHOWN, never silently dropped.
    Palette: validated with the dataviz six-checks (worst adjacent CVD ΔE 26.3
@@ -2423,8 +3153,9 @@ async function loadAnaRecords(){
   DOCTORS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Doctor'}, x); });
   HOSPITALS.forEach(function(x){ dir[x.name.toLowerCase().trim()] = Object.assign({kind:'Hospital'}, x); });
   const dirKeys = Object.keys(dir);
-  const priceMap = {}, secMap = {};
-  PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x.price; secMap[x.name.toLowerCase().trim()] = x.section; });
+  // Maps to the whole price record so the sublet flag and LAB CUT travel with it.
+  const priceMap = {};
+  PRICES.forEach(function(x){ priceMap[x.name.toLowerCase().trim()] = x; });
 
   const out = [];
   let carry = '';
@@ -2433,10 +3164,15 @@ async function loadAnaRecords(){
     const name = (row[1]||'').trim(); if(!name) return;
     const fd = parseFullDate(carry);
     const tests = (row[5]||'').replace(/"/g,'').split(/[,\n]/).map(function(t){return t.trim();}).filter(Boolean);
-    let gross=0; const matched=[], unmatched=[];
+    let gross=0, rebBase=0, subletNoCut=0; const matched=[], unmatched=[];
     tests.forEach(function(t){
-      const k=t.toLowerCase();
-      if(priceMap[k]){ gross+=priceMap[k]; matched.push({name:t, section:(secMap[k]||'Other').toUpperCase(), price:priceMap[k]}); }
+      const p=priceMap[t.toLowerCase()];
+      if(p){
+        gross+=p.price;
+        rebBase+=testRebateBase(p);
+        if(p.sublet && !(p.labCut>0)) subletNoCut++;
+        matched.push({name:t, section:(p.section||'Other').toUpperCase(), price:p.price, sublet:!!p.sublet});
+      }
       else unmatched.push(t);
     });
     let discPct=0;
@@ -2469,7 +3205,10 @@ async function loadAnaRecords(){
       gross:gross, sur:sur, discPct:discPct,
       discountCost: full*discPct/100,
       base:base,
-      rebateCost: ref ? base*ref.rebate/100 : 0,
+      // Same per-test rule as the Rebates view: sublet tests earn on LAB CUT
+      // only, the surcharge is not rebateable, and the discount is absorbed.
+      rebBase:rebBase, subletNoCut:subletNoCut,
+      rebateCost: ref ? rebBase*ref.rebate/100 : 0,
       amount:num(row[8]), payMode:(row[10]||'').trim()||'—',
       payStatus:(row[11]||'').trim(), unpaid:/not\s*paid/i.test((row[11]||'')),
       location:(row[15]||'').trim()
@@ -2823,7 +3562,7 @@ function anaApplyFilters(){
   const cap=300;
   html+='<table class="dd-table"><thead><tr><th>Lab No.</th><th>Date</th><th>Patient</th><th>Tests</th><th>Referrer</th><th class="r">Amount</th><th>Status</th></tr></thead><tbody>';
   anaFiltered.slice(0,cap).forEach(function(r){
-    html+='<tr><td class="mono-c">ES'+r.lab+'/26</td><td class="mono-c">'+escHtml(r.dateStr||'—')+'</td><td>'+escHtml(r.name)+'</td>'
+    html+='<tr><td class="mono-c">'+labNo(r.lab)+'</td><td class="mono-c">'+escHtml(r.dateStr||'—')+'</td><td>'+escHtml(r.name)+'</td>'
       +'<td>'+escHtml(r.tests.join(', '))+(r.unmatched.length?' <span style="color:#6b5715;font-size:10.5px">('+r.unmatched.length+' unmatched)</span>':'')+'</td>'
       +'<td>'+escHtml(r.ref?r.ref.name:(r.refKind==='unlisted'?r.requestor+' ?':'—'))+'</td>'
       +'<td class="r mono-c money">'+(r.amount?naira(r.amount):'—')+'</td>'
@@ -2843,7 +3582,7 @@ function anaExportCsv(filtered){
   const q=function(v){ v=String(v==null?'':v); return '"'+v.replace(/"/g,'""')+'"'; };
   let csv='﻿Lab No,Date,Patient,Tests,Requestor,Matched referrer,Kind,Rate %,Amount recorded,Pay mode,Pay status,Location,DISC %,Gross (price list),Surcharge,Full bill (base),Rebate cost,Unmatched tests\r\n';
   rows.forEach(function(r){
-    csv+=[q('ES'+r.lab+'/26'),q(r.dateStr),q(r.name),q(r.tests.join(', ')),q(r.requestor),
+    csv+=[q(labNo(r.lab)),q(r.dateStr),q(r.name),q(r.tests.join(', ')),q(r.requestor),
       q(r.ref?r.ref.name:''),q(r.ref?r.ref.kind:''),q(r.ref?r.ref.rebate:''),
       r.amount||0,q(r.payMode),q(r.payStatus),q(r.location),r.discPct||0,
       Math.round(r.gross),Math.round(r.sur),Math.round(r.base),Math.round(r.rebateCost),
@@ -2909,15 +3648,56 @@ function anaPrintSummary(){
   win.document.close();
 }
 
+/* ================= DEVICE MEMORY =================
+   Small conveniences only — never patient data. localStorage remembers the
+   receptionist's name and lab location on this device; sessionStorage keeps
+   the management unlock and privacy mode until the tab is closed, so a page
+   reload doesn't demand the passcode again. Every access is guarded: private
+   windows and locked-down browsers may throw or return nothing. */
+function memGet(store, k){ try{ return window[store].getItem(k); }catch(e){ return null; } }
+function memSet(store, k, v){ try{ window[store].setItem(k, v); }catch(e){} }
+function memDel(store, k){ try{ window[store].removeItem(k); }catch(e){} }
+function rememberDeviceDefaults(){
+  const rb=document.getElementById('regBy'), ll=document.getElementById('labLoc');
+  const n=memGet('localStorage','ev.regBy'), l=memGet('localStorage','ev.labLoc');
+  if(rb && n && !rb.value) rb.value=n;
+  if(ll && l && [].some.call(ll.options, function(o){ return o.value===l; })) ll.value=l;
+  if(rb) rb.addEventListener('change', function(){ memSet('localStorage','ev.regBy', rb.value.trim()); });
+  if(ll) ll.addEventListener('change', function(){ memSet('localStorage','ev.labLoc', ll.value); });
+}
+function restoreSession(){
+  try{
+    const u=JSON.parse(memGet('sessionStorage','ev.unlocked')||'{}');
+    Object.keys(u).forEach(function(k){ if(RESTRICTED_VIEWS[k]) sectionUnlocked[k]=true; });
+  }catch(e){}
+  if(memGet('sessionStorage','ev.privacy')==='1') setPrivacy(true);
+}
+// Focus the field the user will type into next, so nothing needs a click first.
+const VIEW_FOCUS = { register:'pName', find:'nameInput', results:'entryLabInput', report:'labInput', records:'recLabInput' };
+function focusFor(v){
+  const id=VIEW_FOCUS[v]; if(!id) return;
+  const el=document.getElementById(id);
+  if(el && !el.value) setTimeout(function(){ try{ el.focus(); }catch(e){} }, 60);
+}
+
 /* ================= INIT ================= */
 buildNav();
 buildWelcomeCards();
 loadToday();
+document.getElementById('buildTag').textContent = BUILD;
+['wlNextLab','todayNextLab','regNextLab'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=labNo('—'); });
+rememberDeviceDefaults();
+restoreSession();
 document.getElementById('code').focus();
 document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
 document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
 document.getElementById('nameInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchByName(); });
 document.getElementById('recLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadRecord(); });
+// Confirmation modal: Enter registers, Escape goes back — so the keyboard flow never stalls.
+document.getElementById('regConfirm').addEventListener('keydown', function(e){
+  if(e.key==='Escape'){ e.preventDefault(); cancelRegister(); }
+  if(e.key==='Enter' && !e.target.closest('button.ghost')){ e.preventDefault(); confirmRegister(); }
+});
 </script>
 </body>
 </html>
