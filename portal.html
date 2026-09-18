@@ -323,6 +323,27 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
 .entry-section{margin-bottom:1.5rem}
 .entry-section-title{font-size:10.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.85rem;padding-bottom:8px;border-bottom:2px solid var(--ink)}
 .entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.entry-grid.dense{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 12px}
+.entry-grid.dense .entry-field label{font-size:12px}
+.entry-grid.dense .entry-field input{height:36px;font-size:13px}
+.entry-grid + .entry-group-title{margin-top:1.1rem}
+/* Sections open when ordered or already filled; others collapse to a title row. */
+.entry-section-title{cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
+.entry-section-title .es-why{margin-left:auto;font-size:9px;letter-spacing:.12em;color:var(--teal);font-weight:700;text-transform:uppercase}
+.entry-section-title .es-why.dim{color:var(--mist)}
+.entry-section-title .es-chev{color:var(--mist);font-size:12px;transition:transform .15s}
+.entry-section.collapsed .entry-section-title{border-bottom-color:var(--line);margin-bottom:.4rem;opacity:.7}
+.entry-section.collapsed .entry-section-title .es-chev{transform:rotate(-90deg)}
+.entry-section.collapsed .entry-section-body{display:none}
+/* Tap-toggles: S / I / R, Reactive / Non-reactive, Nil / Present */
+.toggle-field .tog-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tog{height:34px;padding:0 12px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:12.5px;font-weight:700;color:rgba(21,48,58,.6);cursor:pointer;font-family:'Hanken Grotesk',sans-serif;transition:background .12s,color .12s,border-color .12s}
+.tog:hover{border-color:var(--teal);color:var(--teal)}
+.tog.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.tog.clear{padding:0 9px;font-size:15px;font-weight:400;color:var(--mist)}
+.tog.clear:hover{color:var(--red);border-color:var(--red)}
+.entry-grid.dense .tog{height:30px;padding:0 9px;font-size:11.5px}
+.entry-group-title{font-size:9.5px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.16em;margin:.2rem 0 .6rem;padding-left:2px}
 .entry-field{display:flex;flex-direction:column;gap:5px}
 .entry-field label{font-size:13px;font-weight:600;color:var(--ink)}
 .entry-field .ref-hint{font-size:11px;color:var(--mist);font-weight:400}
@@ -665,7 +686,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
           <button class="btn" onclick="saveResults()" id="saveBtn">Save results</button>
         </div>
       </div>
-      <p class="foot-note">Fields group by section &mdash; Chemistry, Haematology, Hormones &amp; Serology, Microbiology.</p>
+      <p class="foot-note">Fields group by section &mdash; Chemistry, Haematology, Hormones &amp; Serology, Microbiology, Andrology.</p>
     </section>
 
     <!-- ======== GENERATE REPORT ======== -->
@@ -850,7 +871,7 @@ const LOGO='/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
 const LOGO_B64 = LOGO;
 
 /* ================= CONFIG (unchanged from the proven apps) ================= */
-const BUILD = '2026-09-16';   // bump on every deploy — shown in the rail so the live version is never in doubt
+const BUILD = '2026-09-18';   // bump on every deploy — shown in the rail so the live version is never in doubt
 
 /* ---- YEAR-SCOPED CONFIG — the annual rollover checklist ----
    At the start of a new year: set LAB_YEAR, point PATIENT_GID at the new
@@ -864,7 +885,7 @@ const PATIENT_ID = '1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ';
 const PATIENT_GID = '16221607';          // the LAB_YEAR tab on the patient tracker
 const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
 const REFERENCE_GID = '1214031418';
-const GIDS = { CHEMISTRY:'0', HAEMATOLOGY:'2121568916', HORMONES:'60958540', MICROBIOLOGY:'1870622744' };
+const GIDS = { CHEMISTRY:'0', HAEMATOLOGY:'2121568916', HORMONES:'60958540', MICROBIOLOGY:'1870622744', ANDROLOGY:'1913301180' };
 const SAVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycby_rnWGmLhfnN5HbcWs49kU-Ox4shOjJPZdQF2K1ddb16KNTPoN5i08-iO5eVtUrqIEdA/exec';
 const SAVE_TOKEN    = 'evashalom-lab-secure-gateway-2026';
 const REG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyDImO401CsDR7-HNFY0U1Z_x4zffHGL2gcaoGqoJeP9kLUuCmo-d-Asz9ArIh94G4bTw/exec';
@@ -1841,7 +1862,7 @@ window.printReceipt=function(){
 // These get populated at load time from the reference tab.
 // Structure per key: {section, label, unit, group, gLow, gHigh, mLow, mHigh, fLow, fHigh, displayText}
 let REF = null;
-let REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+let REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[], Andrology:[] };
 let REF_GROUPS = {};
 let currentPatient = null, currentResults = null;
 
@@ -1849,7 +1870,8 @@ const SECTION_NAME_MAP = {
   'CHEMISTRY': 'Chemistry',
   'HAEMATOLOGY': 'Haematology',
   'HORMONES': 'Hormones & Serology',
-  'MICROBIOLOGY': 'Microbiology'
+  'MICROBIOLOGY': 'Microbiology',
+  'ANDROLOGY': 'Andrology'
 };
 
 function numOrNull(v) {
@@ -1868,7 +1890,7 @@ async function loadReference() {
   if (REF) return; // already loaded this session
   const raw = await fetchTabCsv(RESULT_ID, REFERENCE_GID);
   REF = {};
-  REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[] };
+  REF_BY_SECTION = { Chemistry:[], Haematology:[], 'Hormones & Serology':[], Microbiology:[], Andrology:[] };
   REF_GROUPS = {};
   const allRows = [raw.cols].concat(raw.rows);
   allRows.forEach(function(row) {
@@ -1972,13 +1994,15 @@ async function loadPatientByLab(labNum) {
     fetchTabCsv(RESULT_ID, GIDS.CHEMISTRY).catch(() => ({ cols: [], rows: [] })),
     fetchTabCsv(RESULT_ID, GIDS.HAEMATOLOGY).catch(() => ({ cols: [], rows: [] })),
     fetchTabCsv(RESULT_ID, GIDS.HORMONES).catch(() => ({ cols: [], rows: [] })),
-    fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] }))
+    fetchTabCsv(RESULT_ID, GIDS.MICROBIOLOGY).catch(() => ({ cols: [], rows: [] })),
+    fetchTabCsv(RESULT_ID, GIDS.ANDROLOGY).catch(() => ({ cols: [], rows: [] }))
   ]);
   currentResults = {
     chemistry:    extractResults(results[0].cols, results[0].rows[rowIndex] || [], 'Chemistry'),
     haematology:  extractResults(results[1].cols, results[1].rows[rowIndex] || [], 'Haematology'),
     hormones:     extractResults(results[2].cols, results[2].rows[rowIndex] || [], 'Hormones & Serology'),
-    microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology')
+    microbiology: extractResults(results[3].cols, results[3].rows[rowIndex] || [], 'Microbiology'),
+    andrology:    extractResults(results[4].cols, results[4].rows[rowIndex] || [], 'Andrology')
   };
   return true;
 }
@@ -2012,7 +2036,8 @@ function renderPatientCard() {
   document.getElementById('testsBadges').innerHTML = p.investigations.split(/[,\n]/).map(t => t.replace(/"/g,'').trim()).filter(Boolean).map(t => '<span class="badge">' + escHtml(t) + '</span>').join('');
   const sections = [
     {name:'Chemistry',results:r.chemistry},{name:'Haematology',results:r.haematology},
-    {name:'Hormones & Serology',results:r.hormones},{name:'Microbiology',results:r.microbiology}
+    {name:'Hormones & Serology',results:r.hormones},{name:'Microbiology',results:r.microbiology},
+    {name:'Andrology',results:r.andrology}
   ];
   document.getElementById('sectionsGrid').innerHTML = sections.map(s => {
     const has = s.results.length > 0;
@@ -2024,20 +2049,54 @@ function renderPatientCard() {
   if (r.haematology.length)  preview += makeTable('Haematology Results',         r.haematology,  'Haematology');
   if (r.hormones.length)     preview += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
   if (r.microbiology.length) preview += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
+  if (r.andrology.length)    preview += makeTable('Seminal Fluid Analysis',      r.andrology,    'Andrology');
   document.getElementById('resultsPreview').innerHTML = preview;
-  const total = r.chemistry.length + r.haematology.length + r.hormones.length + r.microbiology.length;
+  const total = r.chemistry.length + r.haematology.length + r.hormones.length + r.microbiology.length + r.andrology.length;
   const sc = sections.filter(s => s.results.length > 0).length;
   document.getElementById('genNote').textContent = total + ' result' + (total!==1?'s':'') + ' across ' + sc + ' section' + (sc!==1?'s':'');
   document.getElementById('patientCard').classList.remove('hidden');
   applyPrivacy();
 }
 
+// An antibiogram is any GROUP whose entered values are all S / I / R. It is
+// summarised as three lines (Sensitive / Intermediate / Resistant) listing the
+// antibiotics, instead of twenty one-letter rows. Detected from the values, so
+// nothing has to be configured.
+function antibiogramGroups(results, sectionName) {
+  const byGroup = {};
+  results.forEach(function(res) {
+    const def = getRef(sectionName, res.key) || {};
+    if (!def.group) return;
+    if (!byGroup[def.group]) byGroup[def.group] = { S:[], I:[], R:[], ok:true, keys:{} };
+    const g = byGroup[def.group];
+    const v = String(res.value || '').trim().toUpperCase();
+    const code = /^S(ENSITIVE)?$/.test(v) ? 'S' : /^I(NTERMEDIATE)?$/.test(v) ? 'I' : /^R(ESISTANT)?$/.test(v) ? 'R' : null;
+    if (!code) { g.ok = false; return; }
+    g[code].push(res.label); g.keys[res.key] = true;
+  });
+  const out = {};
+  Object.keys(byGroup).forEach(function(k){ if (byGroup[k].ok && (byGroup[k].S.length + byGroup[k].I.length + byGroup[k].R.length) >= 2) out[k] = byGroup[k]; });
+  return out;
+}
+
 function makeTable(title, results, sectionName) {
   const gender = currentPatient ? currentPatient.gender : '';
   let rows = '';
   const seenGroups = {};
+  const abg = antibiogramGroups(results, sectionName);
   results.forEach(function(res) {
     const def = getRef(sectionName, res.key) || {};
+    if (def.group && abg[def.group]) {
+      if (!seenGroups[def.group]) {
+        seenGroups[def.group] = true;
+        const a = abg[def.group];
+        rows += '<tr class="subhdr"><td colspan="4">' + escHtml(def.group) + '</td></tr>'
+          + '<tr><td class="pn">Sensitive</td><td colspan="3" class="rv">' + (a.S.length ? escHtml(a.S.join(', ')) : '—') + '</td></tr>'
+          + '<tr><td class="pn">Intermediate</td><td colspan="3" class="rv">' + (a.I.length ? escHtml(a.I.join(', ')) : '—') + '</td></tr>'
+          + '<tr><td class="pn">Resistant</td><td colspan="3" class="rv abn">' + (a.R.length ? escHtml(a.R.join(', ')) : '—') + '</td></tr>';
+      }
+      return;
+    }
     if (def.group && !seenGroups[def.group]) {
       seenGroups[def.group] = true;
       rows += '<tr class="subhdr"><td colspan="4">' + escHtml(def.group) + '</td></tr>';
@@ -2107,8 +2166,27 @@ async function generateReport() {
       ]}));
       const seenGroups = {};
       let ri = 0;
+      const abg = antibiogramGroups(results, sectionName);
+      function abgRow(label, list, red) {
+        const fill = ri%2===0 ? 'FFFFFF' : GRAY_ROW; ri++;
+        return new TableRow({children:[
+          mkCell(par(run(label,{sz:19,bold:true})),{w:colW[0],borders:allB(4,'E8E8E8'),fill:fill,pad:pd(70,70,120,120)}),
+          mkCell(par(run(list.length ? list.join(', ') : '—',{sz:18,bold:!!list.length,color:red&&list.length?'CC0000':NAVY})),{w:colW[1]+colW[2]+colW[3],span:3,borders:allB(4,'E8E8E8'),fill:fill,pad:pd(70,70,120,120)})
+        ]});
+      }
       results.forEach(function(res) {
         const def = getRef(sectionName, res.key) || {};
+        if (def.group && abg[def.group]) {
+          if (!seenGroups[def.group]) {
+            seenGroups[def.group] = true;
+            const a = abg[def.group];
+            rows.push(new TableRow({children:[mkCell(par(run(def.group,{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
+            rows.push(abgRow('Sensitive', a.S, false));
+            rows.push(abgRow('Intermediate', a.I, false));
+            rows.push(abgRow('Resistant', a.R, true));
+          }
+          return;
+        }
         if (def.group && !seenGroups[def.group]) {
           seenGroups[def.group] = true;
           rows.push(new TableRow({children:[mkCell(par(run(def.group,{bold:true,sz:19,color:NAVY})),{w:W,span:4,borders:allB(4,'C5D8EE'),fill:'E8F0FA',pad:pd(80,80,140,140)})]}));
@@ -2173,6 +2251,7 @@ async function generateReport() {
         ...buildTable('HAEMATOLOGY SECTION',  r.haematology,  'Haematology'),
         ...buildTable('HORMONES & SEROLOGY',  r.hormones,     'Hormones & Serology'),
         ...buildTable('MICROBIOLOGY SECTION', r.microbiology, 'Microbiology'),
+        ...buildTable('SEMINAL FLUID ANALYSIS', r.andrology,  'Andrology'),
         new Paragraph({border:{top:{style:BorderStyle.SINGLE,size:8,color:NAVY,space:1}},children:[run('')],spacing:{before:200,after:120}}),
         par([run('NOTE: ',{bold:true,sz:17,color:'555555'}),run('Results should be interpreted in the context of clinical findings. Abnormal values are flagged with ↑ (high) or ↓ (low).',{sz:17,color:'666666',italic:true})],{after:200}),
         new Table({width:{size:W,type:WidthType.DXA},columnWidths:[5220,5220],rows:[sigRow]})
@@ -2196,7 +2275,8 @@ const SECTION_GIDS = [
   {name:'Chemistry',           gid:GIDS.CHEMISTRY},
   {name:'Haematology',         gid:GIDS.HAEMATOLOGY},
   {name:'Hormones & Serology', gid:GIDS.HORMONES},
-  {name:'Microbiology',        gid:GIDS.MICROBIOLOGY}
+  {name:'Microbiology',        gid:GIDS.MICROBIOLOGY},
+  {name:'Andrology',           gid:GIDS.ANDROLOGY}
 ];
 
 let entryPatient = null;
@@ -2231,6 +2311,7 @@ async function loadEntryPatient() {
     const fetched = await Promise.all(SECTION_GIDS.map(s => fetchTabCsv(RESULT_ID, s.gid).catch(() => ({cols:[],rows:[]}))));
     entrySheetData = {};
     SECTION_GIDS.forEach((s, i) => { entrySheetData[s.name] = fetched[i]; });
+    await ensureRefData().catch(function(){});   // price list → which sections the order touches
     renderEntryForm();
     hideEntryStatus();
   } catch(err) { console.error(err); showEntryStatus('Error: ' + err.message, 'error'); }
@@ -2249,33 +2330,109 @@ function renderEntryForm() {
   ).join('');
   document.getElementById('entryTestsBadges').innerHTML = p.investigations.split(/[,\n]/).map(t => t.replace(/"/g,'').trim()).filter(Boolean).map(t => '<span class="badge">' + escHtml(t) + '</span>').join('');
 
-  // Build input fields for EVERY parameter in each section, pre-filled
-  // with any existing value already in the sheet for this row.
+  // Which result sections does this patient's order actually touch? Each
+  // ordered test carries a price-list SECTION, which maps onto a result sheet.
+  // Serology and Widal are entered under Haematology; SFA under Andrology.
+  const relevant = relevantSectionsFor(p.investigations);
+
+  // Build input fields for EVERY parameter in each section, pre-filled with
+  // any existing value already in the sheet for this row. Sections that are
+  // neither ordered nor already filled start collapsed — one click away,
+  // never hidden, so nothing a scientist needs is ever out of reach.
   let html = '';
   SECTION_GIDS.forEach(section => {
     const sheet = entrySheetData[section.name];
     const existingRow = (sheet.rows[p.rowIndex]) || [];
     const paramKeys = REF_BY_SECTION[section.name] || [];
-    let fieldsHtml = '';
+    if (!paramKeys.length) return;   // a section with no reference rows has nothing to enter
+    const groups = [];   // [{name, fields:[html]}] in REFERENCE order
+    const byName = {};
+    let hasValues = false;
     paramKeys.forEach(key => {
       const def = getRef(section.name, key); if (!def) return;
       const colIndex = sheet.cols.indexOf(key);
       const existingVal = (colIndex >= 0 && existingRow[colIndex]) ? existingRow[colIndex] : '';
-      const label = def.label;
-      const unit = def.unit || '';
-      const ref = def.displayText || '';
-      const safeId = 'entry__' + section.name.replace(/[^a-zA-Z]/g,'') + '__' + key.replace(/[^a-zA-Z0-9]/g,'_');
-      fieldsHtml += '<div class="entry-field">'
-        + '<label>' + escHtml(label) + (unit ? ' <span class="ref-hint">(' + escHtml(unit) + ')</span>' : '') + '</label>'
-        + '<input type="text" id="' + safeId + '" data-section="' + section.name + '" data-key="' + escHtml(key) + '" value="' + existingVal.replace(/"/g,'&quot;') + '" '
-        + 'oninput="validateEntryField(this)" placeholder="—"/>'
-        + (ref ? '<span class="ref-hint">Ref: ' + escHtml(ref) + '</span>' : '')
-        + '</div>';
+      if (existingVal) hasValues = true;
+      const g = def.group || '';
+      if (!byName[g]) { byName[g] = { name: g, fields: [] }; groups.push(byName[g]); }
+      byName[g].fields.push(entryFieldHtml(section.name, key, def, existingVal));
     });
-    html += '<div class="entry-section"><div class="entry-section-title">' + section.name + '</div><div class="entry-grid">' + fieldsHtml + '</div></div>';
+    let body = '';
+    groups.forEach(g => {
+      const dense = section.name === 'Andrology' && g.fields.length >= 8;   // only the SFA abnormality block packs tight
+      body += (g.name ? '<div class="entry-group-title">' + escHtml(g.name) + '</div>' : '')
+        + '<div class="entry-grid' + (dense ? ' dense' : '') + '">' + g.fields.join('') + '</div>';
+    });
+    const open = hasValues || relevant.all || relevant.sections[section.name];
+    const why = hasValues ? 'has results' : (relevant.sections[section.name] ? 'ordered' : 'not ordered');
+    html += '<div class="entry-section' + (open ? '' : ' collapsed') + '">'
+      + '<div class="entry-section-title" onclick="this.parentNode.classList.toggle(\'collapsed\')">' + section.name
+      + '<span class="es-why' + (why==='not ordered' ? ' dim' : '') + '">' + why + '</span><span class="es-chev">&#9662;</span></div>'
+      + '<div class="entry-section-body">' + body + '</div></div>';
   });
   document.getElementById('entryFields').innerHTML = html;
   document.getElementById('entryCard').classList.remove('hidden');
+}
+
+// One field. A reference text that is a short list of plain words separated by
+// "/" — "S / I / R", "Reactive / Non-reactive", "Nil / Present" — renders as
+// tap-buttons instead of a text box; anything with digits ("0 - 3/hpf",
+// "1/20") stays a text box. So the sheet decides, not the code.
+function entryFieldHtml(sectionName, key, def, existingVal) {
+  const label = def.label, unit = def.unit || '', ref = def.displayText || '';
+  const safeId = 'entry__' + sectionName.replace(/[^a-zA-Z]/g,'') + '__' + key.replace(/[^a-zA-Z0-9]/g,'_');
+  const opts = toggleOptions(ref);
+  const head = '<label>' + escHtml(label) + (unit ? ' <span class="ref-hint">(' + escHtml(unit) + ')</span>' : '') + '</label>';
+  if (opts) {
+    const cur = existingVal.trim().toLowerCase();
+    const btns = opts.map(function(o){
+      const on = cur && (o.toLowerCase() === cur || o.charAt(0).toLowerCase() === cur);
+      return '<button type="button" class="tog' + (on ? ' on' : '') + '" onclick="setToggle(this)" data-val="' + escHtml(o) + '">' + escHtml(o) + '</button>';
+    }).join('');
+    return '<div class="entry-field toggle-field">' + head
+      + '<div class="tog-row" data-input="' + safeId + '">' + btns + '<button type="button" class="tog clear" onclick="setToggle(this)" data-val="" title="Clear">×</button></div>'
+      + '<input type="hidden" id="' + safeId + '" data-section="' + sectionName + '" data-key="' + escHtml(key) + '" value="' + existingVal.replace(/"/g,'&quot;') + '"/>'
+      + '</div>';
+  }
+  return '<div class="entry-field">' + head
+    + '<input type="text" id="' + safeId + '" data-section="' + sectionName + '" data-key="' + escHtml(key) + '" value="' + existingVal.replace(/"/g,'&quot;') + '" '
+    + 'oninput="validateEntryField(this)" placeholder="—"/>'
+    + (ref ? '<span class="ref-hint">Ref: ' + escHtml(ref) + '</span>' : '')
+    + '</div>';
+}
+function toggleOptions(ref) {
+  if (!ref || ref.indexOf('/') === -1 || /\d/.test(ref)) return null;
+  const parts = ref.split('/').map(function(s){ return s.trim(); }).filter(Boolean);
+  if (parts.length < 2 || parts.length > 5) return null;
+  if (parts.some(function(s){ return s.length > 18; })) return null;   // a sentence with a slash in it is not an option list
+  return parts;
+}
+window.setToggle = function(btn) {
+  const row = btn.parentNode;
+  const input = document.getElementById(row.getAttribute('data-input'));
+  const val = btn.getAttribute('data-val');
+  const already = btn.classList.contains('on');
+  [].forEach.call(row.querySelectorAll('.tog'), function(b){ b.classList.remove('on'); });
+  if (val && !already) { btn.classList.add('on'); input.value = val; }
+  else input.value = '';   // tapping the active button again clears it
+};
+// Map ordered tests → result sections. Uses each test's price-list SECTION,
+// with the handful of known exceptions. Unknown tests open everything.
+function relevantSectionsFor(investigations) {
+  const out = { sections: {}, all: false };
+  const tests = String(investigations || '').replace(/"/g,'').split(/[,\n]/).map(function(t){ return t.trim(); }).filter(Boolean);
+  if (!tests.length || !PRICES.length) { out.all = true; return out; }
+  const bySec = { 'HAEMATOLOGY':'Haematology', 'CHEMISTRY':'Chemistry', 'MICROBIOLOGY':'Microbiology', 'SPECIAL/HORMONAL':'Hormones & Serology' };
+  tests.forEach(function(t) {
+    const tl = t.toLowerCase();
+    if (/semen analysis|\bsfa\b|seminal/.test(tl)) { out.sections['Andrology'] = true; return; }
+    if (/widal|\bhiv\b|\brvs\b|vdrl|\bhcv\b|\bhsv\b|hepatitis|hbsag/.test(tl)) { out.sections['Haematology'] = true; return; }
+    const p = PRICES.find(function(x){ return x.name.toLowerCase() === tl; });
+    const sec = p ? bySec[(p.section || '').toUpperCase()] : null;
+    if (sec) out.sections[sec] = true;
+    else out.all = true;   // unpriced or "Other investigations" — don't guess, show everything
+  });
+  return out;
 }
 
 function validateEntryField(input) {
@@ -2455,6 +2612,7 @@ async function searchViewResults(labNum) {
     if (r.haematology.length)  html += makeTable('Haematology Results',         r.haematology,  'Haematology');
     if (r.hormones.length)     html += makeTable('Hormones & Serology Results', r.hormones,     'Hormones & Serology');
     if (r.microbiology.length) html += makeTable('Microbiology Results',        r.microbiology, 'Microbiology');
+    if (r.andrology.length)    html += makeTable('Seminal Fluid Analysis',      r.andrology,    'Andrology');
     if (!html) html = '<div style="color:var(--mist);font-size:13px;padding:8px 0;">No results entered for this visit yet.</div>';
     box.innerHTML = html;
   } catch(err) {
