@@ -6,594 +6,731 @@
 <title>Evashalom Operations</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=Poppins:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 <style>
+/* ============================================================
+   TOKENS — one component set, two themes. Light is the default;
+   dark is a variable swap under prefers-color-scheme plus a manual
+   override the user can persist. Printed paper never inverts.
+   ============================================================ */
 :root{
-  --ink:#15303A; --teal:#0F4C5C; --teal-deep:#0A3743; --gold:#C9A227;
-  --mist:#9BB8C0; --bone:#F1EFE8; --white:#FFFFFF; --line:rgba(21,48,58,.12);
-  --line-soft:rgba(21,48,58,.08); --border:rgba(21,48,58,.18);
-  --red:#A32D2D; --green:#2F6B4F; --rail:238px;
+  --page:#eceae3; --panel:#ffffff; --sub:#f6f5f0; --sub2:#f9f8f4; --paper:#fdfdfb;
+  --text:#15171a; --deep:#15171a; --on-deep:#ffffff;
+  --muted:#8d8f88; --faint:#a8aaa2; --faintest:#b0b2aa; --hint:#c4c6be;
+  --hair:#f4f3ee; --div:#eceae3; --div2:#dedcd4; --bar:#dedcd4; --bar2:#e4e2da;
+  --green:#8FC44A; --green-on-deep:#B4D890; --green-text:#3F6B20; --green-tint:#EEF4E4; --green-dim:#A8C97E; --on-green:#101410;
+  --orange:#C4671E; --orange-text:#9E4A12; --orange-tint:#FBEEE3; --orange-border:#EDBC94;
+  --restrict-bg:#f6f2e3; --restrict-text:#8a6a1c;
+  --amber-bg:#fdf7e6; --amber-border:#e4cf94; --amber-text:#8a6a1c;
+  --chart-neutral:#eceae3; --focus:#15171a;
+  --rail:50px;
 }
+:root[data-theme="dark"]{
+  --page:#0E1210; --panel:#171C19; --sub:#1E2521; --sub2:#1C221E; --paper:#F4F3EE;
+  --text:#E8EFE6; --deep:#0A0E0C; --on-deep:#E8EFE6;
+  --muted:#8A9589; --faint:#79837A; --faintest:#6C766D; --hint:#5C665D;
+  --hair:#242C26; --div:#262E28; --div2:#333C35; --bar:#333C35; --bar2:#2E352F;
+  --green:#8FC44A; --green-on-deep:#A9D96B; --green-text:#A9D96B; --green-tint:#1F2A16; --green-dim:#5C7A3C; --on-green:#101410;
+  --orange:#E8914A; --orange-text:#E8914A; --orange-tint:#2C1E13; --orange-border:#5a3a22;
+  --restrict-bg:#2C1E13; --restrict-text:#E8914A;
+  --amber-bg:#2a2412; --amber-border:#5a4c22; --amber-text:#e4cf94;
+  --chart-neutral:#4A564C; --focus:#8FC44A;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0E1210; --panel:#171C19; --sub:#1E2521; --sub2:#1C221E; --paper:#F4F3EE;
+    --text:#E8EFE6; --deep:#0A0E0C; --on-deep:#E8EFE6;
+    --muted:#8A9589; --faint:#79837A; --faintest:#6C766D; --hint:#5C665D;
+    --hair:#242C26; --div:#262E28; --div2:#333C35; --bar:#333C35; --bar2:#2E352F;
+    --green:#8FC44A; --green-on-deep:#A9D96B; --green-text:#A9D96B; --green-tint:#1F2A16; --green-dim:#5C7A3C; --on-green:#101410;
+    --orange:#E8914A; --orange-text:#E8914A; --orange-tint:#2C1E13; --orange-border:#5a3a22;
+    --restrict-bg:#2C1E13; --restrict-text:#E8914A;
+    --amber-bg:#2a2412; --amber-border:#5a4c22; --amber-text:#e4cf94;
+    --chart-neutral:#4A564C; --focus:#8FC44A;
+  }
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bone);color:var(--ink);-webkit-font-smoothing:antialiased}
+body{font-family:'Poppins',system-ui,sans-serif;font-size:13px;letter-spacing:-.005em;background:var(--page);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .2s}
 .pop{font-family:'Poppins',sans-serif}
 .mono{font-family:'DM Mono',ui-monospace,monospace;font-feature-settings:"tnum"}
-a{color:var(--teal);text-decoration:none} a:hover{color:var(--gold)}
-::selection{background:rgba(201,162,39,.25)}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(143,196,74,.35)}
 button,input,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:1.5px solid var(--focus);outline-offset:2px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .hidden{display:none!important}
 .blurmoney{filter:blur(6px);user-select:none}
+img.logo{border-radius:50%;object-fit:cover;background:#fff}
 
-/* ---------- GATE ---------- */
-.gate{position:fixed;inset:0;background:var(--bone);display:grid;place-items:center;z-index:120;padding:1.5rem}
-.gate-in{width:100%;max-width:360px;text-align:center;animation:rise .5s cubic-bezier(.2,.7,.3,1)}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.gate img{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#fff;padding:4px;box-shadow:0 1px 0 var(--line)}
-.gate h1{font-size:30px;line-height:1.1;margin:1.1rem 0 .2rem;color:var(--teal);font-weight:600}
-.gate .sub{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.gate .rule{width:26px;height:2px;background:var(--gold);margin:1.4rem auto}
-.pass{display:flex;gap:8px}
-.pass input{flex:1;height:50px;text-align:center;letter-spacing:.5em;text-indent:.5em;border:1px solid var(--line);border-radius:8px;background:var(--white);font-family:'DM Mono',monospace;font-size:17px}
-.pass button{width:50px;height:50px;border:none;border-radius:8px;background:var(--teal);color:#fff;cursor:pointer;font-size:18px;transition:background .15s}
-.pass button:hover{background:var(--teal-deep)}
-.gate .hint{margin-top:1rem;font-size:12px;color:var(--mist)}
-.gate .err{margin-top:.8rem;font-size:12.5px;color:var(--red);min-height:1em}
+/* ============================================================
+   SIGN IN (the gate). Two panels, no welcome screen after it.
+   ============================================================ */
+.gate{position:fixed;inset:0;background:var(--page);padding:10px;display:flex;gap:10px;z-index:120}
+.gate-l{flex:1.15;background:var(--deep);color:var(--on-deep);border-radius:18px;padding:34px 36px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.gate-r{flex:1;background:var(--panel);border-radius:18px;padding:30px 32px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.brandmark{display:flex;align-items:center;gap:12px}
+.brandmark .mk{width:30px;height:30px;border-radius:10px;background:var(--green);color:#101410;display:grid;place-items:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;overflow:hidden}
+.brandmark .mk img{width:30px;height:30px;border-radius:10px}
+.brandmark .nm{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--green-on-deep)}
+.gate-mid .cap{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#8A9589;margin-bottom:12px}
+.gate-mid .sub{margin-top:26px;font-size:13px;color:#8A9589;max-width:34ch;line-height:1.6}
+.gate-addr{font-family:'DM Mono',monospace;font-size:9px;line-height:1.7;color:#6C766D;letter-spacing:.02em}
+.gate-r h1{font-size:19px;font-weight:500;color:var(--text)}
+.gate-r .lead{font-size:12.5px;color:var(--muted);margin:4px 0 22px}
+.lbl-mono{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+.roles{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.roles button{border:none;border-radius:11px;padding:9px 15px;font-size:12.5px;background:var(--sub);color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+.roles button.on{background:var(--deep);color:var(--green-on-deep)}
+.pin-dots{display:flex;gap:9px;margin-bottom:16px}
+.pin-dots span{width:38px;height:44px;border-radius:11px;background:var(--sub);border:1px solid var(--div2);transition:background .12s}
+.pin-dots span.on{background:var(--deep);border-color:var(--deep)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:250px;margin-bottom:16px}
+.keypad button{height:42px;border:none;border-radius:11px;background:var(--sub);font-family:'DM Mono',monospace;font-size:14px;color:var(--text);cursor:pointer;transition:background .12s}
+.keypad button:hover{background:var(--div)}
+.keypad button.fn{font-family:'Poppins',sans-serif;font-size:11px;color:var(--muted)}
+.gate-r .go{height:44px;border:none;border-radius:12px;background:var(--deep);color:var(--green-on-deep);font-size:13px;cursor:pointer;max-width:250px;width:100%;transition:opacity .15s}
+.gate-r .go:hover{opacity:.92}
+.gate-r .rolenote{margin-top:12px;font-size:11.5px;color:var(--faint);min-height:1.2em}
+.gate-r .err{margin-top:8px;font-size:11.5px;color:var(--orange-text);min-height:1.2em}
+.pass{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}   /* the real #code input the script reads */
 
-/* ---------- SECTION GATE (restricted views) ---------- */
-.sgate{position:fixed;inset:0;background:rgba(21,48,58,.5);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:110;padding:1.5rem}
-.sgate-in{width:100%;max-width:340px;background:var(--white);border-radius:14px;padding:28px 26px 22px;text-align:center;box-shadow:0 24px 60px rgba(21,48,58,.35);animation:rise .3s cubic-bezier(.2,.7,.3,1)}
-.sgate-in .cg{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.sgate-in h3{font-family:'Poppins',sans-serif;font-size:21px;color:var(--teal);font-weight:600;margin:8px 0 4px}
-.sgate-in .d{font-size:12.5px;color:var(--mist);margin-bottom:18px}
-.sgate-in .cancel{margin-top:14px;background:none;border:none;font-size:12.5px;color:var(--mist);cursor:pointer;text-decoration:underline}
-.sgate-in .cancel:hover{color:var(--ink)}
-.sgate-in.confirm-in{max-width:420px;text-align:left}
-.sgate-in.confirm-in h3{text-align:left;margin-bottom:12px}
-.rc-sum{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin-bottom:12px}
-.rc-sum div{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13.5px}
-.rc-sum div span:first-child{color:rgba(21,48,58,.55);flex-shrink:0}
-.rc-sum div span:last-child{text-align:right;word-break:break-word}
-.rc-sum .tot{font-weight:800;color:var(--teal);font-size:16px}
-.rc-sum .tot span:first-child{color:var(--teal)}
-.rc-dup{margin-bottom:12px;padding:10px 12px;border-radius:8px;font-size:12.5px;line-height:1.5;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.4);color:#6b5715}
-.rc-dup b{font-family:'DM Mono',monospace;font-weight:500}
-.rc-actions{display:flex;gap:10px;justify-content:flex-end}
-.rc-actions .btn{height:42px}
+/* ---- Specimen label (sign-in, label view). Paper never inverts. ---- */
+.specimen{background:#fff;border-radius:6px;display:inline-flex;align-items:stretch;overflow:hidden;color:#15171a;max-width:100%}
+.specimen .peel{width:13px;background:#eceae3;border-right:1px dashed #cfccc2;flex-shrink:0}
+.specimen .body{padding:14px 22px 13px 17px;min-width:0}
+.specimen .cap{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;color:#a8aaa2;text-transform:uppercase}
+.specimen .num{font-family:'DM Mono',monospace;font-size:27px;font-weight:500;line-height:1.1;margin-top:3px;white-space:nowrap}
+.specimen .nm{height:7px;width:96px;background:#dedcd4;border-radius:4px;margin-top:8px}
+.specimen .nmtxt{font-size:11px;margin-top:6px;color:#3a3d41;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.specimen .bars{display:flex;gap:1.5px;height:13px;margin-top:8px;align-items:stretch}
+.specimen .bars i{display:block;background:#15171a}
+.specimen .edge{width:7px;background:var(--green);flex-shrink:0}
 
-/* ---------- WELCOME ---------- */
-.welcome{min-height:100vh;background:var(--bone);display:flex;flex-direction:column;position:relative;overflow:hidden}
-.scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 46px,rgba(21,48,58,.035) 46px,rgba(21,48,58,.035) 47px);pointer-events:none}
-.motif{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.wl-head{background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--line-soft);padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;z-index:2}
-.wl-head img{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#fff;padding:2px}
-.wl-head .t{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink)}
-.wl-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:9vh 24px 64px;position:relative;z-index:1}
-.wl-eyebrow{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.wl-h1{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;font-size:clamp(38px,5vw,58px);color:var(--ink);margin:18px 0 0;text-align:center;line-height:1.12;max-width:18ch;text-wrap:balance}
-.wl-h1 em{color:var(--teal);font-style:normal}
-.wl-q{font-size:17px;color:rgba(21,48,58,.7);margin-top:8vh;font-weight:700}
-.wl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,300px));gap:20px;justify-content:center;margin-top:24px;width:100%;max-width:1000px}
-.wl-card{background:var(--white);border:1px solid var(--line-soft);border-radius:16px;padding:20px 18px 16px;box-shadow:0 10px 30px rgba(21,48,58,.06);text-align:left}
-.wl-card .hd{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px 14px}
-.wl-card .cg{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--teal)}
-.wl-card .rst{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
-.wl-card .tiles{display:flex;flex-direction:column;gap:8px}
-.wl-tile{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F6F4EE;border:1px solid rgba(21,48,58,.06);border-radius:10px;padding:13px 14px;color:var(--ink);font-size:14.5px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s}
-.wl-tile:hover{background:var(--white);border-color:rgba(15,76,92,.35)}
-.wl-tile .sub{display:block;font-size:11.5px;font-weight:400;color:rgba(21,48,58,.5);margin-top:2px}
-.wl-tile .go{width:30px;height:30px;flex-shrink:0;border-radius:50%;border:1px solid rgba(21,48,58,.15);display:grid;place-items:center;color:var(--teal);font-size:13px}
-
-/* ---------- SPECIMEN STICKER ---------- */
-.specimen{background:var(--white);border-radius:6px;display:inline-flex;align-items:stretch;overflow:hidden;box-shadow:0 14px 34px rgba(21,48,58,.14),0 2px 6px rgba(21,48,58,.08);transform:rotate(-1deg)}
-.specimen .perf{width:12px;background:repeating-linear-gradient(180deg,var(--bone) 0,var(--bone) 5px,transparent 5px,transparent 11px);border-right:1px dashed rgba(21,48,58,.22)}
-.specimen .body{padding:12px 22px 11px 16px}
-.specimen .cap{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.specimen .num{font-family:'DM Mono',monospace;font-size:27px;font-weight:500;color:var(--ink);line-height:1;margin-top:5px}
-.specimen .spine{width:6px;background:var(--gold)}
-
-/* ---------- SHELL ---------- */
+/* ============================================================
+   SHELL — icon rail + top bar + routed content
+   ============================================================ */
+.welcome{display:none!important}
 .shell{display:none;min-height:100%}
 .shell.on{display:block}
-.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--ink);color:#fff;display:flex;flex-direction:column;padding:24px 0;z-index:40}
-.brand{display:block;padding:0 22px 18px;border-bottom:1px solid rgba(155,184,192,.15);cursor:pointer}
-.brand .nm{font-family:'Poppins',sans-serif;font-size:23px;line-height:1;color:#fff;font-weight:600;letter-spacing:-.02em;display:block}
-.brand .sb{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--mist);margin-top:6px;font-weight:700;display:block}
-.nav{margin-top:10px;flex:1;overflow-y:auto}
-.nav-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(155,184,192,.55);padding:16px 22px 7px;font-weight:700}
-.nav a{display:flex;align-items:center;gap:10px;margin:2px 12px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.68);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,color .15s}
-.nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
-.nav a.on{color:#fff;font-weight:700;background:rgba(155,184,192,.14);box-shadow:inset 2px 0 0 var(--gold)}
-.nav a .lbl{flex:1}
-.nav a .short{display:none}
-/* Mobile sticky total: keeps the amount and the Register button in reach while
-   the receptionist is still adding tests far above the bill panel. */
-.mob-total{display:none;position:fixed;left:0;right:0;bottom:58px;z-index:38;background:var(--ink);color:#fff;padding:10px 16px;align-items:center;gap:12px;box-shadow:0 -6px 20px rgba(21,48,58,.25)}
-.mob-total .mt-l{flex:1;min-width:0}
-.mob-total .mt-k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.mob-total .mt-v{font-family:'DM Mono',monospace;font-size:20px;line-height:1.1;margin-top:2px}
-.mob-total .mt-n{font-size:11px;color:var(--mist);margin-top:1px}
-.mob-total .btn{height:40px;padding:0 16px;font-size:13px;flex-shrink:0}
-.nav a .dot-r{width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;flex-shrink:0}
-.rail-foot{padding:16px 22px 0;border-top:1px solid rgba(155,184,192,.15);font-size:11px;color:rgba(155,184,192,.75);line-height:1.6}
-.rail-foot .priv{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11.5px}
-.rail-foot .priv .dot{width:30px;height:17px;border-radius:9px;background:rgba(255,255,255,.15);position:relative;transition:background .15s;flex-shrink:0}
-.rail-foot .priv .dot::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .15s}
-.rail-foot .priv.on .dot{background:var(--gold)}
-.rail-foot .priv.on .dot::after{transform:translateX(13px)}
-.rail-foot .fresh{margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.rail-foot .fresh .mono{color:rgba(255,255,255,.75)}
-.rail-foot .fresh button{background:rgba(255,255,255,.08);border:1px solid rgba(155,184,192,.25);color:rgba(255,255,255,.8);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;transition:background .15s}
-.rail-foot .fresh button:hover{background:rgba(255,255,255,.16)}
-.rail-foot .fresh button:disabled{opacity:.5;cursor:wait}
-.rail-foot .build{margin-top:6px;font-size:9.5px;color:rgba(155,184,192,.45);letter-spacing:.04em}
+.frame{padding:10px;display:flex;gap:10px;min-height:100vh}
+.rail{width:var(--rail);flex-shrink:0;background:var(--panel);border-radius:18px;padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:6px;position:sticky;top:10px;height:calc(100vh - 20px)}
+.rail .brand{width:28px;height:28px;border-radius:9px;background:var(--green);display:grid;place-items:center;cursor:pointer;overflow:hidden;margin-bottom:2px}
+.rail .brand img{width:28px;height:28px;border-radius:9px}
+.rail .brand span{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:#101410}
+.rail .hr{width:22px;height:1px;background:var(--div);margin:4px 0}
+.nav{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;width:100%}
+.nav a{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;position:relative}
+.nav a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav a:hover{color:var(--text);background:var(--sub)}
+.nav a.restricted{color:var(--orange)}
+.nav a.on{background:var(--green);color:#101410}
+.nav a .lbl{position:absolute;left:44px;top:50%;transform:translateY(-50%);background:var(--deep);color:var(--on-deep);font-size:11px;padding:5px 9px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:60}
+.nav a:hover .lbl{opacity:1}
+.nav a .dot-r{display:none}
+.nav .nav-label{display:none}
+.nav .nav-hr{width:22px;height:1px;background:var(--div);margin:4px 0}
+.rail-foot{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:6px}
+.rail-foot .ic{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;color:var(--muted);cursor:pointer;border:none;background:none;transition:background .15s,color .15s}
+.rail-foot .ic:hover{color:var(--text);background:var(--sub)}
+.rail-foot .ic.on{color:var(--green-text);background:var(--green-tint)}
+.rail-foot .ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rail-foot .stamp{writing-mode:vertical-rl;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--hint);margin-top:4px}
+.rail-foot .priv,.rail-foot .fresh,.rail-foot .build{display:none}
 
-.main{margin-left:var(--rail);padding:36px 44px 64px;max-width:1080px}
-.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.eyebrow.rest{color:var(--gold)}
-h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;font-size:34px;color:var(--teal);margin:6px 0 0}
-.vsub{font-size:13.5px;color:rgba(21,48,58,.6);margin-top:8px;max-width:56ch;line-height:1.6}
-.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.privchk{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mist);cursor:pointer;font-weight:500}
-.privchk input{accent-color:var(--teal)}
+.content{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.topbar{display:flex;gap:8px;align-items:stretch}
+.cmd{flex:1;display:flex;align-items:center;gap:9px;background:var(--panel);border-radius:20px;padding:9px 15px;min-width:0}
+.cmd svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:1.8;flex-shrink:0}
+.cmd input{flex:1;min-width:0;border:none;background:transparent;font-size:13px;color:var(--text);outline:none}
+.cmd input::placeholder{color:var(--faintest)}
+.cmd .k{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--hint);flex-shrink:0}
+.tb-reg{display:flex;align-items:center;gap:7px;background:var(--deep);color:var(--green-on-deep);border:none;border-radius:20px;padding:9px 15px;font-size:13px;cursor:pointer;transition:opacity .15s}
+.tb-reg:hover{opacity:.92}
+.tb-reg svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.tb-stamp{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:20px;padding:0 14px;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.tb-stamp .fr{color:var(--hint)}
+.tb-stamp button{border:none;background:none;color:var(--muted);cursor:pointer;font:inherit;text-decoration:underline dotted;padding:0}
+.tb-stamp button:hover{color:var(--text)}
+.main{flex:1;min-width:0;padding:0;max-width:none;margin:0}
 
 .view{display:none}
-.view.on{display:block;animation:fade .28s ease}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.view.on{display:flex;flex-direction:column;gap:10px;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 
-/* ---------- TODAY ---------- */
-.band{margin-top:26px;background:var(--ink);border-radius:14px;padding:30px 34px;display:flex;align-items:center;gap:40px;flex-wrap:wrap;position:relative;overflow:hidden}
-.band::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 7px,rgba(155,184,192,.05) 7px,rgba(155,184,192,.05) 8px);pointer-events:none}
-.band .sticker{background:var(--white);border-radius:5px;display:flex;align-items:stretch;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.25);transform:rotate(-1.2deg);position:relative}
-.band .sticker .perf{width:14px;background:repeating-linear-gradient(180deg,var(--bone) 0,var(--bone) 5px,transparent 5px,transparent 11px);border-right:1px dashed rgba(21,48,58,.25)}
-.band .sticker .body{padding:16px 26px 14px 20px}
-.band .sticker .cap{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.band .sticker .num{font-family:'DM Mono',monospace;font-size:40px;font-weight:500;color:var(--ink);line-height:1;margin-top:8px;letter-spacing:-.01em}
-.band .sticker .bars{margin-top:10px;height:14px;background:repeating-linear-gradient(90deg,var(--ink) 0,var(--ink) 2px,transparent 2px,transparent 4px,var(--ink) 4px,var(--ink) 5px,transparent 5px,transparent 9px);opacity:.85}
-.band .sticker .spine{width:7px;background:var(--gold)}
-.band .cap-txt{color:var(--mist);font-size:13px;line-height:1.7;max-width:34ch;position:relative}
-.band .cap-txt .prev{margin-top:8px;font-size:12px}
-.band .cap-txt .prev b{font-family:'DM Mono',monospace;color:#fff;font-weight:500}
+/* ---- Card language: 16px radius, no shadows, surface colour is the elevation ---- */
+.card{background:var(--panel);border-radius:16px;padding:17px 20px;border:none;margin:0}
+.card-title,.sec-h{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:400;margin:0 0 10px;padding:0;border:none}
+.sec-h .note-r{float:right;font-size:8.5px;letter-spacing:.1em;color:var(--hint)}
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.vt{font-size:16px;font-weight:500;color:var(--text);margin:0;font-family:'Poppins',sans-serif;letter-spacing:-.005em}
+.eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.eyebrow.rest{color:var(--restrict-text);background:var(--restrict-bg);border-radius:10px;padding:4px 9px;font-size:8.5px}
+.vsub{font-size:12px;color:var(--muted);margin-top:4px;max-width:60ch;line-height:1.55}
+.head-card{background:var(--panel);border-radius:16px;padding:15px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.head-card .vt{font-size:16px}
+.foot-note{font-size:11px;color:var(--faint);line-height:1.6;max-width:70ch;padding:0 6px}
+.divider{border:none;border-top:1px solid var(--hair);margin:14px 0}
+.privchk{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.privchk input{accent-color:var(--green)}
 
-.figs{display:flex;gap:52px;flex-wrap:wrap;padding:24px 2px 20px;border-bottom:1px solid var(--line)}
-.fig .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.fig .v{font-family:'DM Mono',monospace;font-size:25px;margin-top:7px;color:var(--ink);font-weight:500}
-.fig .v.warn{color:var(--red)}
-.fig .v.teal{color:var(--teal)}
-
-.reg-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:30px}
-.reg-head .l{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.reg-head .r{font-size:12px;color:var(--mist)}
-.reg-list{margin-top:10px;border-top:2px solid var(--ink)}
-.regrow{display:flex;align-items:center;gap:18px;padding:14px 4px;border-bottom:1px solid var(--line);color:var(--ink);cursor:pointer;transition:background .15s,padding-left .15s}
-.regrow:hover{background:rgba(255,255,255,.6);padding-left:12px}
-.regrow .lab{font-family:'DM Mono',monospace;font-size:13.5px;color:var(--teal);width:86px;flex-shrink:0}
-.regrow .mid{flex:1;min-width:0}
-.regrow .nm{font-size:14.5px;font-weight:700;display:block}
-.regrow .ts{font-size:12px;color:rgba(21,48,58,.55);display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.regrow .pay{font-family:'DM Mono',monospace;font-size:12.5px;width:110px;text-align:right;flex-shrink:0;color:rgba(21,48,58,.45)}
-.regrow .pay.due{color:var(--red)}
-.reg-empty{padding:16px 4px;font-size:13px;color:var(--mist);font-style:italic}
-
-/* ---------- SECTIONS & FORMS ---------- */
-.sec-h{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700;padding-bottom:9px;border-bottom:2px solid var(--ink)}
-.sec-h .note-r{float:right;font-size:12px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--mist)}
-.fgrid{display:grid;gap:14px;margin-top:16px}
+/* ---- Fields, buttons ---- */
+.fgrid{display:grid;gap:8px;margin-top:8px}
 .fgrid.c211{grid-template-columns:2fr 1fr 1fr}
 .fgrid.c11{grid-template-columns:1fr 1fr}
-.fld{min-width:0;display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:500;color:rgba(21,48,58,.6)}
-.fld input,.fld select{width:100%;box-sizing:border-box;min-width:0;height:42px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:15px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
-.fld select{padding:0 10px}
-.fld input:focus,.fld select:focus{border-color:var(--teal)}
+.fld{min-width:0;display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted)}
+.fld input,.fld select{width:100%;min-width:0;height:36px;border:1px solid transparent;border-radius:11px;padding:0 12px;font-size:12.5px;font-family:'Poppins',sans-serif;background:var(--sub);color:var(--text);outline:none;transition:border-color .15s,background .15s}
+.fld select{padding:0 9px;appearance:auto}
+.fld input::placeholder{color:var(--faintest)}
+.fld input:focus,.fld select:focus{border-color:var(--focus);background:var(--panel)}
 .fld input.mono-in{font-family:'DM Mono',monospace}
-.btn{height:46px;padding:0 20px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-size:14px;font-weight:800;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;letter-spacing:.02em;transition:background .15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
-.btn:hover{background:var(--teal-deep)}
-.btn:disabled{background:var(--border);cursor:not-allowed}
-.btn.ghost{background:var(--white);border:1px solid var(--border);color:var(--ink);font-weight:700}
-.btn.ghost:hover{background:var(--bone)}
-.searchbar{margin-top:24px;display:flex;gap:10px;max-width:520px}
-.searchbar input{flex:1;height:46px;border:1px solid var(--border);border-radius:8px;padding:0 14px;font-size:16px;font-family:'DM Mono',monospace;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
-.searchbar input:focus{border-color:var(--teal)}
-.foot-note{font-size:12px;color:var(--mist);margin-top:18px;line-height:1.6;max-width:60ch}
+.btn{height:40px;padding:0 18px;border:none;border-radius:12px;background:var(--deep);color:var(--green-on-deep);font-size:13px;font-weight:400;font-family:'Poppins',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;transition:opacity .15s,background .15s}
+.btn:hover{opacity:.92}
+.btn:disabled{background:var(--sub);color:var(--faint);cursor:not-allowed;opacity:1}
+.btn.ghost{background:var(--sub);color:var(--text)}
+.btn.ghost:hover{background:var(--div);opacity:1}
+.btn.go{background:var(--green);color:var(--on-green)}
+.searchbar{display:flex;gap:8px;max-width:560px}
+.searchbar input{flex:1;height:38px;border:1px solid transparent;border-radius:11px;padding:0 13px;font-size:12px;font-family:'DM Mono',monospace;background:var(--sub);color:var(--text);outline:none;transition:border-color .15s,background .15s}
+.searchbar input:focus{border-color:var(--focus);background:var(--panel)}
+.searchbar .btn{height:38px;min-width:86px}
 
-/* status bars */
-.status{padding:12px 16px;border-radius:8px;font-size:14px;margin-top:18px;display:flex;align-items:center;gap:10px}
-.status.load{background:rgba(15,76,92,.07);color:var(--teal)}
-.status.err{background:rgba(163,45,45,.08);color:var(--red)}
-.status.ok{background:rgba(47,107,79,.1);color:var(--green)}
-.spinner{width:15px;height:15px;border:2px solid rgba(21,48,58,.15);border-top-color:var(--teal);border-radius:50%;display:inline-block;animation:spin .6s linear infinite;flex-shrink:0}
-.btn .spinner{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+/* ---- Status bars ---- */
+.status{padding:10px 14px;border-radius:12px;font-size:12.5px;display:flex;align-items:center;gap:9px;line-height:1.5}
+.status.load{background:var(--sub);color:var(--muted)}
+.status.err{background:var(--orange-tint);color:var(--orange-text)}
+.status.ok{background:var(--green-tint);color:var(--green-text)}
+.spinner{width:13px;height:13px;border:2px solid var(--div2);border-top-color:var(--text);border-radius:50%;display:inline-block;animation:spin .6s linear infinite;flex-shrink:0}
+.btn .spinner{border-color:rgba(255,255,255,.25);border-top-color:var(--green-on-deep)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* cards & patient info */
-.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:18px}
-.card-title{font-size:10.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.18em;margin-bottom:1rem}
-.patient-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1.2rem}
-.pf{display:flex;flex-direction:column;gap:4px}
-.pf .lbl{font-size:9.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.14em}
-.pf .val{font-size:15px;font-weight:500;color:var(--ink)}
-.pf .val.empty{color:var(--border);font-style:italic;font-weight:400}
-.pf .val.mono-v{font-family:'DM Mono',monospace}
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem}
-.badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(15,76,92,.08);color:var(--teal)}
-.sections-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.2rem}
-.sc{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.sc.has{border-color:var(--teal);background:rgba(15,76,92,.05)}
-.sc.no{opacity:.5}
-.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.sc-name{font-size:13px;font-weight:600}.sc.has .sc-name{color:var(--teal)}
-.dot{width:8px;height:8px;border-radius:50%}.dot-g{background:var(--teal)}.dot-x{background:var(--border)}
-.sc-params{font-size:12px;color:rgba(21,48,58,.55);line-height:1.5}
-.divider{border:none;border-top:1px solid var(--line);margin:1.4rem 0}
-.gen-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.gen-note{font-size:13px;color:rgba(21,48,58,.55)}
+/* ============================================================
+   TODAY — hero, queue, sidebar
+   ============================================================ */
+.hero{background:var(--panel);border-radius:16px;padding:17px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.hero #todayDate{display:none}
+.tile{min-height:76px}
+.hero .l{min-width:200px;flex:1}
+.hero .l .k{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hero .l .v{font-family:'DM Mono',monospace;font-size:31px;font-weight:500;letter-spacing:-.02em;margin-top:6px;line-height:1.05}
+.hero .l .s{font-size:11.5px;color:var(--faint);margin-top:8px}
+.hero .tiles{display:flex;gap:8px;flex:2;flex-wrap:wrap;min-width:260px}
+.tile{flex:1;min-width:86px;border-radius:12px;padding:10px 12px;background:var(--sub);display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.tile .k{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.tile .v{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;line-height:1.1}
+.tile.green{background:var(--green);color:#101410}
+.tile.green .k{color:#35461F}
+.tile.deep{background:var(--deep);flex:1.2;min-width:112px}
+.tile.deep .k{color:var(--muted)}
+.tile.deep .v{color:var(--green-on-deep)}
+.tile .v.warn{color:var(--orange-text)}
+.today-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.queue{flex:2.1;min-width:320px;background:var(--panel);border-radius:16px;padding:15px 18px}
+.qhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.qhead .t{font-size:13.5px;font-weight:500}
+.qhead .s{font-size:11px;color:var(--faint)}
+.reg-list{margin:0;border:none}
+.regrow{display:flex;align-items:center;gap:11px;border-radius:12px;padding:9px 11px;cursor:pointer;color:var(--text);transition:background .15s;border:none}
+.regrow:hover{background:var(--sub)}
+.regrow.next{background:var(--sub)}
+.regrow .lab{font-family:'DM Mono',monospace;font-size:10px;width:64px;flex-shrink:0;color:var(--text)}
+.regrow .mid{flex:1;min-width:0}
+.regrow .nm{font-size:12px;font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.regrow .ts{font-size:10.5px;color:var(--faint);display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.regrow .pay{font-family:'DM Mono',monospace;font-size:9.5px;width:74px;text-align:right;flex-shrink:0;color:var(--faint)}
+.regrow .pay.due{color:var(--orange-text)}
+.regrow .act{width:104px;flex-shrink:0;text-align:center;font-size:11px;color:var(--muted);border-radius:12px;padding:6px 0;transition:background .15s}
+.regrow.next .act,.regrow:hover .act{background:var(--green);color:#101410}
+.regrow .act.done{color:var(--faint)}
+.regrow.next .act.done,.regrow:hover .act.done{background:var(--green-tint);color:var(--green-text)}
+.reg-empty{padding:12px 11px;font-size:12px;color:var(--faint)}
+.reg-head{display:none}
+/* KPI tiles (Analytics dashboard + deep-dive): same tile language as the hero */
+.figs{display:flex;gap:8px;flex-wrap:wrap;background:var(--panel);border-radius:16px;padding:14px 16px!important;border:none!important}
+.fig{flex:1;min-width:118px;border-radius:12px;padding:11px 13px;background:var(--sub)}
+.fig .k{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.fig .v{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;margin-top:6px;color:var(--text)}
+.fig .v.warn{color:var(--orange-text)}
+.fig .v.teal{color:var(--green-text)}
+.side{flex:1;min-width:210px;display:flex;flex-direction:column;gap:10px}
+.side .card{padding:15px 18px}
+.side .t{font-size:13.5px;font-weight:500;margin-bottom:10px}
+.week{display:flex;gap:6px;height:78px;align-items:flex-end}
+.week i{flex:1;background:var(--div);border-radius:5px;display:block;min-height:6px}
+.week i.peak{background:var(--green)}
+.week-cap{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--faint);margin-top:8px;text-transform:uppercase}
+.needs{display:flex;flex-direction:column;gap:9px;font-size:12px;color:var(--muted)}
+.needs div{display:flex;align-items:center;gap:9px}
+.needs i{width:6px;height:6px;border-radius:50%;background:var(--div2);flex-shrink:0}
+.needs i.o{background:var(--orange)}.needs i.k{background:var(--text)}
 
-/* results table */
-.rtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1.4rem}
-.rtable th{text-align:left;padding:8px 10px;background:var(--bone);font-size:10px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--line)}
-.rtable td{padding:8px 10px;border-bottom:1px solid rgba(21,48,58,.06)}
-.rtable tr:last-child td{border-bottom:none}
-.rtable .pn{font-weight:500}
-.rtable .rv{font-weight:600;color:var(--teal);font-family:'DM Mono',monospace;font-size:12.5px}
-.rtable .rv.abn{color:var(--red)}
-.rtable .rr{color:rgba(21,48,58,.5);font-size:12px}
-.subhdr td{background:rgba(15,76,92,.06);font-weight:700;color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
-
-/* register view */
-.reg-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:28px;align-items:start;margin-top:26px}
-.reg-left{display:flex;flex-direction:column;gap:26px;min-width:0}
-.test-search{position:relative;margin-top:16px}
-.test-search input{width:100%;box-sizing:border-box;height:44px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:15px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s}
-.test-search input:focus{border-color:var(--teal)}
-.test-results{position:absolute;top:46px;left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:8px;max-height:280px;overflow-y:auto;z-index:20;box-shadow:0 10px 26px rgba(21,48,58,.16);display:none}
+/* ============================================================
+   REGISTER
+   ============================================================ */
+.reg-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:10px;align-items:start;margin:0}
+.reg-left{min-width:0;background:var(--panel);border-radius:16px;padding:17px 20px;display:flex;flex-direction:column;gap:16px}
+.reg-left>div{border:none}
+.reg-left .sec-h{margin-bottom:6px}
+.test-search{position:relative;margin-top:6px}
+.test-search input{width:100%;height:38px;border:1.5px solid var(--focus);border-radius:11px;padding:0 84px 0 34px;font-size:12.5px;font-family:'Poppins',sans-serif;background:var(--panel);color:var(--text);outline:none}
+.test-search::before{content:'+';position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text);line-height:1;pointer-events:none}
+.test-search::after{content:'PRICE LIST';position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--hint);pointer-events:none}
+.test-search input::placeholder{color:var(--faintest)}
+.test-results{position:absolute;top:42px;left:0;right:0;background:var(--panel);border:1px solid var(--div);border-radius:12px;max-height:280px;overflow-y:auto;z-index:20;display:none;padding:4px}
 .test-results.show{display:block}
-.test-opt{display:flex;justify-content:space-between;gap:12px;padding:10px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid rgba(21,48,58,.07)}
-.test-opt:hover{background:var(--bone)}
-.test-opt .sec{font-size:11px;color:var(--mist)}
-.test-opt .p{font-family:'DM Mono',monospace;color:var(--teal);white-space:nowrap}
-.chosen-list{margin-top:12px;border-top:1px solid var(--line)}
-.chosen-row{display:flex;align-items:center;gap:14px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:14px}
-.chosen-row .nm{flex:1;font-weight:500}
-.chosen-row .sec{font-size:11px;color:var(--mist)}
-.chosen-row .amt{font-family:'DM Mono',monospace;font-size:13.5px;color:var(--ink)}
-.chosen-row button{background:none;border:none;color:var(--red);font-size:16px;line-height:1;cursor:pointer;padding:0 4px}
-.empty-hint{margin-top:12px;font-size:13px;color:var(--mist);font-style:italic}
-.reb-note{margin-top:10px;font-size:12px;color:var(--mist);line-height:1.5}
-.sublet-tag{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:rgba(15,76,92,.09);vertical-align:1px}
-.sub-note{display:flex;align-items:center;gap:10px;margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.5;background:rgba(155,184,192,.14);color:rgba(21,48,58,.7)}
-.sub-note.warn{background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.4);color:#6b5715}
+.test-opt{display:flex;justify-content:space-between;gap:12px;padding:9px 11px;font-size:12.5px;cursor:pointer;border-radius:9px}
+.test-opt:hover{background:var(--sub)}
+.test-opt .sec{font-size:10px;color:var(--faint)}
+.test-opt .p{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);white-space:nowrap}
+.chosen-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;border:none}
+.chosen-row{display:inline-flex;align-items:center;gap:8px;background:var(--sub);border-radius:10px;padding:6px 11px;font-size:11.5px;border:none}
+.chosen-row .nm{font-weight:400}
+.chosen-row .sec{display:none}
+.chosen-row .amt{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted)}
+.chosen-row button{background:none;border:none;color:var(--orange);font-size:14px;line-height:1;cursor:pointer;padding:0 2px}
+.empty-hint{margin-top:9px;font-size:11.5px;color:var(--faint)}
+.reb-note{margin-top:8px;font-size:11.5px;color:var(--faint);line-height:1.5}
+.sublet-tag{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-text);background:var(--green-tint)}
+.chosen-row .unpriced{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--restrict-text);background:var(--restrict-bg)}
+.sub-note{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 11px;border-radius:10px;font-size:11.5px;line-height:1.5;background:var(--sub);color:var(--muted)}
+.sub-note.warn{background:var(--orange-tint);color:var(--orange-text)}
 .sub-note span{flex:1}
-.sub-note button{background:none;border:none;font-size:16px;line-height:1;cursor:pointer;color:inherit;opacity:.6;padding:0 2px}
-.sub-note button:hover{opacity:1}
-.bill-wrap{position:sticky;top:24px}
-.bill-hd{background:var(--ink);border-radius:12px 12px 0 0;padding:18px 20px}
-.bill-hd .cap{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.bill-hd .num{font-family:'DM Mono',monospace;font-size:28px;color:#fff;margin-top:6px}
-.bill-hd .bars{margin-top:8px;height:10px;background:repeating-linear-gradient(90deg,var(--mist) 0,var(--mist) 2px,transparent 2px,transparent 4px,var(--mist) 4px,var(--mist) 5px,transparent 5px,transparent 9px);opacity:.4}
-.bill-bd{background:var(--white);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:18px 20px}
-.bill-line{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;border-bottom:1px solid var(--line-soft)}
-.bill-line .lbl{color:rgba(21,48,58,.55)}
-.bill-line .val{font-family:'DM Mono',monospace}
-.bill-line .val.neg{color:var(--red)}
-.bill-line.total{border-bottom:none;font-size:16px;font-weight:800;padding:12px 0 2px;color:var(--teal)}
-.bill-line.total .val{font-weight:500}
-.editable-net{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
-.editable-net label{font-size:10px;color:var(--mist);font-weight:700;text-transform:uppercase;letter-spacing:.14em}
-.editable-net input{height:44px;border:2px solid var(--teal);border-radius:8px;padding:0 12px;font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--teal);outline:none}
-.adj-wrap{margin-top:10px;display:flex;flex-direction:column;gap:6px}
-.adj-wrap label{color:#6b5715}
-.adj-wrap input{height:38px;border:1px solid rgba(201,162,39,.5);background:rgba(201,162,39,.06);border-radius:7px;padding:0 10px;font-size:13.5px;font-weight:400;font-family:'Hanken Grotesk',sans-serif;color:var(--ink)}
-.bill-bd .btn{width:100%;margin-top:16px}
-.bill-note{margin-top:12px;font-size:12px;color:var(--mist);line-height:1.5}
-.reg-done{margin-top:12px;font-size:12.5px;color:var(--teal);background:rgba(15,76,92,.07);border-radius:8px;padding:10px 12px;line-height:1.5}
-/* Locked after a successful registration: still readable for the receipt,
-   but nothing can be edited or re-submitted until the form is reset. */
+.sub-note button{background:none;border:none;font-size:15px;line-height:1;cursor:pointer;color:inherit;opacity:.6;padding:0 2px}
+.bill-wrap{flex:1;min-width:240px;display:flex;flex-direction:column;gap:10px;position:sticky;top:10px}
+.bill-hd{background:var(--deep);border-radius:16px;padding:15px 18px}
+.bill-hd .cap{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.bill-hd .num{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--green-on-deep);margin-top:6px}
+.bill-hd .bars{display:flex;gap:1.5px;height:15px;margin-top:9px}
+.bill-hd .bars i{display:block;background:#3a3d41}
+.bill-hd .bars i:nth-child(3n){background:var(--green)}
+.bill-hd .caption{font-size:11px;color:var(--muted);margin-top:8px}
+.bill-bd{background:var(--panel);border-radius:16px;padding:15px 18px;border:none}
+.bill-line{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid var(--hair);color:var(--muted)}
+.bill-line .lbl{color:var(--muted)}
+.bill-line .val{font-family:'DM Mono',monospace;color:var(--text)}
+.bill-line .val.neg{color:var(--orange-text)}
+.bill-line.total{border-bottom:none;background:var(--green);color:#101410;border-radius:12px;padding:10px 13px;margin-top:8px;font-size:12px}
+.bill-line.total .val{font-size:15px;font-weight:500;color:#101410}
+.bill-line input#mdDisc{width:60px;height:30px;border:1px solid transparent;border-radius:8px;text-align:right;padding:0 8px;font-family:'DM Mono',monospace;font-size:12px;background:var(--sub);color:var(--text);outline:none}
+.bill-line input#mdDisc:focus{border-color:var(--focus)}
+.editable-net{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--hair)}
+.editable-net label{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.editable-net input{height:40px;border:1.5px solid var(--focus);border-radius:11px;padding:0 12px;font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text);background:var(--panel);outline:none}
+.adj-wrap{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.adj-wrap label{color:var(--amber-text)}
+.adj-wrap input{height:34px;border:1px solid var(--amber-border);background:var(--amber-bg);border-radius:9px;padding:0 10px;font-size:12px;font-weight:400;font-family:'Poppins',sans-serif;color:var(--text)}
+.bill-bd .btn{width:100%;margin-top:12px}
+.bill-note{margin-top:9px;font-size:11px;color:var(--faint);line-height:1.5;text-align:center}
 .reg-grid.locked{opacity:.55;pointer-events:none;user-select:none}
-.mob-total.locked .btn{opacity:.4;pointer-events:none}
-.after-actions{display:flex;gap:10px;margin-top:.6rem;flex-wrap:wrap}
-.after-actions .btn{flex:1;min-width:200px}
+.after-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.after-actions .btn{flex:1;min-width:180px}
+#afterRegister .card{margin-top:0}
+#afterRegister .bill-line .val{font-family:'DM Mono',monospace}
+.mob-total{display:none}
 
-/* find patient */
-.person-group{border:1px solid var(--line);border-radius:10px;margin-top:12px;overflow:hidden;background:var(--white)}
-.person-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;transition:background .12s}
-.person-head:hover{background:var(--bone)}
-.person-name{font-weight:700;font-size:15px;color:var(--teal)}
-.person-count{font-size:12px;color:var(--mist);font-weight:500}
-.person-chevron{color:var(--mist);font-size:13px;transition:transform .15s}
+/* ============================================================
+   FIND PATIENT
+   ============================================================ */
+.person-group{border:1px solid var(--div);border-radius:14px;overflow:hidden;background:var(--panel);margin-top:8px}
+.person-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;background:var(--sub2);transition:background .12s}
+.person-head:hover{background:var(--sub)}
+.person-name{font-weight:500;font-size:12.5px;display:flex;align-items:center;gap:10px}
+.person-name::before{content:'';width:28px;height:28px;border-radius:50%;background:var(--div2);flex-shrink:0}
+.person-count{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--faint);font-weight:400}
+.person-chevron{color:var(--faint);font-size:11px;transition:transform .15s}
 .person-group.open .person-chevron{transform:rotate(90deg)}
-.visit-list{display:none;border-top:1px solid var(--line)}
+.visit-list{display:none}
 .person-group.open .visit-list{display:block}
-.visit-row{padding:12px 16px;border-bottom:1px solid rgba(21,48,58,.06)}
-.visit-row:last-child{border-bottom:none}
-.visit-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-bottom:8px}
-.visit-meta .vm b{color:var(--teal);font-family:'DM Mono',monospace;font-weight:500}
-.visit-meta .vm-tests{color:rgba(21,48,58,.55);width:100%}
-.visit-actions{display:flex;gap:8px;flex-wrap:wrap}
-.visit-actions button{height:34px;padding:0 14px;border-radius:7px;border:1px solid var(--border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
-.visit-actions .btn-rep{background:var(--teal);color:#fff;border-color:var(--teal)}
-.visit-actions .btn-rep:hover{background:var(--teal-deep)}
-.visit-actions .btn-view{color:var(--teal)}
-.visit-actions .btn-view:hover{background:rgba(15,76,92,.08)}
-.inline-results{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+.visit-row{padding:10px 14px;border-top:1px solid var(--hair)}
+.visit-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;margin-bottom:7px;align-items:baseline}
+.visit-meta .vm b{font-family:'DM Mono',monospace;font-size:10px;font-weight:400;color:var(--text)}
+.visit-meta .vm-tests{color:var(--faint);width:100%;font-size:11px}
+.visit-actions{display:flex;gap:6px;flex-wrap:wrap}
+.visit-actions button{height:30px;padding:0 12px;border-radius:9px;border:none;background:var(--sub);font-size:11.5px;cursor:pointer;color:var(--text);transition:background .12s}
+.visit-actions .btn-rep{background:var(--deep);color:var(--green-on-deep)}
+.visit-actions .btn-view{color:var(--green-text)}
+.visit-actions button:hover{opacity:.9}
+.inline-results{margin-top:10px;padding-top:10px;border-top:1px dashed var(--div2)}
 
-/* entry view */
-.entry-section{margin-bottom:1.5rem}
-.entry-section-title{font-size:10.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.85rem;padding-bottom:8px;border-bottom:2px solid var(--ink)}
-.entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.entry-grid.dense{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 12px}
-.entry-grid.dense .entry-field label{font-size:12px}
-.entry-grid.dense .entry-field input{height:36px;font-size:13px}
-.entry-grid + .entry-group-title{margin-top:1.1rem}
-/* Sections open when ordered or already filled; others collapse to a title row. */
-.entry-section-title{cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
-.entry-section-title .es-why{margin-left:auto;font-size:9px;letter-spacing:.12em;color:var(--teal);font-weight:700;text-transform:uppercase}
-.entry-section-title .es-why.dim{color:var(--mist)}
-.entry-section-title .es-chev{color:var(--mist);font-size:12px;transition:transform .15s}
-.entry-section.collapsed .entry-section-title{border-bottom-color:var(--line);margin-bottom:.4rem;opacity:.7}
+/* ============================================================
+   ENTER RESULTS / REPORT
+   ============================================================ */
+.patient-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
+.pf{display:flex;flex-direction:column;gap:3px}
+.pf .lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.pf .val{font-size:12.5px;font-weight:500;color:var(--text)}
+.pf .val.empty{color:var(--faintest);font-weight:400}
+.pf .val.mono-v{font-family:'DM Mono',monospace;font-weight:500}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.badge{padding:4px 10px;border-radius:9px;font-size:11px;background:var(--sub);color:var(--text)}
+.sections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.sc{border-radius:12px;padding:10px 12px;background:var(--sub)}
+.sc.has{background:var(--green-tint)}
+.sc.no{opacity:.55}
+.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:11.5px;font-weight:500}.sc.has .sc-name{color:var(--green-text)}
+.dot{width:7px;height:7px;border-radius:50%}.dot-g{background:var(--green)}.dot-x{background:var(--div2)}
+.sc-params{font-size:10.5px;color:var(--faint);line-height:1.45}
+.gen-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.gen-note{font-size:12px;color:var(--muted)}
+.rtable{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.rtable th{text-align:left;padding:6px 8px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:400;border-bottom:1.5px solid var(--text)}
+.rtable td{padding:7px 8px;border-bottom:1px solid var(--hair)}
+.rtable tr:last-child td{border-bottom:none}
+.rtable .pn{font-weight:400}
+.rtable .rv{font-family:'DM Mono',monospace;font-size:11px;color:var(--text)}
+.rtable .rv.abn{color:var(--orange-text)}
+.rtable .rr{color:var(--faint);font-family:'DM Mono',monospace;font-size:10px}
+.subhdr td{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:12px;border-bottom:1px solid var(--div)}
+.two-col{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.two-col>.card{flex:2;min-width:330px}
+.two-col>.aside{flex:1;min-width:230px;display:flex;flex-direction:column;gap:10px}
+.aside .deep{background:var(--deep);border-radius:16px;padding:15px 18px;color:var(--on-deep)}
+.aside .deep .cap{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.aside .deep .num{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--green-on-deep);margin-top:6px}
+.aside .deep .sub{font-size:11px;color:var(--muted);margin-top:8px}
+.entry-section{margin-bottom:16px}
+.entry-section-title{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text);font-weight:400;margin-bottom:8px;padding-bottom:7px;border-bottom:1.5px solid var(--text);cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
+.entry-section-title .es-why{margin-left:auto;font-size:8.5px;letter-spacing:.12em;color:var(--green-text)}
+.entry-section-title .es-why.dim{color:var(--faint)}
+.entry-section-title .es-chev{color:var(--faint);font-size:11px;transition:transform .15s}
+.entry-section.collapsed .entry-section-title{border-bottom:1px solid var(--div);color:var(--faint);margin-bottom:4px}
 .entry-section.collapsed .entry-section-title .es-chev{transform:rotate(-90deg)}
 .entry-section.collapsed .entry-section-body{display:none}
-/* Tap-toggles: S / I / R, Reactive / Non-reactive, Nil / Present */
-.toggle-field .tog-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tog{height:34px;padding:0 12px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:12.5px;font-weight:700;color:rgba(21,48,58,.6);cursor:pointer;font-family:'Hanken Grotesk',sans-serif;transition:background .12s,color .12s,border-color .12s}
-.tog:hover{border-color:var(--teal);color:var(--teal)}
-.tog.on{background:var(--teal);border-color:var(--teal);color:#fff}
-.tog.clear{padding:0 9px;font-size:15px;font-weight:400;color:var(--mist)}
-.tog.clear:hover{color:var(--red);border-color:var(--red)}
-.entry-grid.dense .tog{height:30px;padding:0 9px;font-size:11.5px}
-.entry-group-title{font-size:9.5px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.16em;margin:.2rem 0 .6rem;padding-left:2px}
-.entry-field{display:flex;flex-direction:column;gap:5px}
-.entry-field label{font-size:13px;font-weight:600;color:var(--ink)}
-.entry-field .ref-hint{font-size:11px;color:var(--mist);font-weight:400}
-.entry-field input{height:40px;border:1px solid var(--border);border-radius:7px;padding:0 10px;font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color .15s;background:var(--white)}
-.entry-field input:focus{border-color:var(--teal)}
-.entry-field input.flagged{border-color:var(--red);background:rgba(163,45,45,.06)}
-.analyst-row{display:flex;gap:12px;align-items:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);flex-wrap:wrap}
-.analyst-row .fld{max-width:320px;flex:1}
+.entry-group-title{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:6px 0 8px}
+.entry-grid+.entry-group-title{margin-top:14px}
+.entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px 12px}
+.entry-grid.dense{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px 10px}
+.entry-field{display:flex;flex-direction:column;gap:4px;padding-bottom:8px;border-bottom:1px solid var(--hair)}
+.entry-field label{font-size:11.5px;color:var(--text)}
+.entry-field .ref-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--faintest)}
+.entry-field input[type=text]{height:28px;border:1px solid transparent;border-radius:8px;padding:0 8px;font-size:11px;font-family:'DM Mono',monospace;background:var(--sub);color:var(--text);outline:none;transition:border-color .12s,background .12s}
+.entry-field input[type=text]:focus{background:var(--panel);border:1.5px solid var(--focus)}
+.entry-field input.flagged{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber-text)}
+.toggle-field .tog-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tog{height:28px;padding:0 10px;border:none;border-radius:8px;background:var(--sub);font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);cursor:pointer;transition:background .12s,color .12s}
+.tog:hover{color:var(--text)}
+.tog.on{background:var(--green);color:#101410}
+.tog.clear{padding:0 8px;font-size:13px;color:var(--faint)}
+.tog.clear:hover{color:var(--orange-text)}
+.analyst-row{display:flex;gap:8px;align-items:flex-end;margin-top:6px;padding-top:12px;border-top:1px solid var(--hair);flex-wrap:wrap}
+.analyst-row .fld{max-width:300px;flex:1}
 
-/* rebates */
-.reb-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.reb-controls select{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13.5px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink)}
-.reb-controls .btn{height:38px;font-size:12.5px;padding:0 16px}
+/* ============================================================
+   REBATES
+   ============================================================ */
+.reb-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.reb-controls select{height:36px;border:none;border-radius:11px;padding:0 13px;font-size:12.5px;font-family:'Poppins',sans-serif;background:var(--sub);color:var(--text)}
+.reb-controls .btn{height:36px;font-size:12.5px;padding:0 15px}
 .exp-wrap{position:relative;display:inline-block}
-.exp-menu{display:none;position:absolute;right:0;top:44px;z-index:60;min-width:270px;max-height:60vh;overflow-y:auto;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 14px 36px rgba(21,48,58,.2);padding:6px}
+.exp-menu{display:none;position:absolute;right:0;top:42px;z-index:60;min-width:270px;max-height:60vh;overflow-y:auto;background:var(--panel);border:1px solid var(--div);border-radius:12px;padding:5px}
 .exp-menu.on{display:block}
-.exp-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 11px;border-radius:7px;font-size:13px;font-family:'Hanken Grotesk',sans-serif;color:var(--ink);cursor:pointer}
-.exp-menu button:hover{background:var(--bone)}
-.exp-sep{height:1px;background:var(--line);margin:6px 4px}
-.exp-lbl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700;padding:6px 11px 4px}
-.exp-menu .none{font-size:12.5px;color:var(--mist);padding:6px 11px 9px;font-style:italic}
-.rtbl{margin-top:28px}
-.rtbl .hd{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:9px;border-bottom:2px solid var(--ink)}
-.rtbl .hd .t{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.rtbl .hd .n{font-size:12px;color:var(--mist)}
-.rtbl .cols,.rtbl .row{display:grid;grid-template-columns:minmax(110px,1fr) 78px 100px 104px 46px 104px 84px;gap:8px;align-items:baseline}
-.rtbl .cols{padding:9px 4px 7px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);font-weight:700;border-bottom:1px solid var(--line)}
+.exp-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;border-radius:8px;font-size:12.5px;font-family:'Poppins',sans-serif;color:var(--text);cursor:pointer}
+.exp-menu button:hover{background:var(--sub)}
+.exp-sep{height:1px;background:var(--hair);margin:5px 4px}
+.exp-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding:6px 10px 4px}
+.exp-menu .none{font-size:12px;color:var(--faint);padding:6px 10px 8px}
+.rtbl{background:var(--panel);border-radius:16px;padding:15px 18px}
+.rtbl .hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.rtbl .hd .t{font-size:13.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text)}
+.rtbl .hd .n{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--faint)}
+.rtbl .cols,.rtbl .row{display:grid;grid-template-columns:minmax(0,1fr) 64px 100px 104px 46px 104px 84px;gap:9px;align-items:baseline}
+.rtbl .cols{padding:6px 0;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border-bottom:1.5px solid var(--text)}
 .rtbl .cols span,.rtbl .row span{text-align:right}
 .rtbl .cols span:first-child,.rtbl .row span:first-child{text-align:left}
-.rtbl .row{padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px}
-.rtbl .row:hover{background:rgba(255,255,255,.6)}
-.rtbl .row .who{font-weight:500}
-.rtbl .row .m{font-family:'DM Mono',monospace;font-size:13.5px}
-.rtbl .row .m.due{color:var(--teal);font-weight:500}
-.rtbl .row .stmt{text-align:right}
-.rtbl .row .stmt button{height:26px;padding:0 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);font-size:11.5px;font-weight:700;color:var(--teal);cursor:pointer}
-.rtbl .row .stmt button:hover{background:rgba(15,76,92,.08)}
-.rtbl .tot{display:grid;grid-template-columns:1fr 120px 96px;padding:13px 4px;font-size:13.5px;font-weight:700;color:var(--teal)}
-.rtbl .tot .m{text-align:right;font-family:'DM Mono',monospace}
-.reb-warn{margin-top:18px;padding:12px 16px;background:rgba(201,162,39,.1);border:1px solid rgba(201,162,39,.35);border-radius:8px;font-size:12.5px;color:#6b5715;line-height:1.6}
-.rtbl-empty{padding:16px 4px;font-size:13px;color:var(--mist);font-style:italic}
+.rtbl .row{padding:10px 0;border-bottom:1px solid var(--hair);font-size:12px}
+.rtbl .row:hover{background:var(--sub2)}
+.rtbl .row .who{font-weight:400}
+.rtbl .row .m{font-family:'DM Mono',monospace;font-size:10.5px}
+.rtbl .row .m.due{font-weight:500;color:var(--text)}
+.rtbl .row .stmt button{height:24px;padding:0 9px;border:1px solid var(--div2);border-radius:9px;background:var(--panel);font-size:10.5px;color:var(--muted);cursor:pointer}
+.rtbl .row .stmt button:hover{color:var(--text)}
+.rtbl .tot{display:grid;grid-template-columns:1fr 120px 84px;padding:10px 13px;margin-top:8px;font-size:12.5px;background:var(--green);color:#101410;border-radius:12px}
+.rtbl .tot .m{text-align:right;font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
+.reb-warn{padding:10px 14px;background:var(--restrict-bg);border-radius:12px;font-size:12px;color:var(--restrict-text);line-height:1.6}
+.reb-grand{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:10px;padding:14px 18px;border-radius:16px;background:var(--green);color:#101410;font-size:13px}
+.reb-grand .m{font-family:'DM Mono',monospace;font-size:18px;font-weight:500}
+.rtbl .tot{background:var(--sub);color:var(--text);font-size:12.5px}
+.rtbl .tot .m{font-size:13px}
+.rtbl-empty{padding:12px 0;font-size:12px;color:var(--faint)}
 
-/* edit records */
-.rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:1.2rem}
-.rec-suggest{margin-top:8px;font-size:12px;color:rgba(21,48,58,.65);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.rec-suggest b{color:var(--teal);font-weight:500}
-.rec-suggest button{height:26px;padding:0 10px;border:1px solid var(--teal);border-radius:6px;background:var(--white);font-size:11.5px;font-weight:700;color:var(--teal);cursor:pointer}
-.rec-suggest button:hover{background:rgba(15,76,92,.08)}
-.chosen-row .unpriced{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b5715;background:rgba(201,162,39,.14);vertical-align:1px}
+/* ============================================================
+   EDIT RECORDS
+   ============================================================ */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:6px}
+.rec-suggest{margin-top:6px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec-suggest b{color:var(--text);font-weight:500}
+.rec-suggest button{height:24px;padding:0 9px;border:none;border-radius:8px;background:var(--green);font-size:11px;color:#101410;cursor:pointer}
 
-/* ---------- ANALYTICS ---------- */
-.ana-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
-.ana-controls select{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13.5px;font-family:'Hanken Grotesk',sans-serif;background:var(--white);color:var(--ink)}
-.ana-controls .btn{height:38px;font-size:12.5px;padding:0 16px}
-.ana-tabs{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white)}
-.ana-tabs button{height:36px;padding:0 16px;border:none;background:transparent;font-weight:700;font-size:12.5px;cursor:pointer;color:rgba(21,48,58,.5);font-family:'Hanken Grotesk',sans-serif}
-.ana-tabs button.on{background:var(--teal);color:#fff}
-.ana-sec{margin-top:30px}
-.ana-sec .sh{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink)}
-.ana-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
-.ana-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+/* ============================================================
+   ANALYTICS (charts keep their validated palette)
+   ============================================================ */
+.ana-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ana-controls select{height:36px;border:none;border-radius:11px;padding:0 12px;font-size:12.5px;font-family:'Poppins',sans-serif;background:var(--sub);color:var(--text)}
+.ana-controls .btn{height:36px;font-size:12.5px;padding:0 15px}
+.ana-tabs{display:inline-flex;border-radius:11px;overflow:hidden;background:var(--sub)}
+.ana-tabs button{height:36px;padding:0 15px;border:none;background:transparent;font-size:12.5px;cursor:pointer;color:var(--muted);font-family:'Poppins',sans-serif}
+.ana-tabs button.on{background:var(--deep);color:var(--green-on-deep)}
+.ana-sec{display:flex;flex-direction:column;gap:10px}
+.ana-sec .sh{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding:0 6px}
+.ana-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ana-card{background:var(--panel);border-radius:16px;padding:15px 18px;min-width:0;border:none}
 .ana-card.wide{grid-column:1 / -1}
-.ana-card .ct{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);font-weight:700}
-.ana-card .cs{font-size:11.5px;color:rgba(21,48,58,.5);margin-top:3px;line-height:1.5}
-.ana-card .chart{margin-top:14px}
-.ana-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:11.5px;color:rgba(21,48,58,.65);font-weight:500}
-.ana-legend .sw{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:-1px}
-.hb-row{display:flex;align-items:center;gap:10px;margin-top:6px;min-width:0}
-.hb-row .lb{width:34%;min-width:0;font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:rgba(21,48,58,.75)}
+.ana-card .ct{font-size:13.5px;font-weight:500;color:var(--text);text-transform:none;letter-spacing:0}
+.ana-card .cs{font-size:11px;color:var(--faint);margin-top:2px;line-height:1.5}
+.ana-card .chart{margin-top:12px}
+.ana-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:11px;color:var(--muted)}
+.ana-legend .sw{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:-1px}
+.ana-figs{display:flex;gap:8px;flex-wrap:wrap}
+.ana-figs .fig{flex:1;min-width:118px;border-radius:12px;padding:11px 13px;background:var(--sub)}
+.ana-figs .fig .k{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.ana-figs .fig .v{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;margin-top:6px;color:var(--text)}
+.ana-figs .fig .v.warn{color:var(--orange-text)}
+.ana-figs .fig.warnbg{background:var(--orange-tint)}
+.fig .delta{font-family:'DM Mono',monospace;font-size:8.5px;margin-top:4px}
+.delta.up{color:var(--green-text)}.delta.down{color:var(--orange-text)}.delta.flat{color:var(--faint)}
+.hb-row{display:flex;align-items:center;gap:9px;margin-top:6px;min-width:0}
+.hb-row .lb{width:34%;min-width:0;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:var(--muted)}
 .hb-row .track{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
-.hb-row .bar{height:16px;border-radius:0 4px 4px 0;min-width:2px;flex-shrink:0}
-.hb-row .v{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink);white-space:nowrap}
-.stackbar{display:flex;height:26px;border-radius:5px;overflow:hidden;gap:2px;background:transparent;margin-top:14px}
+.hb-row .bar{height:14px;border-radius:0 4px 4px 0;min-width:2px;flex-shrink:0}
+.hb-row .v{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text);white-space:nowrap}
+.stackbar{display:flex;height:22px;border-radius:5px;overflow:hidden;gap:2px;margin-top:12px}
 .stackbar .seg{min-width:3px}
-.colchart{display:flex;gap:10px;height:170px;margin-top:14px;padding-bottom:20px;position:relative}
-.colchart .bucket{display:flex;flex-direction:column-reverse;align-items:stretch;gap:2px;height:100%;justify-content:flex-start;position:relative;width:100%;max-width:56px;margin:0 auto}
+.colchart{display:flex;gap:9px;height:150px;margin-top:12px;padding-bottom:20px;position:relative}
+.colchart .bucket{display:flex;flex-direction:column-reverse;align-items:stretch;gap:2px;height:100%;justify-content:flex-start;position:relative;width:100%;max-width:52px;margin:0 auto}
 .colchart .bwrap{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;min-width:0}
-.colchart .bl{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--mist);font-weight:700;white-space:nowrap}
-.colchart .seg{width:100%;border-radius:0}
-.colchart .seg.top{border-radius:4px 4px 0 0}
-.ana-tip{position:fixed;z-index:130;background:var(--ink);color:#fff;padding:7px 11px;border-radius:6px;font-size:12px;pointer-events:none;display:none;max-width:280px;line-height:1.55;box-shadow:0 8px 24px rgba(21,48,58,.35)}
-.ana-tip b{font-family:'DM Mono',ui-monospace,monospace;font-weight:500}
-[data-tt]{cursor:default}
-[data-tt]:hover{opacity:.82}
-.fig .delta{font-size:11px;font-weight:700;margin-top:5px}
-.delta.up{color:var(--green)}.delta.down{color:var(--red)}.delta.flat{color:var(--mist)}
-.ana-note{margin-top:12px;font-size:11.5px;color:rgba(21,48,58,.55);line-height:1.6}
-.ana-note b{color:#6b5715}
-.least-list{columns:2;column-gap:26px;margin-top:12px;font-size:12.5px;line-height:2}
+.colchart .bl{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-family:'DM Mono',monospace;font-size:8px;color:var(--faint);white-space:nowrap}
+.colchart .seg{width:100%}
+.ana-tip{position:fixed;z-index:130;background:var(--deep);color:var(--on-deep);padding:6px 10px;border-radius:8px;font-size:11.5px;pointer-events:none;display:none;max-width:280px;line-height:1.5}
+.ana-tip b{font-family:'DM Mono',monospace;font-weight:500}
+[data-tt]{cursor:default}[data-tt]:hover{opacity:.85}
+.ana-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6}
+.ana-note b{color:var(--restrict-text)}
+.least-list{columns:2;column-gap:22px;margin-top:10px;font-size:12px;line-height:1.9}
 .least-list div{break-inside:avoid}
-.least-list span{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--mist)}
-.dd-filters{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:flex-end}
-.dd-filters .fld{flex:0 1 160px;font-size:11px}
-.dd-filters input,.dd-filters select{height:36px;font-size:13px;padding:0 8px}
-.dd-filters .btn{height:36px;font-size:12.5px;padding:0 14px}
-.dd-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px}
-.dd-table th{text-align:left;padding:7px 9px;background:var(--bone);font-size:9.5px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--line);white-space:nowrap}
-.dd-table td{padding:7px 9px;border-bottom:1px solid rgba(21,48,58,.06);vertical-align:top}
-.dd-table .mono-c{font-family:'DM Mono',monospace;font-size:11.5px;white-space:nowrap}
+.least-list span{font-family:'DM Mono',monospace;font-size:10px;color:var(--faint)}
+.dd-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--panel);border-radius:16px;padding:14px 18px}
+.dd-filters .fld{flex:0 1 150px;font-size:10.5px}
+.dd-filters input,.dd-filters select{height:34px;font-size:12px;padding:0 9px}
+.dd-filters .btn{height:34px;font-size:12px;padding:0 13px}
+#ddOut{background:var(--panel);border-radius:16px;padding:14px 18px}
+.dd-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}
+.dd-table th{text-align:left;padding:6px 8px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:400;border-bottom:1.5px solid var(--text);white-space:nowrap}
+.dd-table td{padding:7px 8px;border-bottom:1px solid var(--hair);vertical-align:top}
+.dd-table .mono-c{font-family:'DM Mono',monospace;font-size:10.5px;white-space:nowrap}
 .dd-table .r{text-align:right;white-space:nowrap}
-@media(max-width:960px){
-  .reg-grid{grid-template-columns:1fr}
-  .bill-wrap{position:static}
-}
-/* The rebate table needs its own breakpoint: it carries two money columns, so
-   it runs out of room for referrer names well before the page does. */
+
+/* ============================================================
+   LABEL & RECEIPT (new view)
+   ============================================================ */
+.print-grid{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.print-grid>.card{flex:1.2;min-width:300px}
+.print-grid>.card.rc{flex:1;min-width:250px}
+.sticker-wrap{display:flex;justify-content:center;padding:18px 0 14px}
+.print-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.print-actions .btn{flex:1;min-width:118px}
+.sheet{border:1px solid var(--div);border-radius:8px;background:var(--paper);color:#15171a;padding:15px 16px 18px;font-family:'DM Mono',monospace;font-size:9px;line-height:1.6;margin-top:10px}
+.sheet .c{text-align:center}
+.sheet .h1{font-size:9px;letter-spacing:.06em}.sheet .h2{font-size:7.5px;color:#666;letter-spacing:.06em}
+.sheet .dash{border-top:1px dashed #cfccc2;margin:8px 0}
+.sheet .row{display:flex;justify-content:space-between;gap:10px}
+.sheet .tot{border-top:1px solid #15171a;margin-top:8px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:500}
+.sheet .ft{text-align:center;font-size:7.5px;color:#666;margin-top:10px;letter-spacing:.06em}
+
+/* ============================================================
+   MODALS — registration confirm, section gate
+   ============================================================ */
+.sgate{position:fixed;inset:0;background:rgba(14,18,16,.55);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:110;padding:1.5rem}
+.sgate-in{width:100%;max-width:340px;background:var(--panel);border-radius:18px;padding:26px 24px 20px;text-align:center;animation:rise .25s cubic-bezier(.2,.7,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sgate-in .cg{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--restrict-text)}
+.sgate-in h3{font-size:16px;color:var(--text);font-weight:500;margin:8px 0 4px}
+.sgate-in .d{font-size:12px;color:var(--muted);margin-bottom:16px}
+.sgate-in .pass{position:static;width:auto;height:auto;overflow:visible;display:flex;gap:8px}
+.sgate-in .pass input{flex:1;height:44px;text-align:center;letter-spacing:.5em;text-indent:.5em;border:none;border-radius:11px;background:var(--sub);font-family:'DM Mono',monospace;font-size:16px;color:var(--text);outline:none}
+.sgate-in .pass button{width:44px;height:44px;border:none;border-radius:11px;background:var(--deep);color:var(--green-on-deep);cursor:pointer;font-size:16px}
+.sgate-in .err{margin-top:8px;font-size:11.5px;color:var(--orange-text);min-height:1em}
+.sgate-in .cancel{margin-top:12px;background:none;border:none;font-size:12px;color:var(--faint);cursor:pointer;text-decoration:underline}
+.sgate-in.confirm-in{max-width:420px;text-align:left}
+.sgate-in.confirm-in .cg{color:var(--green-text)}
+.sgate-in.confirm-in h3{margin-bottom:10px}
+.rc-sum{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:4px 0;margin-bottom:12px}
+.rc-sum div{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:12.5px}
+.rc-sum div span:first-child{color:var(--muted);flex-shrink:0}
+.rc-sum div span:last-child{text-align:right;word-break:break-word}
+.rc-sum .tot{font-weight:500;color:var(--text);font-size:15px}
+.rc-sum .tot span:last-child{font-family:'DM Mono',monospace}
+.rc-dup{margin-bottom:12px;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:var(--restrict-bg);color:var(--restrict-text)}
+.rc-dup b{font-family:'DM Mono',monospace;font-weight:500}
+.rc-actions{display:flex;gap:8px;justify-content:flex-end}
+.rc-actions .btn{height:40px}
+
+/* ============================================================
+   RESPONSIVE — rail becomes a bottom bar; two-column layouts wrap
+   ============================================================ */
 @media(max-width:1200px){
-  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(120px,1fr) 92px 96px 44px 96px 74px;font-size:13px}
+  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(120px,1fr) 92px 96px 44px 96px 74px}
   .rtbl .cols span:nth-child(2),.rtbl .row span:nth-child(2){display:none}
 }
-@media(max-width:820px){
-  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(96px,1fr) 88px 40px 88px 68px;font-size:12.5px}
+@media(max-width:860px){
+  .frame{padding:8px;padding-bottom:70px;gap:8px}
+  .rail{position:fixed;left:8px;right:8px;bottom:8px;top:auto;width:auto;height:56px;flex-direction:row;padding:0 6px;border-radius:16px;justify-content:space-between;z-index:40}
+  .rail .brand,.rail .hr,.rail-foot .stamp,.rail-foot .ic.theme,.rail-foot .ic.print{display:none}
+  .nav{flex-direction:row;justify-content:space-around;gap:0;flex:1}
+  .nav .nav-hr{display:none}
+  .nav a{width:38px;height:38px}
+  .nav a .lbl{display:none}
+  .rail-foot{flex-direction:row;padding:0;gap:2px}
+  .topbar{flex-wrap:wrap}
+  .tb-stamp{display:none}
+  .gate{flex-direction:column}
+  .gate-l{flex:none;padding:22px}
+  .gate-l .gate-addr{display:none}
+  .gate-mid .sub{display:none}
+  .ana-grid{grid-template-columns:1fr}
+  .fgrid.c211{grid-template-columns:1fr 1fr}
+  .fgrid.c211 label:first-child{grid-column:1 / -1}
+  .reg-grid{grid-template-columns:1fr}
+  .bill-wrap{position:static}
+  .mob-total{display:none}
+  .rtbl .cols,.rtbl .row{grid-template-columns:minmax(96px,1fr) 88px 40px 88px 68px;font-size:11.5px}
   .rtbl .cols span:nth-child(3),.rtbl .row span:nth-child(3){display:none}
 }
-@media(max-width:860px){
-  .rail{left:0;right:0;top:auto;bottom:0;width:auto;height:auto;flex-direction:row;padding:0;overflow-x:auto}
-  .brand,.nav-label,.rail-foot{display:none}
-  .nav{display:flex;margin:0;width:100%;overflow-x:auto}
-  .nav a{flex-direction:column;gap:3px;padding:10px 12px;font-size:9.5px;margin:0;border-radius:0;min-width:70px;text-align:center;justify-content:center}
-  .nav a.on{box-shadow:inset 0 2px 0 var(--gold)}
-  .nav a .dot-r{display:none}
-  .nav a .full{display:none}
-  .nav a .short{display:inline}
-  .nav a{min-width:0;flex:1;padding:10px 6px}
-  #v-register.on ~ .mob-total,.mob-total.on{display:flex}
-  #v-register.on{padding-bottom:70px}
-  .ana-grid{grid-template-columns:1fr}
-  .main{margin-left:0;padding:24px 20px 100px}
-  h2.vt{font-size:27px}
-  .figs{gap:28px}
-  .band{padding:22px 20px;gap:22px}
-  .band .sticker .num{font-size:30px}
-  .sections-grid{grid-template-columns:1fr}
-}
+@media print{.rail,.topbar,.gate,.sgate{display:none!important}}
 </style>
 </head>
 <body>
 
-<!-- GATE -->
+<!-- SIGN IN (the gate) -->
 <div class="gate" id="gate">
-  <div class="gate-in">
-    <img id="gateLogo" alt="">
-    <h1 class="pop">Evashalom</h1>
-    <div class="sub">Operations</div>
-    <div class="rule"></div>
-    <form class="pass" onsubmit="event.preventDefault();unlock()">
-      <input id="code" type="password" inputmode="numeric" maxlength="6" placeholder="Passcode" autocomplete="off" aria-label="Passcode">
-      <button type="submit" aria-label="Enter">&rarr;</button>
+  <div class="gate-l">
+    <div class="brandmark"><span class="mk" id="gateMark">E</span><span class="nm">EVASHALOM &middot; OPERATIONS</span></div>
+    <div class="gate-mid">
+      <div class="cap">Next lab number waiting</div>
+      <div class="specimen">
+        <div class="peel"></div>
+        <div class="body"><div class="cap">Specimen</div><div class="num" id="wlNextLab">ES&mdash;/26</div><div class="bars" aria-hidden="true"></div></div>
+        <div class="edge"></div>
+      </div>
+      <div class="sub">One number carries the patient, the sheet row, the receipt and the report header. Sign in and it becomes yours to issue.</div>
+    </div>
+    <div class="gate-addr">MAIN LAB &middot; NO. 1 GOVERNOR STREET, BESIDE WETLAND MICROFINANCE BANK, ASABA<br>BRANCH &middot; NO. 6 ENGR. FRED EJIOFOR CRESCENT, BEHIND MR. BIGGS, ASABA<br>TEL 07060904931 &middot; 07089460842</div>
+  </div>
+  <div class="gate-r">
+    <h1>Sign in</h1>
+    <div class="lead">your role decides what the rail shows</div>
+    <div class="lbl-mono">Role</div>
+    <div class="roles" id="roles">
+      <button type="button" class="on" data-role="Reception" onclick="setRole(this)">Reception</button>
+      <button type="button" data-role="Laboratory" onclick="setRole(this)">Laboratory</button>
+      <button type="button" data-role="Management" onclick="setRole(this)">Management</button>
+    </div>
+    <div class="lbl-mono">4-digit PIN</div>
+    <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
+    <div class="keypad">
+      <button type="button" onclick="pinKey('1')">1</button><button type="button" onclick="pinKey('2')">2</button><button type="button" onclick="pinKey('3')">3</button>
+      <button type="button" onclick="pinKey('4')">4</button><button type="button" onclick="pinKey('5')">5</button><button type="button" onclick="pinKey('6')">6</button>
+      <button type="button" onclick="pinKey('7')">7</button><button type="button" onclick="pinKey('8')">8</button><button type="button" onclick="pinKey('9')">9</button>
+      <button type="button" class="fn" onclick="pinKey('clear')">clear</button><button type="button" onclick="pinKey('0')">0</button><button type="button" class="fn" onclick="pinKey('back')">&larr;</button>
+    </div>
+    <form class="pass" onsubmit="event.preventDefault();unlock()" aria-hidden="true">
+      <input id="code" type="password" inputmode="numeric" maxlength="6" autocomplete="off" aria-label="Passcode" tabindex="-1">
+      <button type="submit" tabindex="-1">&rarr;</button>
     </form>
+    <button type="button" class="go" onclick="unlock()">enter the day</button>
+    <div class="rolenote" id="roleNote">Reception sees registration, search and the day.</div>
     <div class="err" id="gateErr" role="status"></div>
-    <div class="hint">Ask the MD for the passcode.</div>
   </div>
 </div>
 
-<!-- WELCOME -->
-<div class="welcome hidden" id="welcome">
-  <div class="scan"></div>
-  <div class="motif" aria-hidden="true">
-    <div style="position:absolute;top:20vh;left:5vw;width:30px;height:128px;border:3px solid rgba(15,76,92,.14);border-top:none;border-radius:0 0 16px 16px;transform:rotate(-11deg)"><div style="position:absolute;left:3px;right:3px;bottom:3px;height:46px;background:rgba(15,76,92,.12);border-radius:2px 2px 12px 12px"></div></div>
-    <div style="position:absolute;top:26vh;left:calc(5vw + 52px);width:24px;height:96px;border:3px solid rgba(15,76,92,.11);border-top:none;border-radius:0 0 13px 13px;transform:rotate(9deg)"><div style="position:absolute;left:3px;right:3px;bottom:3px;height:30px;background:rgba(201,162,39,.18);border-radius:2px 2px 9px 9px"></div></div>
-    <div style="position:absolute;top:15vh;right:5vw;width:112px;height:112px;border:3px solid rgba(15,76,92,.13);border-radius:50%"><div style="position:absolute;inset:18px;border:2px dashed rgba(15,76,92,.12);border-radius:50%"></div><div style="position:absolute;top:34px;left:38px;width:10px;height:10px;background:rgba(201,162,39,.22);border-radius:50%"></div><div style="position:absolute;top:58px;left:60px;width:7px;height:7px;background:rgba(15,76,92,.16);border-radius:50%"></div><div style="position:absolute;top:64px;left:34px;width:6px;height:6px;background:rgba(15,76,92,.14);border-radius:50%"></div></div>
-    <div style="position:absolute;bottom:12vh;left:7vw;width:150px;height:120px"><div style="position:absolute;top:52px;left:20px;width:96px;height:3px;background:rgba(15,76,92,.11);transform:rotate(-24deg);transform-origin:left center"></div><div style="position:absolute;top:52px;left:20px;width:86px;height:3px;background:rgba(15,76,92,.11);transform:rotate(32deg);transform-origin:left center"></div><div style="position:absolute;top:44px;left:6px;width:20px;height:20px;border:3px solid rgba(15,76,92,.15);border-radius:50%;background:#F1EFE8"></div><div style="position:absolute;top:4px;left:102px;width:16px;height:16px;background:rgba(201,162,39,.2);border-radius:50%"></div><div style="position:absolute;top:94px;left:90px;width:16px;height:16px;background:rgba(15,76,92,.13);border-radius:50%"></div></div>
-    <div style="position:absolute;bottom:24vh;right:12vw;width:30px;height:30px;background:rgba(15,76,92,.1);border-radius:50% 50% 50% 0;transform:rotate(-45deg)"></div>
-    <div style="position:absolute;bottom:9vh;right:6vw;width:92px;height:92px"><div style="position:absolute;top:33px;left:0;width:92px;height:26px;background:rgba(15,76,92,.08);border-radius:8px"></div><div style="position:absolute;top:0;left:33px;width:26px;height:92px;background:rgba(15,76,92,.08);border-radius:8px"></div></div>
-    <div style="position:absolute;top:8vh;left:-60px;width:260px;height:100px;background:#FFFFFF;opacity:.4;border-radius:6px;transform:rotate(-8deg);border-right:8px solid rgba(201,162,39,.3)"></div>
-  </div>
-  <header class="wl-head"><img id="wlLogo" alt=""><div class="t">Evashalom Medical Diagnostic Services</div></header>
-  <div class="wl-body">
-    <div class="wl-eyebrow" id="wlDate">Asaba</div>
-    <h1 class="wl-h1">One lab number, from <em>counter</em> to <em>signed report</em>.</h1>
-    <div class="specimen" style="margin-top:26px">
-      <div class="perf"></div>
-      <div class="body"><div class="cap">Next lab number</div><div class="num" id="wlNextLab">ES&mdash;/26</div></div>
-      <div class="spine"></div>
-    </div>
-    <div class="wl-q">What would you like to do?</div>
-    <div class="wl-grid" id="wlGrid"></div>
-  </div>
-</div>
+<!-- Legacy welcome (kept for the script's hooks; never shown) -->
+<div class="welcome hidden" id="welcome"><div id="wlDate"></div><div id="wlGrid"></div></div>
 
 <!-- SHELL -->
 <div class="shell" id="shell">
+<div class="frame">
   <nav class="rail">
-    <a class="brand" onclick="goWelcome()" title="Back to the front door">
-      <span class="nm pop">Evashalom</span>
-      <span class="sb">Medical Diagnostics &middot; Asaba</span>
-    </a>
+    <a class="brand" onclick="show('home')" title="Today"><span id="railMark">E</span></a>
+    <div class="hr"></div>
     <div class="nav" id="nav"></div>
     <div class="rail-foot">
-      Fred Ejiofor Crescent<br>Governor Street &middot; Asaba
-      <div class="priv" id="privToggle" onclick="togglePrivacy()"><span class="dot"></span> Privacy mode</div>
-      <div class="fresh">Data as of <span class="mono" id="freshAt">&mdash;</span> <button type="button" id="refreshBtn" onclick="refreshAllData()">Refresh</button></div>
-      <div class="build">Build <span class="mono" id="buildTag"></span></div>
+      <button type="button" class="ic print" onclick="show('print')" title="Label &amp; receipt"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg></button>
+      <button type="button" class="ic" id="privToggle" onclick="togglePrivacy()" title="Hide money (patient at counter)"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button type="button" class="ic theme" onclick="toggleTheme()" title="Light / dark"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A7 7 0 0 1 12 3z"/></svg></button>
+      <button type="button" class="ic" onclick="signOut()" title="Sign out"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      <div class="stamp" id="railRole">RECEPTION</div>
+      <!-- script hooks, not shown in the rail on this design -->
+      <div class="priv"></div>
+      <div class="fresh"><span id="freshAt"></span><button type="button" id="refreshBtn" onclick="refreshAllData()">Refresh</button></div>
+      <div class="build"><span id="buildTag"></span></div>
     </div>
   </nav>
-  <main class="main">
+
+  <div class="content">
+    <div class="topbar">
+      <label class="cmd">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="text" id="cmdInput" placeholder="name or lab number &mdash; jumps straight to the record" autocomplete="off" onkeydown="cmdKey(event)">
+        <span class="k">Ctrl K</span>
+      </label>
+      <button type="button" class="tb-reg" onclick="show('register')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>register</button>
+      <div class="tb-stamp"><span id="tbDate"></span><span>&middot;</span><span id="tbRole">RECEPTION</span><span class="fr">&middot; data <span id="tbFresh">&mdash;</span></span><button type="button" onclick="refreshAllData()" title="Reload every sheet">&#8635;</button><span class="fr" id="tbBuild"></span></div>
+    </div>
+
+    <main class="main">
 
     <!-- ======== TODAY ======== -->
     <section class="view on" id="v-home">
-      <div class="vhead">
-        <div>
-          <div class="eyebrow" id="todayDate"></div>
-          <h2 class="vt">Today</h2>
+      <div class="hero">
+        <div class="l">
+          <div class="k">collected today <label class="privchk"><input type="checkbox" id="privChk" onchange="setPrivacy(this.checked)"> hide money</label></div>
+          <div class="v money" id="figMoney">&#8358;&mdash;</div>
+          <div class="s" id="todayPrev">&mdash;</div>
+          <div class="s eyebrow" id="todayDate" style="margin-top:6px"></div>
         </div>
-        <label class="privchk"><input type="checkbox" id="privChk" onchange="setPrivacy(this.checked)"> Hide money (patient at counter)</label>
-      </div>
-      <div class="band">
-        <div class="sticker">
-          <div class="perf"></div>
-          <div class="body"><div class="cap">Next lab number</div><div class="num" id="todayNextLab">ES&mdash;/26</div><div class="bars"></div></div>
-          <div class="spine"></div>
-        </div>
-        <div class="cap-txt">
-          The next patient through the door takes this number. Results, report and receipt all hang off it.
-          <div class="prev" id="todayPrev"></div>
+        <div class="tiles">
+          <div class="tile"><div class="k">Today</div><div class="v" id="figToday">&mdash;</div></div>
+          <div class="tile"><div class="k">On tracker</div><div class="v" id="figTotal">&mdash;</div></div>
+          <div class="tile"><div class="k">Unpaid</div><div class="v warn money" id="figUnpaid">&mdash;</div></div>
+          <div class="tile deep"><div class="k">Next number</div><div class="v" id="todayNextLab">ES&mdash;/26</div></div>
         </div>
       </div>
-      <div class="figs">
-        <div class="fig"><div class="k">Registered today</div><div class="v" id="figToday">&mdash;</div></div>
-        <div class="fig"><div class="k">On the tracker</div><div class="v" id="figTotal">&mdash;</div></div>
-        <div class="fig"><div class="k">Unpaid today</div><div class="v warn money" id="figUnpaid">&mdash;</div></div>
-        <div class="fig"><div class="k">Collected today</div><div class="v money" id="figMoney">&mdash;</div></div>
+      <div class="today-row">
+        <div class="queue">
+          <div class="qhead"><span class="t">The queue</span><span class="s">newest first &middot; one action each</span></div>
+          <div class="reg-list" id="regList"><div class="reg-empty">Loading the tracker&hellip;</div></div>
+        </div>
+        <div class="side">
+          <div class="card"><div class="t">This week</div><div class="week" id="weekBars"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="week-cap">Mon &mdash; Sat &middot; patients</div></div>
+          <div class="card"><div class="t">Needs a person</div><div class="needs" id="needsList"><div><i></i>Loading&hellip;</div></div></div>
+        </div>
       </div>
-      <div class="reg-head"><span class="l">The register &middot; today</span><span class="r">newest first</span></div>
-      <div class="reg-list" id="regList"><div class="reg-empty">Loading the tracker&hellip;</div></div>
     </section>
 
     <!-- ======== REGISTER PATIENT ======== -->
     <section class="view" id="v-register">
-      <div class="eyebrow">Front desk</div>
-      <h2 class="vt">Register patient</h2>
       <div id="regLoadStatus" class="status load"><span class="spinner"></span>Loading price list, doctors and hospitals&hellip;</div>
       <div class="reg-grid" id="regMain" style="display:none">
         <div class="reg-left">
+          <div class="vhead"><h2 class="vt">Register patient</h2><span class="eyebrow">Front desk</span></div>
           <div>
             <div class="sec-h">01 &middot; Patient</div>
             <div class="fgrid c211">
-              <label class="fld">Full name<input type="text" id="pName" placeholder="Surname first"></label>
-              <label class="fld">Sex<select id="pGender"><option value="">&mdash;</option><option>F</option><option>M</option></select></label>
-              <label class="fld">Age<input type="text" id="pAge" class="mono-in" placeholder="34"></label>
+              <label class="fld"><input type="text" id="pName" placeholder="full name"></label>
+              <label class="fld"><select id="pGender"><option value="">sex</option><option>F</option><option>M</option></select></label>
+              <label class="fld"><input type="text" id="pAge" class="mono-in" placeholder="age"></label>
             </div>
             <div class="fgrid c11">
-              <label class="fld">Phone<input type="text" id="pPhone" class="mono-in" placeholder="0803 &hellip;"></label>
-              <label class="fld">Lab location<select id="labLoc"><option>Fred Ejiofor Crescent</option><option>Governor Street</option></select></label>
+              <label class="fld"><input type="text" id="pPhone" class="mono-in" placeholder="phone"></label>
+              <label class="fld"><select id="labLoc"><option>Fred Ejiofor Crescent</option><option>Governor Street</option></select></label>
             </div>
           </div>
           <div>
             <div class="sec-h">02 &middot; Tests</div>
             <div class="test-search">
-              <input type="text" id="testSearch" placeholder="Type to add &mdash; FBC, PSA, widal&hellip;" autocomplete="off">
+              <input type="text" id="testSearch" placeholder="type to add &mdash; FBC, PSA, widal&hellip;" autocomplete="off">
               <div class="test-results" id="testResults"></div>
             </div>
             <div id="chosenTests"><div class="empty-hint">No tests added yet.</div></div>
@@ -601,15 +738,15 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
           <div>
             <div class="sec-h">03 &middot; Referral &amp; payment</div>
             <div class="fgrid c11">
-              <label class="fld">Referral type<select id="refType"><option value="na">N/A &mdash; not available</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
-              <label class="fld">Referrer<select id="refName"><option value="">&mdash;</option></select></label>
+              <label class="fld"><select id="refType"><option value="na">N/A &mdash; no referrer</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
+              <label class="fld"><select id="refName"><option value="">referrer &mdash;</option></select></label>
             </div>
             <div class="fgrid c11">
-              <label class="fld">Payment mode<select id="payMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
-              <label class="fld">Payment status<select id="payStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
+              <label class="fld"><select id="payMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
+              <label class="fld"><select id="payStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
             </div>
             <div class="fgrid c11">
-              <label class="fld">Registered by<input type="text" id="regBy" placeholder="Your name"></label>
+              <label class="fld"><input type="text" id="regBy" placeholder="registered by (your name)"></label>
             </div>
             <div class="reb-note" id="rebateNote"></div>
             <div id="subletNotice"></div>
@@ -619,17 +756,19 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
           <div class="bill-hd">
             <div class="cap">Will be issued</div>
             <div class="num" id="regNextLab">ES&mdash;/26</div>
-            <div class="bars"></div>
+            <div class="bars" aria-hidden="true"></div>
+            <div class="caption">sheet row &middot; receipt no. &middot; report header</div>
           </div>
           <div class="bill-bd">
-            <div class="bill-line"><span class="lbl">Tests</span><span class="val" id="billCount">0</span></div>
-            <div class="bill-line"><span class="lbl">Gross</span><span class="val" id="billGross">&#8358;0</span></div>
-            <div class="bill-line" id="surchargeLine" style="display:none"><span class="lbl">Surcharge (<span id="billSurRate">0</span>/test)</span><span class="val" id="billSurcharge">+&#8358;0</span></div>
-            <div class="bill-line" id="subtotalLine" style="display:none"><span class="lbl">Subtotal</span><span class="val" id="billSubtotal">&#8358;0</span></div>
-            <div class="bill-line" style="align-items:center"><span class="lbl">MD discount %</span><input type="text" id="mdDisc" inputmode="numeric" placeholder="0" style="width:64px;height:32px;border:1px solid var(--border);border-radius:6px;text-align:right;padding:0 8px;font-family:'DM Mono',monospace;font-size:13.5px;background:var(--white)"></div>
-            <div class="bill-line" id="discLine" style="display:none"><span class="lbl">Discount (<span id="billDiscPct">0</span>%)</span><span class="val neg" id="billDiscount">&minus;&#8358;0</span></div>
-            <div class="bill-line"><span class="lbl">Referrer rebate (<span id="billRebatePct">0</span>%) &middot; monthly</span><span class="val" style="color:var(--mist)" id="billRebate">&#8358;0</span></div>
-            <div class="bill-line total"><span>Total payable</span><span class="val" id="billNet">&#8358;0</span></div>
+            <div class="bill-line"><span class="lbl">tests</span><span class="val" id="billCount">0</span></div>
+            <div class="bill-line"><span class="lbl">gross</span><span class="val" id="billGross">&#8358;0</span></div>
+            <div class="bill-line" id="surchargeLine" style="display:none"><span class="lbl">surcharge (<span id="billSurRate">0</span>/test)</span><span class="val" id="billSurcharge">+&#8358;0</span></div>
+            <div class="bill-line" id="subtotalLine" style="display:none"><span class="lbl">subtotal</span><span class="val" id="billSubtotal">&#8358;0</span></div>
+            <div class="bill-line"><span class="lbl">MD discount %</span><input type="text" id="mdDisc" inputmode="numeric" placeholder="0"></div>
+            <div class="bill-line" id="discLine" style="display:none"><span class="lbl">discount (<span id="billDiscPct">0</span>%)</span><span class="val neg" id="billDiscount">&minus;&#8358;0</span></div>
+            <div class="bill-line" id="levyLine" style="display:none"><span class="lbl">levy &middot; per patient</span><span class="val" id="billLevy">+&#8358;200</span></div>
+            <div class="bill-line"><span class="lbl">rebate (<span id="billRebatePct">0</span>%) &middot; monthly statement</span><span class="val" id="billRebate">&#8358;0</span></div>
+            <div class="bill-line total"><span>net payable</span><span class="val" id="billNet">&#8358;0</span></div>
             <div class="editable-net">
               <label>Final amount (editable)</label>
               <input type="text" id="finalAmount" inputmode="numeric">
@@ -638,98 +777,104 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
                 <input type="text" id="adjReason" placeholder="e.g. negotiated, staff, partial test" maxlength="80">
               </div>
             </div>
-            <button class="btn" id="registerBtn" onclick="doRegister()">Register &amp; issue lab no.</button>
-            <div class="bill-note" id="targetNote"></div>
+            <button class="btn" id="registerBtn" onclick="doRegister()">register &amp; issue number</button>
+            <div class="bill-note" id="targetNote">prints the label and the receipt</div>
           </div>
         </div>
       </div>
       <div id="afterRegister"></div>
     </section>
-    <div class="mob-total" id="mobTotal" aria-hidden="true">
-      <div class="mt-l"><div class="mt-k">Total payable</div><div class="mt-v money" id="mtVal">&#8358;0</div><div class="mt-n" id="mtN">No tests yet</div></div>
-      <button class="btn" type="button" onclick="doRegister()">Register</button>
-    </div>
+    <div class="mob-total hidden" id="mobTotal" aria-hidden="true"><span id="mtVal"></span><span id="mtN"></span></div>
 
     <!-- ======== FIND PATIENT ======== -->
     <section class="view" id="v-find">
-      <div class="eyebrow">Front desk</div>
-      <h2 class="vt">Find patient</h2>
-      <p class="vsub">Search by any part of a name. Visits group under the person, newest first.</p>
-      <div class="searchbar">
-        <input type="text" id="nameInput" placeholder="e.g. esther, ezenyili">
-        <button class="btn" onclick="searchByName()" id="nameSearchBtn">Search</button>
+      <div class="card">
+        <div class="vhead"><h2 class="vt">Find patient</h2><span class="eyebrow">Front desk</span></div>
+        <p class="vsub">any part of a name &mdash; visits group under the person, newest first</p>
+        <div class="searchbar" style="margin-top:12px">
+          <input type="text" id="nameInput" placeholder="e.g. esther, ezenyili">
+          <button class="btn" onclick="searchByName()" id="nameSearchBtn">search</button>
+        </div>
+        <div id="searchStatusBar" class="hidden" style="margin-top:10px"></div>
+        <div id="searchResults"></div>
       </div>
-      <div id="searchStatusBar" class="hidden"></div>
-      <div id="searchResults"></div>
       <p class="foot-note">Every visit keeps its own lab number &mdash; open one to re-print a report or check payment.</p>
     </section>
 
     <!-- ======== ENTER RESULTS ======== -->
     <section class="view" id="v-results">
-      <div class="eyebrow">Laboratory</div>
-      <h2 class="vt">Enter results</h2>
-      <p class="vsub">Pull a lab number, type values against labelled fields. Out-of-range values flag as you type.</p>
-      <div class="searchbar">
-        <input type="number" id="entryLabInput" placeholder="Lab number &mdash; e.g. 6208" min="2">
-        <button class="btn" onclick="loadEntryPatient()" id="entrySearchBtn">Load</button>
-      </div>
-      <div id="entryStatusBar" class="hidden"></div>
-      <div id="entryCard" class="card hidden">
-        <div class="card-title">Patient</div>
-        <div class="patient-grid" id="entryPatientGrid"></div>
-        <div class="card-title" style="margin-top:.5rem">Tests requested</div>
-        <div class="badges" id="entryTestsBadges"></div>
-        <hr class="divider">
-        <div id="entryFields"></div>
-        <div class="analyst-row">
-          <label class="fld">Analyst name<input type="text" id="analystName" placeholder="Who is entering these results?"></label>
-          <button class="btn" onclick="saveResults()" id="saveBtn">Save results</button>
+      <div class="two-col">
+        <div class="card">
+          <div class="vhead"><h2 class="vt">Enter results</h2><span class="eyebrow">Laboratory</span></div>
+          <div class="searchbar" style="margin-top:12px">
+            <input type="number" id="entryLabInput" placeholder="lab number &mdash; e.g. 6208" min="2">
+            <button class="btn" onclick="loadEntryPatient()" id="entrySearchBtn">load</button>
+          </div>
+          <div id="entryStatusBar" class="hidden" style="margin-top:10px"></div>
+          <div id="entryCard" class="hidden" style="margin-top:14px">
+            <div class="card-title">Patient</div>
+            <div class="patient-grid" id="entryPatientGrid"></div>
+            <div class="card-title">Tests requested</div>
+            <div class="badges" id="entryTestsBadges"></div>
+            <hr class="divider">
+            <div id="entryFields"></div>
+            <div class="analyst-row">
+              <label class="fld"><input type="text" id="analystName" placeholder="analyst name &mdash; who is entering these?"></label>
+              <button class="btn" onclick="saveResults()" id="saveBtn">save results</button>
+            </div>
+          </div>
+        </div>
+        <div class="aside">
+          <div class="deep"><div class="cap">Working on</div><div class="num" id="wkNum">&mdash;</div><div class="sub" id="wkSub">load a lab number to begin</div></div>
+          <div class="card"><div class="card-title">How it reads</div><div class="foot-note" style="padding:0">Sections open only for what was ordered. Out-of-range values turn amber as you type. Tap-buttons mean the sheet decided the options.</div></div>
         </div>
       </div>
-      <p class="foot-note">Fields group by section &mdash; Chemistry, Haematology, Hormones &amp; Serology, Microbiology, Andrology.</p>
     </section>
 
     <!-- ======== GENERATE REPORT ======== -->
     <section class="view" id="v-report">
-      <div class="eyebrow">Laboratory</div>
-      <h2 class="vt">Generate report</h2>
-      <p class="vsub">Review the entered results against reference ranges, then download the signed report.</p>
-      <div class="searchbar">
-        <input type="number" id="labInput" placeholder="Lab number &mdash; e.g. 6207" min="2">
-        <button class="btn" onclick="searchPatient()" id="searchBtn">Load</button>
-      </div>
-      <div id="statusBar" class="hidden"></div>
-      <div id="patientCard" class="card hidden">
-        <div class="card-title">Patient</div>
-        <div class="patient-grid" id="patientGrid"></div>
-        <div class="card-title" style="margin-top:.5rem">Tests requested</div>
-        <div class="badges" id="testsBadges"></div>
-        <hr class="divider">
-        <div class="card-title">Sections with data</div>
-        <div class="sections-grid" id="sectionsGrid"></div>
-        <div id="resultsPreview"></div>
-        <hr class="divider">
-        <div class="gen-row">
-          <div class="gen-note" id="genNote"></div>
-          <button class="btn" onclick="generateReport()" id="genBtn">Download report (.docx)</button>
+      <div class="two-col">
+        <div class="card">
+          <div class="vhead"><h2 class="vt">Generate report</h2><span class="eyebrow">Laboratory</span></div>
+          <div class="searchbar" style="margin-top:12px">
+            <input type="number" id="labInput" placeholder="lab number &mdash; e.g. 6207" min="2">
+            <button class="btn" onclick="searchPatient()" id="searchBtn">load</button>
+          </div>
+          <div id="statusBar" class="hidden" style="margin-top:10px"></div>
+          <div id="patientCard" class="hidden" style="margin-top:14px">
+            <div class="card-title">Patient</div>
+            <div class="patient-grid" id="patientGrid"></div>
+            <div class="card-title">Tests requested</div>
+            <div class="badges" id="testsBadges"></div>
+            <hr class="divider">
+            <div class="card-title">Sections with data</div>
+            <div class="sections-grid" id="sectionsGrid"></div>
+            <div id="resultsPreview"></div>
+            <hr class="divider">
+            <div class="gen-row">
+              <div class="gen-note" id="genNote"></div>
+              <button class="btn" onclick="generateReport()" id="genBtn">download report (.docx)</button>
+            </div>
+          </div>
+        </div>
+        <div class="aside">
+          <div class="card"><div class="card-title">On the report</div><div class="foot-note" style="padding:0">Header carries the lab number, both addresses and the analyst who entered the values. Antibiograms print as Sensitive / Intermediate / Resistant.</div></div>
         </div>
       </div>
-      <p class="foot-note">The report header carries the lab number and both lab addresses.</p>
     </section>
 
     <!-- ======== REBATES ======== -->
     <section class="view" id="v-rebates">
-      <div class="vhead">
+      <div class="head-card">
         <div>
-          <div class="eyebrow rest">Management &middot; Restricted</div>
-          <h2 class="vt">Rebates</h2>
-          <p class="vsub">What you owe each referrer for the month, rebuilt registration by registration from the tracker. Each test earns rebate on its own base &mdash; full price normally, Evashalom's lab cut only for sublet tests.</p>
+          <div class="vhead" style="justify-content:flex-start;gap:10px"><h2 class="vt">Rebates</h2><span class="eyebrow rest">&#9679; Restricted</span></div>
+          <p class="vsub">rebuilt registration by registration from the tracker &mdash; a statement can never disagree with the day. Each test earns on its own base: full price normally, the lab cut for sublet tests.</p>
         </div>
         <div class="reb-controls">
           <select id="rebMonth"><option value="">Loading months&hellip;</option></select>
-          <button class="btn" id="rebBuildBtn" onclick="buildRebates()">Build statements</button>
+          <button class="btn" id="rebBuildBtn" onclick="buildRebates()">build</button>
           <div class="exp-wrap" id="expWrap" style="display:none">
-            <button class="btn ghost" type="button" onclick="toggleExportMenu(event)" id="expBtn">Export &#9662;</button>
+            <button class="btn ghost" type="button" onclick="toggleExportMenu(event)" id="expBtn">export &#9662;</button>
             <div class="exp-menu" id="expMenu">
               <button type="button" onclick="exportDoctorRebates()">Doctors &mdash; rebate totals</button>
               <button type="button" onclick="exportHospitalRebates()">Hospitals &mdash; rebate totals</button>
@@ -743,52 +888,52 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       <div id="rebStatus" class="hidden"></div>
       <div id="rebWarn" class="hidden"></div>
       <div id="rebTable"></div>
-      <p class="foot-note">Rebate base is per test: full price for a normal test, the <span class="mono">LAB CUT</span> (price list column H) for a sublet test &mdash; a sublet test with no lab cut earns nothing. The per-test surcharge is not rebateable, and MD discounts are absorbed by Evashalom without reducing what a referrer earns. Figures are never read from the AMOUNT column.</p>
+      <p class="foot-note">The per-test surcharge and the per-patient levy are not rebateable, and MD discounts are absorbed by Evashalom without reducing what a referrer earns. Figures are never read from the AMOUNT column.</p>
     </section>
 
     <!-- ======== ANALYTICS ======== -->
     <section class="view" id="v-analytics">
-      <div class="eyebrow rest">Management &middot; Restricted</div>
-      <h2 class="vt">Analytics</h2>
-      <p class="vsub">Money, test volumes and referrer value for a month or quarter, rebuilt straight from the tracker. Read-only &mdash; nothing here writes to any sheet.</p>
-      <div class="ana-controls">
-        <select id="anaMode" onchange="anaModeChanged()"><option value="month">Month</option><option value="quarter">Quarter</option></select>
-        <select id="anaKey"><option value="">Loading&hellip;</option></select>
-        <button class="btn" id="anaBuildBtn" onclick="buildAnalytics()">Build</button>
-        <span style="flex:1"></span>
-        <div class="ana-tabs" id="anaTabs" style="display:none">
-          <button class="on" id="anaTabDash" onclick="anaShowTab('dash')">Dashboard</button>
-          <button id="anaTabDeep" onclick="anaShowTab('deep')">Deep-dive</button>
+      <div class="head-card">
+        <div>
+          <div class="vhead" style="justify-content:flex-start;gap:10px"><h2 class="vt">Analytics</h2><span class="eyebrow rest">&#9679; Restricted</span></div>
+          <p class="vsub">read-only &mdash; nothing here writes to any sheet. Month or quarter; yearly is deliberately not offered.</p>
         </div>
-        <button class="btn ghost" id="anaCsvBtn" style="display:none;height:36px;font-size:12px" onclick="anaExportCsv(false)">CSV</button>
-        <button class="btn ghost" id="anaPdfBtn" style="display:none;height:36px;font-size:12px" onclick="anaPrintSummary()">Print summary</button>
+        <div class="ana-controls">
+          <select id="anaMode" onchange="anaModeChanged()"><option value="month">Month</option><option value="quarter">Quarter</option></select>
+          <select id="anaKey"><option value="">Loading&hellip;</option></select>
+          <button class="btn" id="anaBuildBtn" onclick="buildAnalytics()">build</button>
+          <div class="ana-tabs" id="anaTabs" style="display:none">
+            <button class="on" id="anaTabDash" onclick="anaShowTab('dash')">Dashboard</button>
+            <button id="anaTabDeep" onclick="anaShowTab('deep')">Deep-dive</button>
+          </div>
+          <button class="btn ghost" id="anaCsvBtn" style="display:none" onclick="anaExportCsv(false)">CSV</button>
+          <button class="btn ghost" id="anaPdfBtn" style="display:none" onclick="anaPrintSummary()">print summary</button>
+        </div>
       </div>
       <div id="anaStatus" class="hidden"></div>
       <div id="anaDash" style="display:none"></div>
       <div id="anaDeep" style="display:none"></div>
-      <p class="foot-note">Gross figures are rebuilt from the live price list; the AMOUNT column supplies recorded income. Tests that don't match the price list are counted under &ldquo;unmatched&rdquo; and shown, never dropped. Yearly totals are deliberately not offered &mdash; early hand-entered months would blend into clean data and mislead.</p>
     </section>
 
     <!-- ======== EDIT RECORDS ======== -->
     <section class="view" id="v-records">
-      <div class="eyebrow rest">Management &middot; Restricted</div>
-      <h2 class="vt">Edit records</h2>
-      <p class="vsub">Open a lab number and correct it &mdash; mark a bill paid, add a test the patient came back for, or record the doctor they forgot to mention. Every change leaves a note on the record.</p>
-      <div class="searchbar">
-        <input type="number" id="recLabInput" placeholder="Lab number &mdash; e.g. 6206" min="2">
-        <button class="btn" onclick="loadRecord()" id="recLoadBtn">Open</button>
+      <div class="card">
+        <div class="vhead" style="justify-content:flex-start;gap:10px"><h2 class="vt">Edit records</h2><span class="eyebrow rest">&#9679; Restricted</span></div>
+        <p class="vsub">mark a bill paid, add a test the patient came back for, fix the referring doctor &mdash; nothing is deleted, every change leaves a note</p>
+        <div class="searchbar" style="margin-top:12px">
+          <input type="number" id="recLabInput" placeholder="lab number &mdash; e.g. 6206" min="2">
+          <button class="btn" onclick="loadRecord()" id="recLoadBtn">open</button>
+        </div>
+        <div id="recStatusBar" class="hidden" style="margin-top:10px"></div>
       </div>
-      <div id="recStatusBar" class="hidden"></div>
-      <div id="recCard" class="card hidden">
-        <div class="card-title">Record</div>
-        <div class="rec-grid" id="recGrid"></div>
-        <hr class="divider">
-        <div class="reg-grid" style="margin-top:0">
+      <div id="recCard" class="hidden">
+        <div class="card" style="margin-bottom:10px"><div class="card-title">Record</div><div class="rec-grid" id="recGrid"></div></div>
+        <div class="reg-grid">
           <div class="reg-left">
             <div>
               <div class="sec-h">Tests</div>
               <div class="test-search">
-                <input type="text" id="recTestSearch" placeholder="Type to add a test&hellip;" autocomplete="off">
+                <input type="text" id="recTestSearch" placeholder="type to add a test&hellip;" autocomplete="off">
                 <div class="test-results" id="recTestResults"></div>
               </div>
               <div id="recChosenTests"></div>
@@ -796,15 +941,15 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
             <div>
               <div class="sec-h">Referral &amp; payment</div>
               <div class="fgrid c11">
-                <label class="fld">Referral type<select id="recRefType"><option value="na">N/A &mdash; not available</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
-                <label class="fld">Referrer<select id="recRefName"><option value="">&mdash;</option></select></label>
+                <label class="fld"><select id="recRefType"><option value="na">N/A &mdash; no referrer</option><option value="self">Self</option><option value="doctor">Doctor</option><option value="hospital">Hospital / Clinic</option></select></label>
+                <label class="fld"><select id="recRefName"><option value="">referrer &mdash;</option></select></label>
               </div>
               <div class="fgrid c11">
-                <label class="fld">Payment mode<select id="recPayMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
-                <label class="fld">Payment status<select id="recPayStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
+                <label class="fld"><select id="recPayMode"><option>Cash</option><option>POS</option><option>Transfer</option><option>POS/Cash</option></select></label>
+                <label class="fld"><select id="recPayStatus"><option>Paid</option><option>Not Paid</option><option>Part Paid</option><option>C/O Director</option></select></label>
               </div>
               <div class="fgrid c11">
-                <label class="fld">Phone<input type="text" id="recPhone" class="mono-in"></label>
+                <label class="fld"><input type="text" id="recPhone" class="mono-in" placeholder="phone"></label>
               </div>
               <div class="reb-note" id="recRefNote"></div>
             </div>
@@ -813,17 +958,18 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
             <div class="bill-hd">
               <div class="cap">Suggested bill</div>
               <div class="num" id="recSuggested">&#8358;0</div>
-              <div class="bars"></div>
+              <div class="bars" aria-hidden="true"></div>
             </div>
             <div class="bill-bd">
-              <div class="bill-line"><span class="lbl">Tests</span><span class="val" id="recBillCount">0</span></div>
-              <div class="bill-line"><span class="lbl">Gross</span><span class="val money" id="recBillGross">&#8358;0</span></div>
-              <div class="bill-line" id="recSurLine" style="display:none"><span class="lbl">Surcharge (<span id="recSurRate">0</span>/test)</span><span class="val money" id="recBillSur">+&#8358;0</span></div>
-              <div class="bill-line"><span class="lbl">Referrer rebate (<span id="recRebPct">0</span>%) &middot; monthly</span><span class="val money" style="color:var(--mist)" id="recBillRebate">&#8358;0</span></div>
+              <div class="bill-line"><span class="lbl">tests</span><span class="val" id="recBillCount">0</span></div>
+              <div class="bill-line"><span class="lbl">gross</span><span class="val money" id="recBillGross">&#8358;0</span></div>
+              <div class="bill-line" id="recSurLine" style="display:none"><span class="lbl">surcharge (<span id="recSurRate">0</span>/test)</span><span class="val money" id="recBillSur">+&#8358;0</span></div>
+              <div class="bill-line" id="recLevyLine" style="display:none"><span class="lbl">levy &middot; per patient</span><span class="val money" id="recBillLevy">+&#8358;200</span></div>
+              <div class="bill-line"><span class="lbl">rebate (<span id="recRebPct">0</span>%) &middot; monthly</span><span class="val money" id="recBillRebate">&#8358;0</span></div>
               <div class="editable-net">
                 <label>Amount recorded (editable)</label>
                 <input type="text" id="recAmount" inputmode="numeric">
-                <div class="rec-suggest" id="recSuggestRow" style="display:none">Suggested from tests: <b class="mono money" id="recSuggestVal"></b> <button type="button" onclick="recUseSuggested()">Use it</button></div>
+                <div class="rec-suggest" id="recSuggestRow" style="display:none">suggested from tests: <b class="mono money" id="recSuggestVal"></b> <button type="button" onclick="recUseSuggested()">use it</button></div>
               </div>
               <button class="btn" id="recUpdateBtn" onclick="updateRecord()" disabled>No changes yet</button>
               <div class="bill-note" id="recNote"></div>
@@ -831,27 +977,59 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
           </div>
         </div>
       </div>
-      <p class="foot-note">Adding a test or changing the referrer never changes the recorded amount by itself &mdash; the suggested figure is shown and you choose whether to apply it. A referrer change also updates the rebate % so they appear on the next statement. Each save appends an <span class="mono">EDIT</span> note to the record's comments.</p>
     </section>
 
-  </main>
+    <!-- ======== LABEL & RECEIPT ======== -->
+    <section class="view" id="v-print">
+      <div class="print-grid">
+        <div class="card">
+          <div class="vhead"><h2 class="vt">Label &amp; receipt</h2><span class="eyebrow" id="prIssued">&mdash;</span></div>
+          <p class="vsub">one number, three pieces of paper &mdash; sticker on the tube, receipt to the patient, header on the report</p>
+          <div class="lbl-mono" style="margin-top:14px">Tube sticker &middot; 50 &times; 25 mm</div>
+          <div class="sticker-wrap">
+            <div class="specimen" id="stickerEl">
+              <div class="peel"></div>
+              <div class="body"><div class="cap">Evashalom &middot; Asaba</div><div class="num" id="stkNum">ES&mdash;/26</div><div class="nmtxt" id="stkName">&mdash;</div><div class="bars" aria-hidden="true"></div></div>
+              <div class="edge"></div>
+            </div>
+          </div>
+          <div class="print-actions">
+            <button class="btn" type="button" onclick="printSticker()">print sticker</button>
+            <button class="btn go" type="button" onclick="printReceipt()">print receipt</button>
+            <button class="btn ghost" type="button" onclick="show('home')">back to today</button>
+          </div>
+          <div class="after-actions" style="margin-top:10px">
+            <button class="btn ghost" type="button" onclick="resetForm();show('register')">register another patient</button>
+            <button class="btn ghost" type="button" id="prAddTest">forgot a test?</button>
+          </div>
+        </div>
+        <div class="card rc">
+          <div class="lbl-mono">Receipt &middot; 80 mm roll</div>
+          <div class="sheet" id="rcptPrev"><div class="c" style="color:#999;padding:20px 0">no registration yet this session</div></div>
+        </div>
+      </div>
+    </section>
+
+    </main>
+  </div>
+</div>
 </div>
 
 <!-- REGISTRATION CONFIRM -->
 <div class="sgate hidden" id="regConfirm">
   <div class="sgate-in confirm-in">
-    <div class="cg" style="color:var(--teal)">Confirm registration</div>
+    <div class="cg">Confirm registration</div>
     <h3 id="rcName">&mdash;</h3>
     <div class="rc-sum" id="rcSummary"></div>
     <div class="rc-dup hidden" id="rcDup"></div>
     <div class="rc-actions">
-      <button class="btn ghost" type="button" onclick="cancelRegister()">Go back</button>
-      <button class="btn" type="button" id="rcGo" onclick="confirmRegister()">Register &amp; issue lab no.</button>
+      <button class="btn ghost" type="button" onclick="cancelRegister()">go back</button>
+      <button class="btn" type="button" id="rcGo" onclick="confirmRegister()">register &amp; issue number</button>
     </div>
   </div>
 </div>
 
-<!-- SECTION GATE (Rebates / Edit records) -->
+<!-- SECTION GATE (Rebates / Analytics / Edit records) -->
 <div class="sgate hidden" id="sgate">
   <div class="sgate-in">
     <div class="cg">&#9679; Restricted</div>
@@ -861,7 +1039,7 @@ h2.vt{font-family:'Poppins',sans-serif;font-weight:600;letter-spacing:-.02em;fon
       <input id="sgateCode" type="password" inputmode="numeric" maxlength="6" placeholder="Passcode" autocomplete="off" aria-label="Management passcode">
       <button type="submit" aria-label="Enter">&rarr;</button>
     </form>
-    <div class="err" id="sgateErr" role="status" style="margin-top:.8rem;font-size:12.5px;color:var(--red);min-height:1em"></div>
+    <div class="err" id="sgateErr" role="status"></div>
     <button class="cancel" type="button" onclick="sgateCancel()">Cancel</button>
   </div>
 </div>
@@ -871,7 +1049,7 @@ const LOGO='/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
 const LOGO_B64 = LOGO;
 
 /* ================= CONFIG (unchanged from the proven apps) ================= */
-const BUILD = '2026-09-18';   // bump on every deploy — shown in the rail so the live version is never in doubt
+const BUILD = '2026-09-19b';  // bump on every deploy — shown in the rail so the live version is never in doubt
 
 /* ---- YEAR-SCOPED CONFIG — the annual rollover checklist ----
    At the start of a new year: set LAB_YEAR, point PATIENT_GID at the new
@@ -881,6 +1059,19 @@ const BUILD = '2026-09-18';   // bump on every deploy — shown in the rail so t
 const LAB_YEAR = 2026;
 const LAB_YY = String(LAB_YEAR).slice(-2);
 function labNo(n){ return 'ES' + n + '/' + LAB_YY; }
+
+/* ---- STATUTORY LEVY ----
+   A flat ₦200 every registered patient pays on top of their bill — per lab
+   number, not per test. Never discounted, never rebateable, and not
+   Evashalom's income: it is collected and passed on. Charged on every
+   registration made by this build; rows dated before LEVY_START are rebuilt
+   without it so Analytics still reconciles with the AMOUNT column. */
+const LEVY = 200;
+const LEVY_START = '2026-09-20';   // yyyy-mm-dd — the day this build went live
+function levyForDate(raw){         // tracker date cell → the levy that row carried
+  const f = parseFullDate(raw); if(!f) return 0;
+  return (f.y*10000 + f.m*100 + f.d) >= parseInt(LEVY_START.replace(/-/g,''), 10) ? LEVY : 0;
+}
 const PATIENT_ID = '1G2NmMZoyk_JpzJwlpGap7HCg0UBAbe6khMA9z5B-fnQ';
 const PATIENT_GID = '16221607';          // the LAB_YEAR tab on the patient tracker
 const RESULT_ID  = '1n6un2Nv6wtcmFoH7QWfDN8RL4pJg60rZqo3kntk40mA';
@@ -942,9 +1133,8 @@ function dropTracker(){ dropSheet(PATIENT_ID, PATIENT_GID); }
 function dropResults(){ Object.keys(GIDS).forEach(function(k){ dropSheet(RESULT_ID, GIDS[k]); }); }
 function dropAllSheets(){ Object.keys(sheetCache).forEach(function(k){ delete sheetCache[k]; }); }
 function paintFreshness(){
-  const el = document.getElementById('freshAt');
-  if(!el) return;
-  el.textContent = lastSheetLoadAt ? lastSheetLoadAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+  const t = lastSheetLoadAt ? lastSheetLoadAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+  ['freshAt','tbFresh','needsFresh'].forEach(function(id){ const el=document.getElementById(id); if(el) el.textContent=t; });
 }
 async function refreshAllData(){
   const btn = document.getElementById('refreshBtn');
@@ -1041,13 +1231,24 @@ var NAV=[
     ['records','Edit records',true,'Correct a registration, mark bills paid','Records']]}
 ];
 
+// Icon rail: 16px stroke glyphs, one per view, groups split by hairlines.
+// Restricted items sit in orange until active; the label appears on hover.
+var NAV_ICONS = {
+  home:     '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  register: '<svg viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.5"/><path d="M3 20a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg>',
+  find:     '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  results:  '<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3"/><path d="M7 15h10"/></svg>',
+  report:   '<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg>',
+  rebates:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4"/></svg>',
+  analytics:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  records:  '<svg viewBox="0 0 24 24"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="m13 7 3 3"/></svg>'
+};
 function buildNav(){
   var html='';
-  NAV.forEach(function(g){
-    html+='<div class="nav-label">'+g.label+'</div>';
+  NAV.forEach(function(g, gi){
+    if(gi>0) html+='<div class="nav-hr"></div>';
     g.items.forEach(function(it){
-      var dot=it[2]?'<span class="dot-r"></span>':'';
-      html+='<a data-v="'+it[0]+'"><span class="lbl"><span class="full">'+it[1]+'</span><span class="short">'+(it[4]||it[1])+'</span></span>'+dot+'</a>';
+      html+='<a data-v="'+it[0]+'" class="'+(it[2]?'restricted':'')+'" title="'+it[1]+'">'+(NAV_ICONS[it[0]]||'')+'<span class="lbl">'+it[1]+(it[2]?' · restricted':'')+'</span></a>';
     });
   });
   document.getElementById('nav').innerHTML=html;
@@ -1117,11 +1318,92 @@ function enterShell(v){
   document.getElementById('shell').classList.add('on');
   show(v||'home');
 }
-function goWelcome(){
-  document.getElementById('shell').classList.remove('on');
-  document.getElementById('welcome').classList.remove('hidden');
-  window.scrollTo(0,0);
+// No welcome screen in this shell — the brand mark simply returns to Today.
+function goWelcome(){ showNow('home'); }
+
+/* ---- Sign-in: role chips + PIN keypad feeding the hidden #code input ---- */
+var currentRole = memGet('sessionStorage','ev.role') || 'Reception';
+var ROLE_NOTES = {
+  Reception:  'Reception sees registration, search and the day.',
+  Laboratory: 'Laboratory sees results entry and reports.',
+  Management: 'Management sees rebates, analytics and record edits.'
+};
+window.setRole = function(btn){
+  currentRole = btn.getAttribute('data-role');
+  [].forEach.call(document.querySelectorAll('#roles button'), function(b){ b.classList.toggle('on', b===btn); });
+  document.getElementById('roleNote').textContent = ROLE_NOTES[currentRole] || '';
+};
+window.pinKey = function(k){
+  var inp = document.getElementById('code');
+  if(k==='clear') inp.value='';
+  else if(k==='back') inp.value=inp.value.slice(0,-1);
+  else if(inp.value.length<6) inp.value+=k;
+  paintPin();
+  if(inp.value.length===4) unlock();   // four digits — go
+};
+function paintPin(){
+  var n=document.getElementById('code').value.length;
+  [].forEach.call(document.querySelectorAll('#pinDots span'), function(s,i){ s.classList.toggle('on', i<n); });
 }
+function paintRoleStamps(){
+  var r=(currentRole||'Reception').toUpperCase();
+  ['railRole','tbRole'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=r; });
+}
+window.signOut = function(){
+  memDel('sessionStorage','ev.unlocked'); memDel('sessionStorage','ev.role');
+  location.reload();
+};
+// Physical keyboard on the sign-in screen types into the PIN too.
+document.addEventListener('keydown', function(e){
+  if(document.getElementById('gate').style.display==='none') return;
+  if(/^[0-9]$/.test(e.key)) { pinKey(e.key); e.preventDefault(); }
+  else if(e.key==='Backspace') { pinKey('back'); e.preventDefault(); }
+  else if(e.key==='Enter') { unlock(); e.preventDefault(); }
+});
+
+/* ---- Command bar: a lab number jumps to the record, a name searches ---- */
+window.cmdKey = function(e){
+  if(e.key!=='Enter') return;
+  var q=e.target.value.trim(); if(!q) return;
+  e.target.value='';
+  var m=q.match(/^(?:ES)?\s*(\d{1,6})(?:\/\d{2})?$/i);
+  if(m){ openLabFor('report', parseInt(m[1],10)); return; }
+  show('find');
+  var ni=document.getElementById('nameInput'); ni.value=q; searchByName();
+};
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    var c=document.getElementById('cmdInput');
+    if(c && document.getElementById('shell').classList.contains('on')){ e.preventDefault(); c.focus(); c.select(); }
+  }
+});
+// Open a lab number in a given view (report / results / records), loading it.
+window.openLabFor = function(view, lab){
+  if(view==='records'){ openRecordsFor(lab); return; }
+  show(view);
+  if(view==='results'){ document.getElementById('entryLabInput').value=lab; loadEntryPatient(); }
+  else { document.getElementById('labInput').value=lab; searchPatient(); }
+};
+
+/* ---- Theme: system by default, manual override persists on this device ---- */
+window.toggleTheme = function(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var sysDark=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var isDark = cur ? cur==='dark' : sysDark;
+  var next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  memSet('localStorage','ev.theme', next);
+};
+(function(){ var t=memGet('localStorage','ev.theme'); if(t) document.documentElement.setAttribute('data-theme', t); })();
+
+/* ---- Top-bar clock ---- */
+function paintClock(){
+  var d=new Date();
+  var s=d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'}).replace(/,/g,'').toUpperCase()
+        +' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  var e=document.getElementById('tbDate'); if(e) e.textContent=s;
+}
+setInterval(paintClock, 30000);
 // Passcodes are never stored in source — only salted SHA-256 digests are.
 // This keeps them out of casual View Source reading; it is deterrence, not
 // real security (nothing on a static page is).
@@ -1189,10 +1471,12 @@ async function unlock(){
   var v=document.getElementById('code').value.trim();
   if(await checkCode(v, GATE_HASH)){
     document.getElementById('gate').style.display='none';
-    document.getElementById('welcome').classList.remove('hidden');
+    memSet('sessionStorage','ev.role', currentRole);
+    paintRoleStamps(); paintClock();
+    enterShell('home');
   }else{
-    document.getElementById('gateErr').textContent='That passcode is not recognised.';
-    document.getElementById('code').value=''; document.getElementById('code').focus();
+    document.getElementById('gateErr').textContent='That PIN is not recognised.';
+    document.getElementById('code').value=''; paintPin();
   }
 }
 
@@ -1228,24 +1512,79 @@ async function loadToday(){
     document.getElementById('figUnpaid').textContent=naira(unpaid);
     document.getElementById('figMoney').textContent=naira(money);
     renderTodayRows(todayRows.reverse());
+    paintWeek(rows);
+    paintNeeds(todayRows);
     applyPrivacy();
   }catch(e){
     document.getElementById('todayPrev').textContent='(could not reach the tracker — check sharing)';
     document.getElementById('regList').innerHTML='<div class="reg-empty">Could not reach the tracker.</div>';
   }
 }
+// The queue: every row states its single next action, computed from state —
+// no results on any sheet yet → "enter results"; results present → "generate
+// report". The newest row without results is the one the bench takes next.
+var todayQueue = [];
 function renderTodayRows(list){
   var box=document.getElementById('regList');
+  todayQueue = list;
   if(!list.length){ box.innerHTML='<div class="reg-empty">No registrations on the tracker yet today.</div>'; return; }
   box.innerHTML=list.map(function(r){
     var due=/not\s*paid/i.test(r.payStatus);
-    var pay=due?naira(r.amount)+' due':(r.payStatus||'—');
-    return '<div class="regrow" onclick="openLab('+r.lab+')">'
+    var pay=due?naira(r.amount)+' due':(r.payStatus||'paid');
+    return '<div class="regrow" id="qrow_'+r.lab+'" onclick="queueGo('+r.lab+')">'
       +'<span class="lab">'+labNo(r.lab)+'</span>'
       +'<span class="mid"><span class="nm">'+escHtml(r.name)+'</span><span class="ts">'+escHtml(r.tests||'—')+'</span></span>'
       +'<span class="pay'+(due?' due':'')+(due?' money':'')+'">'+pay+'</span>'
+      +'<span class="act" id="qact_'+r.lab+'">…</span>'
       +'</div>';
   }).join('');
+  paintQueueActions(list);
+}
+// Results sheets are cached, so after the first load this is instant.
+async function paintQueueActions(list){
+  try{
+    const sheets = await Promise.all(Object.keys(GIDS).map(function(k){ return fetchTabCsv(RESULT_ID, GIDS[k]).catch(function(){ return {cols:[],rows:[]}; }); }));
+    let nextMarked = false;
+    list.forEach(function(r){
+      const idx = r.lab - 2;
+      const has = sheets.some(function(s){ const row = s.rows[idx]; return row && row.some(function(v,ci){ return ci>2 && v; }); });
+      r.action = has ? 'report' : 'results';
+      const el = document.getElementById('qact_'+r.lab); if(!el) return;
+      el.textContent = has ? 'generate report' : 'enter results';
+      el.classList.toggle('done', false);
+      const row = document.getElementById('qrow_'+r.lab);
+      if(row && !has && !nextMarked){ row.classList.add('next'); nextMarked = true; }
+    });
+    if(!nextMarked && list.length){ const first=document.getElementById('qrow_'+list[0].lab); if(first) first.classList.add('next'); }
+  }catch(e){ list.forEach(function(r){ const el=document.getElementById('qact_'+r.lab); if(el) el.textContent='open'; }); }
+}
+window.queueGo = function(lab){
+  const r = todayQueue.find(function(x){ return x.lab===lab; });
+  openLabFor(r && r.action==='results' ? 'results' : 'report', lab);
+};
+// "This week": patients per day, Monday to Saturday of the current week.
+function paintWeek(rows){
+  const box=document.getElementById('weekBars'); if(!box) return;
+  const now=new Date(); const dow=(now.getDay()+6)%7;   // Mon=0
+  const mon=new Date(now); mon.setDate(now.getDate()-dow); mon.setHours(0,0,0,0);
+  const keys=[]; for(let i=0;i<6;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); keys.push(ddmmyyyy(d)); }
+  const counts={}; keys.forEach(function(k){ counts[k]=0; });
+  let carry='';
+  for(let i=Math.max(1,rows.length-2500);i<rows.length;i++){ const r=rows[i]; if(!r) continue; const dt=(r[0]||'').trim(); if(dt) carry=dt; if((r[1]||'').trim() && counts[carry]!==undefined) counts[carry]++; }
+  const vals=keys.map(function(k){ return counts[k]; }); const mx=Math.max.apply(null, vals.concat([1]));
+  const peak=vals.indexOf(mx);
+  box.innerHTML=vals.map(function(v,i){ return '<i style="height:'+Math.max(8, v/mx*100)+'%" title="'+keys[i]+': '+v+'" class="'+(i===peak&&v>0?'peak':'')+'"></i>'; }).join('');
+}
+// "Needs a person": only things the data can actually vouch for.
+function paintNeeds(todayRows){
+  const box=document.getElementById('needsList'); if(!box) return;
+  const unpaid=todayRows.filter(function(r){ return /not\s*paid/i.test(r.payStatus); }).length;
+  const items=[];
+  items.push(unpaid ? '<div><i class="o"></i>'+unpaid+' bill'+(unpaid>1?'s':'')+' unpaid today</div>' : '<div><i></i>No unpaid bills today</div>');
+  const lastM = new Date(); lastM.setDate(0);
+  items.push('<div><i class="k"></i>Rebate statements for '+lastM.toLocaleDateString('en-GB',{month:'long'})+' — build them in Rebates</div>');
+  items.push('<div><i></i>Sheets refreshed at <span class="mono" id="needsFresh">'+(lastSheetLoadAt?lastSheetLoadAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'—')+'</span></div>');
+  box.innerHTML=items.join('');
 }
 function openLab(labNum){
   show('report');
@@ -1392,11 +1731,14 @@ function testRebateBase(t){
 //      to the external lab, so no rebate is earned on it). Bookkeeping only:
 //      never deducted from the bill. The surcharge is not part of the base, and
 //      an MD discount does not reduce it — Evashalom absorbs the whole discount.
-//   4. the editable final-amount field can override the figure directly
+//   4. + the statutory levy: a flat LEVY per patient, after the discount, so
+//      it is never discounted. Not part of the rebate base either.
+//   5. the editable final-amount field can override the figure directly
 // One source of truth for the bill math. Registration and Edit records both
 // call this, so a later correction can never be priced differently from the
-// original registration.
-function billFor(tests, surRate, pct, discPct){
+// original registration. `levy` defaults to LEVY; Edit records and the
+// rebuilds pass levyForDate(row date) so pre-levy rows stay as they were.
+function billFor(tests, surRate, pct, discPct, levy){
   const gross=tests.reduce(function(s,c){return s+(c.price||0);},0);
   const surcharge=surRate*tests.length;
   const subtotal=gross+surcharge;
@@ -1406,8 +1748,10 @@ function billFor(tests, surRate, pct, discPct){
   const rebate=rebateBase*pct/100;
   const subletCount=tests.filter(function(c){ return c.sublet; }).length;
   const subletNoCut=tests.filter(function(c){ return c.sublet && !(c.labCut>0); }).length;
-  const net=discounted;
-  return {gross:gross,surRate:surRate,surcharge:surcharge,subtotal:subtotal,discPct:discPct,discount:discount,discounted:discounted,pct:pct,rebateBase:rebateBase,rebate:rebate,subletCount:subletCount,subletNoCut:subletNoCut,net:net};
+  if(levy===undefined) levy=LEVY;
+  levy = tests.length ? levy : 0;   // an empty bill carries no levy
+  const net=discounted+levy;
+  return {gross:gross,surRate:surRate,surcharge:surcharge,subtotal:subtotal,discPct:discPct,discount:discount,discounted:discounted,levy:levy,pct:pct,rebateBase:rebateBase,rebate:rebate,subletCount:subletCount,subletNoCut:subletNoCut,net:net};
 }
 function computeBill(){
   const discPct=Math.min(100,Math.max(0,num(document.getElementById('mdDisc').value)));
@@ -1466,6 +1810,10 @@ function recalc(){
   }else{
     discLine.style.display='none';
   }
+
+  const levyLine=document.getElementById('levyLine');
+  if(b.levy>0){ levyLine.style.display='flex'; document.getElementById('billLevy').textContent='+'+naira(b.levy); }
+  else levyLine.style.display='none';
 
   document.getElementById('billRebatePct').textContent=b.pct;
   document.getElementById('billRebate').textContent=naira(b.rebate);
@@ -1636,6 +1984,7 @@ window.doRegister=async function(){
     ['Location', payload.location]
   ];
   if(b.discPct>0) sum.push(['MD discount', b.discPct+'% (−'+naira(b.discount)+')']);
+  if(b.levy>0) sum.push(['Levy', naira(b.levy)+' per patient — included in the amount']);
   if(overridden) sum.push(['Amount adjusted', naira(b.net)+' → '+naira(finalAmt)+(adjReason?' — '+adjReason:' — no reason given')]);
   document.getElementById('rcSummary').innerHTML = sum.map(function(p){ return '<div><span>'+escHtml(p[0])+'</span><span>'+escHtml(p[1])+'</span></div>'; }).join('')
     + '<div class="tot"><span>Amount</span><span class="money">'+naira(finalAmt)+'</span></div>';
@@ -1723,6 +2072,8 @@ window.confirmRegister=async function(){
     // Lock the form: the details stay visible for the receipt, but nothing can
     // be re-submitted until "Register another patient" resets it.
     lockRegisterForm(true);
+    populatePrintView(lastRegistration);
+    show('print');   // the number becomes physical: sticker + receipt
     dropTracker();   // a new row exists — the next read must see it
     loadToday();
   }else{
@@ -1796,45 +2147,50 @@ window.printReceipt=function(){
     adj+='<tr><td colspan="2">Discount ('+b.discPct+'%)</td><td class="r neg">−'+naira(b.discount)+'</td></tr>';
     adj+='<tr class="sub"><td colspan="2">Subtotal after discount</td><td class="r">'+naira(b.discounted)+'</td></tr>';
   }
+  // The statutory levy is a flat per-patient charge on top of the bill.
+  if(b.levy>0){
+    adj+='<tr><td colspan="2">Levy (per patient)</td><td class="r">+'+naira(b.levy)+'</td></tr>';
+  }
   // The referrer rebate is an internal monthly payout — it never appears on the
   // patient's receipt and is never deducted from what they pay.
 
   // 80mm thermal roll: 72.1mm printable inside 80mm paper, up to 297mm long.
   // Single column, no side-by-side blocks — nothing fits two-up at 72mm.
   const win=window.open('','_blank','width=420,height=900');
-  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt '+labNo(R.labNum)+'</title>'+
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+labNo(R.labNum)+'</title>'+
   '<meta name="viewport" content="width=302">'+
+  '<style id="pg">@page{size:80mm 297mm;margin:0;}</style>'+
+  // Thermal head (203 dpi, monochrome): nothing under ~8pt, no grey fills —
+  // they dither into noise — and pure black ink throughout.
   '<style>'+
-  '@page{size:80mm 297mm;margin:0;}'+
-  '*{box-sizing:border-box;}'+
-  'body{font-family:"Segoe UI",Arial,sans-serif;color:#15303A;margin:0 auto;width:72.1mm;padding:3mm 0 4mm;font-size:9.5pt;line-height:1.35;}'+
-  '.hd{text-align:center;border-bottom:2px solid #1B3A6B;padding-bottom:2mm;}'+
-  '.hd img{width:14mm;height:14mm;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.5mm;}'+
-  '.hd h1{font-size:10pt;margin:0;color:#1B3A6B;line-height:1.2;letter-spacing:.01em;}'+
-  '.hd p{margin:1mm 0 0;font-size:6.6pt;color:#444;line-height:1.35;}'+
-  '.tag{text-align:center;background:#1B3A6B;color:#fff;font-weight:700;letter-spacing:.12em;font-size:8pt;padding:1.4mm;margin:2.5mm 0;}'+
-  '.meta{font-size:7.8pt;margin-bottom:2.5mm;}'+
-  '.meta div{display:flex;justify-content:space-between;gap:2mm;padding:.5mm 0;}'+
-  '.meta div span{color:#777;flex:0 0 auto;}'+
-  '.meta div b{color:#1B3A6B;text-align:right;word-break:break-word;}'+
-  'table{width:100%;border-collapse:collapse;font-size:7.8pt;table-layout:fixed;}'+
-  'th{background:#E8EEF6;color:#1B3A6B;text-align:left;padding:1.2mm 1mm;font-size:6.6pt;letter-spacing:.04em;text-transform:uppercase;}'+
-  'td{padding:1.2mm 1mm;border-bottom:1px solid #eee;vertical-align:top;word-break:break-word;}'+
-  'td.n{width:5mm;color:#999;} td.r,th.r{text-align:right;white-space:nowrap;width:19mm;}'+
-  'tr.sub td{font-weight:600;background:#fafafa;}'+
-  'td.neg{color:#A32D2D;}'+
-  '.total{margin-top:2mm;display:flex;justify-content:space-between;align-items:baseline;gap:2mm;border-top:2px solid #1B3A6B;padding-top:1.8mm;font-size:11pt;font-weight:800;color:#1B3A6B;}'+
-  '.paid{margin-top:2mm;text-align:center;border:1.5px solid #0F6E56;color:#0F6E56;font-weight:800;letter-spacing:.16em;padding:1.2mm;font-size:9pt;}'+
-  '.ft{margin-top:3mm;font-size:6.4pt;color:#666;text-align:center;line-height:1.5;border-top:1px solid #ddd;padding-top:1.8mm;}'+
-  '@media print{.noprint{display:none;}body{width:72.1mm;}}'+
+  '*{box-sizing:border-box;}html,body{margin:0;padding:0;}'+
+  'body{font-family:"Segoe UI",Arial,sans-serif;color:#000;width:72.1mm;margin:0 auto;padding:2mm 0 3mm;font-size:10.5pt;line-height:1.3;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
+  '.hd{text-align:center;border-bottom:2px solid #000;padding-bottom:2mm;}'+
+  '.hd img{width:12mm;height:12mm;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.5mm;}'+
+  '.hd h1{font-size:11.5pt;margin:0;line-height:1.15;letter-spacing:.02em;font-weight:800;}'+
+  '.hd p{margin:1.2mm 0 0;font-size:8pt;line-height:1.35;font-weight:500;}'+
+  '.tag{text-align:center;background:#000;color:#fff;font-weight:800;letter-spacing:.14em;font-size:9.5pt;padding:1.5mm;margin:2.5mm 0;}'+
+  '.meta{font-size:9pt;margin-bottom:2.5mm;}'+
+  '.meta div{display:flex;justify-content:space-between;gap:2mm;padding:.6mm 0;}'+
+  '.meta div span{flex:0 0 auto;font-weight:500;}'+
+  '.meta div b{text-align:right;word-break:break-word;font-weight:800;}'+
+  'table{width:100%;border-collapse:collapse;font-size:9pt;table-layout:fixed;}'+
+  'th{text-align:left;padding:1.2mm 1mm;font-size:7.5pt;letter-spacing:.06em;text-transform:uppercase;border-bottom:1.5px solid #000;font-weight:800;}'+
+  'td{padding:1.4mm 1mm;border-bottom:1px solid #000;vertical-align:top;word-break:break-word;font-weight:500;}'+
+  'td.n{width:5mm;} td.r,th.r{text-align:right;white-space:nowrap;width:20mm;}'+
+  'tr.sub td{font-weight:800;}'+
+  '.total{margin-top:2.5mm;display:flex;justify-content:space-between;align-items:baseline;gap:2mm;border-top:2.5px solid #000;padding-top:2mm;font-size:13pt;font-weight:900;}'+
+  '.paid{margin-top:2.5mm;text-align:center;border:2px solid #000;font-weight:900;letter-spacing:.2em;padding:1.5mm;font-size:11pt;}'+
+  '.ft{margin-top:3mm;font-size:7.5pt;text-align:center;line-height:1.45;border-top:1px solid #000;padding-top:2mm;font-weight:500;}'+
+  '@media print{.noprint{display:none;}}'+
   '.noprint{margin-top:4mm;text-align:center;}'+
-  '.noprint button{background:#0F6E56;color:#fff;border:none;padding:2.5mm 5mm;border-radius:1.5mm;font-size:9pt;cursor:pointer;}'+
+  '.noprint button{background:#000;color:#fff;border:none;padding:2.5mm 5mm;border-radius:1.5mm;font-size:9pt;cursor:pointer;}'+
   '</style></head><body>'+
   '<div class="hd"><img src="data:image/jpeg;base64,'+LOGO_B64+'"/>'+
   '<h1>EVASHALOM MEDICAL<br>DIAGNOSTIC SERVICES</h1>'+
-  '<p>No. 6 Engr. Fred Ejiofor Crescent,<br>Behind Mr. Biggs, Asaba, Delta State<br>'+
-  'No. 1 Governor Street, Beside Wetland<br>Microfinance Bank, Asaba, Delta State<br>'+
-  'Tel: 07060904931, 08037068465<br>shalomnwagodfmc@gmail.com</p></div>'+
+  '<p>Main Lab: No. 1 Governor Street,<br>Beside Wetland Microfinance Bank, Asaba<br>'+
+  'Branch: No. 6 Engr. Fred Ejiofor Crescent,<br>Behind Mr. Biggs, Asaba, Delta State<br>'+
+  'Tel: 07060904931, 07089460842<br>shalomnwagodfmc@gmail.com</p></div>'+
   '<div class="tag">PAYMENT RECEIPT</div>'+
   '<div class="meta">'+
   '<div><span>Receipt No</span> <b>'+labNo(R.labNum)+'</b></div>'+
@@ -1855,7 +2211,19 @@ window.printReceipt=function(){
   '<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'+
   '</body></html>');
   win.document.close();
-  setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} }, 500);
+  // Fit the page to the slip: measure the rendered height and rewrite @page,
+  // so the printer cuts after the content instead of feeding a 297 mm blank tail.
+  setTimeout(function(){
+    try{
+      var d=win.document, b=d.body;
+      var np=d.querySelector('.noprint'); if(np) np.style.display='none';
+      var pxPerMm=b.getBoundingClientRect().width/72.1 || 3.78;
+      var hmm=Math.ceil(b.scrollHeight/pxPerMm)+4;
+      if(np) np.style.display='';
+      var pg=d.getElementById('pg'); if(pg) pg.textContent='@page{size:80mm '+Math.max(60,Math.min(hmm,297))+'mm;margin:0;}';
+      win.focus(); win.print();
+    }catch(e){}
+  }, 600);
 };
 
 /* ================= REFERENCE RANGES (ported from index.html) ================= */
@@ -2212,9 +2580,9 @@ async function generateReport() {
       mkCell(par(new ImageRun({data:logoData,transformation:{width:72,height:72},type:'jpg'}),{align:AlignmentType.CENTER}),{w:1200,borders:noBorders,pad:pd(0,0,0,80)}),
       mkCell([
         par(run('EVASHALOM MEDICAL DIAGNOSTIC SERVICES',{bold:true,sz:26,color:NAVY}),{after:40}),
-        par(run('No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
-        par(run('No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
-        par(run('Tel: 07060904931  |  08037068465     Email: shalomnwagodfmc@gmail.com',{sz:16,color:'444444'}))
+        par(run('Main Lab: No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
+        par(run('Branch: No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State',{sz:16,color:'444444'}),{after:20}),
+        par(run('Tel: 07060904931  |  07089460842     Email: shalomnwagodfmc@gmail.com',{sz:16,color:'444444'}))
       ],{w:9240,borders:noBorders,pad:pd(0,0,80,0)})
     ]});
 
@@ -2372,6 +2740,8 @@ function renderEntryForm() {
   });
   document.getElementById('entryFields').innerHTML = html;
   document.getElementById('entryCard').classList.remove('hidden');
+  const wk=document.getElementById('wkNum'), ws=document.getElementById('wkSub');
+  if(wk){ wk.textContent=p.labNo; ws.textContent=p.name+' · '+(p.investigations||'').replace(/"/g,'').split(',').filter(Boolean).length+' test(s) · '+(p.date||''); }
 }
 
 // One field. A reference text that is a short list of plain words separated by
@@ -2795,7 +3165,15 @@ async function buildRebates() {
     REB_RESULT.sort(function(x, y){ return y.due - x.due; });
     REB_RESULT.forEach(function(a, idx){ a.id = idx; });
 
-    renderRebTable('rebTable', 'Amount payable to referrers', REB_RESULT);
+    // Doctors and hospitals are separate accounts: two tables, each with its own
+    // subtotal, then one grand total for the month.
+    const docs = REB_RESULT.filter(function(a){ return a.kind === 'Doctor'; });
+    const hosps = REB_RESULT.filter(function(a){ return a.kind === 'Hospital'; });
+    document.getElementById('rebTable').innerHTML = '<div id="rebDocs"></div><div id="rebHosps" style="margin-top:10px"></div><div id="rebGrand"></div>';
+    renderRebTable('rebDocs', 'Doctors', docs, 'due to doctors');
+    renderRebTable('rebHosps', 'Hospitals', hosps, 'due to hospitals');
+    const grand = REB_RESULT.reduce(function(s, a){ return s + a.due; }, 0);
+    document.getElementById('rebGrand').innerHTML = '<div class="reb-grand"><span>total rebate payable · ' + escHtml(REB_MONTH_LABEL) + '</span><span class="m money">' + naira(grand) + '</span></div>';
     renderExportMenu();
 
     // Warnings — anything the build refused to guess about.
@@ -2822,11 +3200,11 @@ async function buildRebates() {
   btn.disabled = false; btn.innerHTML = 'Build statements';
 }
 
-function renderRebTable(boxId, title, list) {
+function renderRebTable(boxId, title, list, subtotalLabel) {
   const box = document.getElementById(boxId);
   let html = '<div class="rtbl"><div class="hd"><span class="t">' + title + '</span><span class="n">' + REB_MONTH_LABEL + '</span></div>';
   if (!list.length) {
-    html += '<div class="rtbl-empty">No referrers with activity this month.</div></div>';
+    html += '<div class="rtbl-empty">No ' + title.toLowerCase() + ' with rebate activity this month.</div></div>';
     box.innerHTML = html; return;
   }
   html += '<div class="cols"><span>Referrer</span><span>Patients</span><span>Full bill</span><span>Rebate base</span><span>Rate</span><span>Payable</span><span></span></div>';
@@ -2843,7 +3221,7 @@ function renderRebTable(boxId, title, list) {
       + '<span class="stmt"><button onclick="printStatement(' + a.id + ')">Statement</button></span>'
       + '</div>';
   });
-  html += '<div class="tot"><span>Total payable</span><span class="m money">' + naira(totDue) + '</span><span></span></div></div>';
+  html += '<div class="tot"><span>' + (subtotalLabel || 'Total payable') + '</span><span class="m money">' + naira(totDue) + '</span><span></span></div></div>';
   box.innerHTML = html;
 }
 
@@ -2977,9 +3355,9 @@ function printStatement(id) {
   + '</style></head><body>'
   + '<div class="hd"><img src="data:image/jpeg;base64,' + LOGO_B64 + '"/>'
   + '<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'
-  + '<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'
-  + 'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'
-  + 'Tel: 07060904931, 08037068465 &nbsp;|&nbsp; shalomnwagodfmc@gmail.com</p></div></div>'
+  + '<p>Main Lab: No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'
+  + 'Branch: No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'
+  + 'Tel: 07060904931, 07089460842 &nbsp;|&nbsp; shalomnwagodfmc@gmail.com</p></div></div>'
   + '<div class="tag">REFERRER REBATE STATEMENT</div>'
   + '<div class="meta">'
   + '<div><span>Referrer:</span> <b>' + escHtml(a.name) + '</b> (' + a.kind + ')</div>'
@@ -3089,8 +3467,13 @@ function recRenderChosen(){
 }
 function recBill(){
   const r=recReferrer();
-  return billFor(recChosen, (r&&r.surcharge)?r.surcharge:0, r?r.rebate:0, 0);
+  // The levy follows the record's own date: a row registered before LEVY_START
+  // never gains ₦200 just because it was edited later.
+  return billFor(recChosen, (r&&r.surcharge)?r.surcharge:0, r?r.rebate:0, 0, recRecord?levyForDate(recRecord.date):0);
 }
+// The price-list figure offered for the amount box: subtotal plus the levy the
+// record carries. Discounts are not re-applied here (they were recorded once).
+function recSuggestedAmount(b){ b=b||recBill(); return b.subtotal+b.levy; }
 function recRecalc(){
   if(!recRecord) return;
   const b=recBill();
@@ -3099,16 +3482,20 @@ function recRecalc(){
   const sl=document.getElementById('recSurLine');
   if(b.surRate>0 && recChosen.length){ sl.style.display='flex'; document.getElementById('recSurRate').textContent=naira(b.surRate); document.getElementById('recBillSur').textContent='+'+naira(b.surcharge); }
   else sl.style.display='none';
+  const ll=document.getElementById('recLevyLine');
+  if(b.levy>0){ ll.style.display='flex'; document.getElementById('recBillLevy').textContent='+'+naira(b.levy); }
+  else ll.style.display='none';
   document.getElementById('recRebPct').textContent=b.pct;
   document.getElementById('recBillRebate').textContent=naira(b.rebate);
-  document.getElementById('recSuggested').textContent=naira(b.subtotal);
+  const sug=recSuggestedAmount(b);
+  document.getElementById('recSuggested').textContent=naira(sug);
   // Offer the price-list figure only once the user has actually changed the
   // tests or referrer, and only if it differs from the amount box. A freshly
   // opened record never nags — a negotiated amount is not a mistake to fix.
   const cur=num(document.getElementById('recAmount').value);
   const row=document.getElementById('recSuggestRow');
   const billChanged = recChosen.map(function(c){return c.name;}).join(', ')!==recRecord.tests || recRequestorString()!==recRecord.referredBy;
-  if(billChanged && recChosen.length && Math.round(b.subtotal)!==Math.round(cur)){ row.style.display='flex'; document.getElementById('recSuggestVal').textContent=naira(b.subtotal); }
+  if(billChanged && recChosen.length && Math.round(sug)!==Math.round(cur)){ row.style.display='flex'; document.getElementById('recSuggestVal').textContent=naira(sug); }
   else row.style.display='none';
   const note=document.getElementById('recRefNote');
   const type=document.getElementById('recRefType').value;
@@ -3120,7 +3507,7 @@ function recRecalc(){
   applyPrivacy();
 }
 window.recUseSuggested=function(){
-  document.getElementById('recAmount').value=Math.round(recBill().subtotal).toLocaleString('en-NG');
+  document.getElementById('recAmount').value=Math.round(recSuggestedAmount()).toLocaleString('en-NG');
   recRecalc();
 };
 function recChanges(){
@@ -3275,12 +3662,25 @@ async function updateRecord() {
                         only. Same rule as the Rebates view (full price normally,
                         LAB CUT for sublet tests) so the two screens agree.
    - MD discount cost = (gross+surcharge) × DISC%.
+   - Levy collected   = LEVY per patient row dated on/after LEVY_START. Sits
+                        inside recorded income (the counter collects it) but is
+                        pass-through, so it is shown on its own, never as revenue.
    - Unmatched tests are counted and SHOWN, never silently dropped.
    Palette: validated with the dataviz six-checks (worst adjacent CVD ΔE 26.3
    on bone #F1EFE8); gold slot ships with bar-tip labels + table as relief. */
-const ANA_CAT = ['#0B7FA3','#B08A1E','#B02F2F','#4468D0','#188A50']; // fixed order, never cycled
-const ANA_ONE = '#0F4C5C';   // single-series hue
-const ANA_DIM = '#98A5A1';   // de-emphasis / non-referred
+let ANA_CAT = ['#0B7FA3','#B08A1E','#B02F2F','#4468D0','#188A50']; // fixed order, never cycled
+let ANA_ONE = '#0F4C5C';   // single-series hue
+let ANA_DIM = '#98A5A1';   // de-emphasis / non-referred
+// Charts follow the page's own tokens when the shell defines them (green / ink /
+// orange / greys — separated by lightness, so CVD-safe); otherwise they keep
+// the validated teal-family palette above.
+function cssVar(n, fb){ try{ const v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||fb; }catch(e){ return fb; } }
+function refreshAnaPalette(){
+  if(!cssVar('--page','')) return;   // --page exists only in the redesigned shell
+  ANA_CAT=[cssVar('--green','#8FC44A'), cssVar('--text','#15171a'), cssVar('--orange','#C4671E'), cssVar('--muted','#8d8f88'), cssVar('--div2','#dedcd4')];
+  ANA_ONE=cssVar('--green','#8FC44A');
+  ANA_DIM=cssVar('--div2','#dedcd4');
+}
 let anaInited=false, anaAll=null, anaPeriod=null, anaPrevAgg=null, anaAgg=null;
 let anaLabel='', anaPrevLabel='', anaModeCur='month', anaKeyCur='', anaFiltered=null;
 
@@ -3363,6 +3763,9 @@ async function loadAnaRecords(){
       gross:gross, sur:sur, discPct:discPct,
       discountCost: full*discPct/100,
       base:base,
+      // Flat per-patient levy carried by rows from LEVY_START. Kept out of
+      // `base` — it is pass-through, not revenue the referrer brought.
+      levy: levyForDate(carry),
       // Same per-test rule as the Rebates view: sublet tests earn on LAB CUT
       // only, the surcharge is not rebateable, and the discount is absorbed.
       rebBase:rebBase, subletNoCut:subletNoCut,
@@ -3412,13 +3815,13 @@ function anaPrevKey(mode,k){
 }
 
 function anaAggregate(recs){
-  const a={n:recs.length, income:0, nAmt:0, outstanding:0, rebateCost:0, discountCost:0, baseSum:0,
+  const a={n:recs.length, income:0, nAmt:0, outstanding:0, rebateCost:0, discountCost:0, baseSum:0, levy:0,
     payModes:{}, tests:{}, unmatchedCount:0, unmatchedNames:{}, sections:{},
     referred:0, nonRef:0, unlisted:0, refs:{}, days:{}, mixBuckets:{}};
   recs.forEach(function(r){
     if(r.amount>0){ a.income+=r.amount; a.nAmt++; }
     if(r.unpaid) a.outstanding+=r.amount;
-    a.rebateCost+=r.rebateCost; a.discountCost+=r.discountCost; a.baseSum+=r.base;
+    a.rebateCost+=r.rebateCost; a.discountCost+=r.discountCost; a.baseSum+=r.base; a.levy+=(r.levy||0);
     const pm=r.payMode.toUpperCase().replace(/\s/g,'');
     if(r.amount>0){ if(!a.payModes[pm]) a.payModes[pm]={n:0,amt:0}; a.payModes[pm].n++; a.payModes[pm].amt+=r.amount; }
     r.matched.forEach(function(t){
@@ -3510,8 +3913,8 @@ function lineSVG(days, daysInMonth){
   let grid='',ticks='';
   for(let g=0;g<=2;g++){
     const v=yMax*g/2, yy=y(v);
-    grid+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="rgba(21,48,58,.10)" stroke-width="1"/>';
-    ticks+='<text x="'+(L-6)+'" y="'+(yy+3.5)+'" text-anchor="end" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">'+compactN(v)+'</text>';
+    grid+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="'+cssVar('--hair','rgba(21,48,58,.10)')+'" stroke-width="1"/>';
+    ticks+='<text x="'+(L-6)+'" y="'+(yy+3.5)+'" text-anchor="end" font-size="9" fill="'+cssVar('--faint','#9BB8C0')+'" font-family="DM Mono,monospace">'+compactN(v)+'</text>';
   }
   let path='', hits='', maxD=1;
   for(let d=1;d<=daysInMonth;d++){ if((days[d]||0)>(days[maxD]||0)) maxD=d; }
@@ -3522,11 +3925,11 @@ function lineSVG(days, daysInMonth){
     const tt=('0'+d).slice(-2)+' '+anaLabel+' — '+(privacy?'₦•••':naira(v));
     hits+='<rect x="'+(x(d)-pw/daysInMonth/2)+'" y="'+T+'" width="'+(pw/daysInMonth)+'" height="'+ph+'" fill="transparent" data-tt="'+escHtml(tt)+'"/>';
   }
-  const dots='<circle cx="'+x(lastD)+'" cy="'+y(days[lastD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="#F1EFE8" stroke-width="2"/>'
-    +(maxD!==lastD?'<circle cx="'+x(maxD)+'" cy="'+y(days[maxD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="#F1EFE8" stroke-width="2"/>':'');
-  const lbl='<text class="money" x="'+Math.min(x(maxD),W-R-40)+'" y="'+Math.max(10,y(days[maxD]||0)-9)+'" text-anchor="middle" font-size="10" font-family="DM Mono,monospace" fill="#15303A">'+naira(days[maxD]||0)+'</text>';
-  const xt='<text x="'+L+'" y="'+(H-8)+'" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">01</text>'
-    +'<text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" font-size="9" fill="#9BB8C0" font-family="DM Mono,monospace">'+('0'+daysInMonth).slice(-2)+'</text>';
+  const dots='<circle cx="'+x(lastD)+'" cy="'+y(days[lastD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="'+cssVar('--panel','#FFFFFF')+'" stroke-width="2"/>'
+    +(maxD!==lastD?'<circle cx="'+x(maxD)+'" cy="'+y(days[maxD]||0)+'" r="4.5" fill="'+ANA_ONE+'" stroke="'+cssVar('--panel','#FFFFFF')+'" stroke-width="2"/>':'');
+  const lbl='<text class="money" x="'+Math.min(x(maxD),W-R-40)+'" y="'+Math.max(10,y(days[maxD]||0)-9)+'" text-anchor="middle" font-size="10" font-family="DM Mono,monospace" fill="'+cssVar('--text','#15303A')+'">'+naira(days[maxD]||0)+'</text>';
+  const xt='<text x="'+L+'" y="'+(H-8)+'" font-size="9" fill="'+cssVar('--faint','#9BB8C0')+'" font-family="DM Mono,monospace">01</text>'
+    +'<text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" font-size="9" fill="'+cssVar('--faint','#9BB8C0')+'" font-family="DM Mono,monospace">'+('0'+daysInMonth).slice(-2)+'</text>';
   return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">'+grid+ticks+xt
     +'<path d="'+path+'" fill="none" stroke="'+ANA_ONE+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+dots+lbl+hits+'</svg>';
 }
@@ -3534,6 +3937,7 @@ function niceStep(mx){ const p=Math.pow(10,Math.floor(Math.log10(mx))); const f=
 function compactN(v){ if(v>=1e6) return (v/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(v>=1e3) return Math.round(v/1e3)+'K'; return String(Math.round(v)); }
 
 function renderAnaDash(){
+  refreshAnaPalette();
   const a=anaAgg, p=anaPrevAgg;
   let html='';
   /* ---- 1 · Money ---- */
@@ -3543,6 +3947,7 @@ function renderAnaDash(){
     +'<div class="fig"><div class="k">Outstanding</div><div class="v warn money">'+naira(a.outstanding)+'</div>'+anaDelta(a.outstanding,p?p.outstanding:null,false)+'</div>'
     +'<div class="fig"><div class="k">Rebate cost</div><div class="v money">'+naira(a.rebateCost)+'</div>'+anaDelta(a.rebateCost,p?p.rebateCost:null,false)+'</div>'
     +'<div class="fig"><div class="k">MD discounts</div><div class="v money">'+naira(a.discountCost)+'</div>'+anaDelta(a.discountCost,p?p.discountCost:null,false)+'</div>'
+    +'<div class="fig"><div class="k">Levy collected · pass-through</div><div class="v money">'+naira(a.levy)+'</div>'+anaDelta(a.levy,p?p.levy:null,false)+'</div>'
     +'<div class="fig"><div class="k">Average bill</div><div class="v money">'+naira(a.avg)+'</div>'+anaDelta(a.avg,p?p.avg:null,true)+'</div>'
     +'<div class="fig"><div class="k">Patients</div><div class="v">'+a.n.toLocaleString('en-GB')+'</div>'+anaDelta(a.n,p?p.n:null,true)+'</div>'
     +'</div>';
@@ -3738,12 +4143,12 @@ function anaExportCsv(filtered){
   const rows = filtered ? (anaFiltered||[]) : (anaPeriod||[]);
   if(!rows.length){ showAnaStatus('Nothing to export yet — build a period first.','error'); return; }
   const q=function(v){ v=String(v==null?'':v); return '"'+v.replace(/"/g,'""')+'"'; };
-  let csv='﻿Lab No,Date,Patient,Tests,Requestor,Matched referrer,Kind,Rate %,Amount recorded,Pay mode,Pay status,Location,DISC %,Gross (price list),Surcharge,Full bill (base),Rebate cost,Unmatched tests\r\n';
+  let csv='﻿Lab No,Date,Patient,Tests,Requestor,Matched referrer,Kind,Rate %,Amount recorded,Pay mode,Pay status,Location,DISC %,Gross (price list),Surcharge,Full bill (base),Levy,Rebate cost,Unmatched tests\r\n';
   rows.forEach(function(r){
     csv+=[q(labNo(r.lab)),q(r.dateStr),q(r.name),q(r.tests.join(', ')),q(r.requestor),
       q(r.ref?r.ref.name:''),q(r.ref?r.ref.kind:''),q(r.ref?r.ref.rebate:''),
       r.amount||0,q(r.payMode),q(r.payStatus),q(r.location),r.discPct||0,
-      Math.round(r.gross),Math.round(r.sur),Math.round(r.base),Math.round(r.rebateCost),
+      Math.round(r.gross),Math.round(r.sur),Math.round(r.base),Math.round(r.levy||0),Math.round(r.rebateCost),
       q(r.unmatched.join(', '))].join(',')+'\r\n';
   });
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -3782,14 +4187,15 @@ function anaPrintSummary(){
   +'</style></head><body>'
   +'<div class="hd"><img src="data:image/jpeg;base64,'+LOGO_B64+'"/>'
   +'<div><h1>EVASHALOM MEDICAL DIAGNOSTIC SERVICES</h1>'
-  +'<p>No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State<br>'
-  +'No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State</p></div></div>'
+  +'<p>Main Lab: No. 1 Governor Street, Beside Wetland Microfinance Bank, Asaba, Delta State<br>'
+  +'Branch: No. 6 Engr. Fred Ejiofor Crescent, Behind Mr. Biggs, Asaba, Delta State</p></div></div>'
   +'<div class="tag">ANALYTICS SUMMARY — '+escHtml(anaLabel.toUpperCase())+'</div>'
   +'<h2>Money</h2><table><thead><tr><th></th><th class="r">'+escHtml(anaLabel)+'</th><th class="r">'+escHtml(p?anaPrevLabel:'—')+'</th><th class="r">Change</th></tr></thead><tbody>'
   +dRow('Recorded income',a.income,p?p.income:0,true)
   +dRow('Outstanding (not paid)',a.outstanding,p?p.outstanding:0,true)
   +dRow('Rebate cost',a.rebateCost,p?p.rebateCost:0,true)
   +dRow('MD discounts',a.discountCost,p?p.discountCost:0,true)
+  +dRow('Levy collected (pass-through)',a.levy,p?p.levy:0,true)
   +dRow('Average bill',a.avg,p?p.avg:0,true)
   +dRow('Patients',a.n,p?p.n:0,false)
   +'</tbody></table>'
@@ -3799,11 +4205,62 @@ function anaPrintSummary(){
   +'<h2>Referrers (top 15 by revenue brought)</h2><table><thead><tr><th>Referrer</th><th class="r">Patients</th><th class="r">Revenue</th><th class="r">Rebate cost</th><th class="r">Net</th></tr></thead><tbody>'
   +refList.map(function(r){ return '<tr><td>'+escHtml(r.name)+' ('+r.kind+' '+r.rate+'%)</td><td class="r">'+r.patients+'</td><td class="r">'+naira(r.revenue)+'</td><td class="r">'+naira(r.rebateCost)+'</td><td class="r">'+naira(r.revenue-r.rebateCost)+'</td></tr>'; }).join('')
   +'</tbody></table>'
-  +'<div class="note">Revenue brought is rebuilt from the price list (gross + surcharge, less DISC tags); recorded income is the tracker AMOUNT column. Part-paid and C/O rows count as collected; only “Not Paid” counts as outstanding.</div>'
+  +'<div class="note">Revenue brought is rebuilt from the price list (gross + surcharge, less DISC tags); recorded income is the tracker AMOUNT column, which from '+LEVY_START.split('-').reverse().join('/')+' includes the '+naira(LEVY)+' per-patient statutory levy — the levy row shows how much of it is pass-through, not lab income. Part-paid and C/O rows count as collected; only “Not Paid” counts as outstanding.</div>'
   +'<div class="ft">Generated '+new Date().toLocaleDateString('en-GB')+' — Evashalom Operations · Internal</div>'
   +'<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>'
   +'</body></html>');
   win.document.close();
+}
+
+/* ================= LABEL & RECEIPT =================
+   The moment the lab number becomes physical. Fed by the last registration
+   in this session; the receipt preview mirrors what printReceipt() prints. */
+function populatePrintView(R){
+  const issued=document.getElementById('prIssued'), num=document.getElementById('stkNum'), nm=document.getElementById('stkName'), prev=document.getElementById('rcptPrev'), add=document.getElementById('prAddTest');
+  if(!R){ if(prev) prev.innerHTML='<div class="c" style="color:#999;padding:20px 0">no registration yet this session</div>'; return; }
+  issued.textContent=labNo(R.labNum)+' issued';
+  num.textContent=labNo(R.labNum);
+  nm.textContent=R.name;
+  add.onclick=function(){ openRecordsFor(R.labNum); };
+  const b=R.bill;
+  let lines=R.tests.map(function(t){ return '<div class="row"><span>'+escHtml(t.name)+'</span><span>'+Math.round(t.price).toLocaleString('en-NG')+'</span></div>'; }).join('');
+  if(b && b.surcharge>0) lines+='<div class="row"><span>surcharge × '+R.tests.length+'</span><span>+'+Math.round(b.surcharge).toLocaleString('en-NG')+'</span></div>';
+  if(b && b.discount>0) lines+='<div class="row"><span>discount '+b.discPct+'%</span><span>−'+Math.round(b.discount).toLocaleString('en-NG')+'</span></div>';
+  if(b && b.levy>0) lines+='<div class="row"><span>levy · per patient</span><span>+'+Math.round(b.levy).toLocaleString('en-NG')+'</span></div>';
+  const d=R.when||new Date();
+  prev.innerHTML='<div class="c h1">EVASHALOM MEDICAL</div><div class="c h2">DIAGNOSTIC SERVICES · ASABA</div><div class="dash"></div>'
+    +'<div class="row"><span>LAB NO.</span><span style="font-weight:500">'+labNo(R.labNum)+'</span></div>'
+    +'<div class="row"><span>PATIENT</span><span>'+escHtml(R.name)+'</span></div>'
+    +'<div class="row"><span>DATE</span><span>'+ddmmyyyy(d)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+'</span></div>'
+    +'<div class="dash"></div>'+lines
+    +'<div class="tot"><span>'+escHtml((R.payStatus||'').toUpperCase())+' · '+escHtml((R.payMode||'').toUpperCase())+'</span><span class="money">'+naira(R.finalAmount)+'</span></div>'
+    +'<div class="ft">KEEP THIS SLIP TO COLLECT YOUR RESULT</div>';
+  applyPrivacy();
+}
+// 50 × 25 mm tube sticker. Decorative bars for now; a Code128 encoder can
+// replace them without changing this layout.
+window.printSticker = function(){
+  const R=lastRegistration; if(!R){ alert('No registration to print yet.'); return; }
+  const win=window.open('','_blank','width=420,height=300');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Sticker '+labNo(R.labNum)+'</title><style>'
+    +'@page{size:50mm 25mm;margin:0}body{margin:0;width:50mm;height:25mm;font-family:"DM Mono",Consolas,monospace;color:#15171a;display:flex;background:#fff}'
+    +'.peel{width:3mm;background:#eceae3;border-right:1px dashed #cfccc2}.b{padding:2mm 2.5mm;flex:1;min-width:0}.cap{font-size:5.5pt;letter-spacing:.14em;color:#8d8f88}'
+    +'.num{font-size:15pt;font-weight:700;line-height:1.05;margin-top:.5mm;white-space:nowrap}.nm{font-size:6.5pt;margin-top:.8mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.bars{display:flex;gap:.3mm;height:4mm;margin-top:1mm}.bars i{display:block;background:#15171a}.edge{width:1.8mm;background:#8FC44A}'
+    +'@media print{.np{display:none}}.np{position:fixed;bottom:2px;right:4px;font-size:9px}'
+    +'</style></head><body><div class="peel"></div><div class="b"><div class="cap">EVASHALOM · ASABA</div><div class="num">'+labNo(R.labNum)+'</div><div class="nm">'+escHtml(R.name)+'</div><div class="bars">'
+    +[2,1,3,1,2,4,1,2,3,1,2,1,3].map(function(w){ return '<i style="width:'+(w*0.35)+'mm"></i>'; }).join('')+'</div></div><div class="edge"></div>'
+    +'<button class="np" onclick="window.print()">print</button></body></html>');
+  win.document.close();
+  setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} }, 400);
+};
+// Draw the decorative barcode strips wherever a .bars container is empty.
+function paintBars(){
+  const W=[2,1,3,1,2,4,1,2,3,1,2,1,3];
+  document.querySelectorAll('.specimen .bars, .bill-hd .bars').forEach(function(b){
+    if(b.children.length) return;
+    b.innerHTML=W.map(function(w){ return '<i style="width:'+w+'px"></i>'; }).join('');
+  });
 }
 
 /* ================= DEVICE MEMORY =================
@@ -3843,10 +4300,14 @@ buildNav();
 buildWelcomeCards();
 loadToday();
 document.getElementById('buildTag').textContent = BUILD;
+document.getElementById('tbBuild').textContent = '· build ' + BUILD;
 ['wlNextLab','todayNextLab','regNextLab'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=labNo('—'); });
 rememberDeviceDefaults();
 restoreSession();
-document.getElementById('code').focus();
+paintBars(); paintClock(); paintRoleStamps();
+(function(){ var b=document.querySelector('#roles button[data-role="'+currentRole+'"]'); if(b) setRole(b); })();
+// Real logo in the marks if the embedded one is present
+(function(){ if(typeof LOGO==='string' && LOGO.length>100){ ['gateMark','railMark'].forEach(function(id){ var e=document.getElementById(id); if(e) e.innerHTML='<img src="data:image/jpeg;base64,'+LOGO+'" alt="">'; }); } })();
 document.getElementById('labInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPatient(); });
 document.getElementById('entryLabInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadEntryPatient(); });
 document.getElementById('nameInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchByName(); });
